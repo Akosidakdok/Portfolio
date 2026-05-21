@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "postinstall": "cd cj-portfolio && npm install",
     "dev": "cd cj-portfolio && npm run dev",
     "build": "cd cj-portfolio && npm run build",
     "preview": "cd cj-portfolio && npm run preview",
