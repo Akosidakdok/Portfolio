@@ -428,7 +428,7 @@ function App() {
 
             {/* Top tags row */}
             <div style={{ padding: '12px 20px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              <span className="pill-tag">Full-Stack</span>
+              <span className="pill-tag">Front-End</span>
               <span className="pill-tag">React</span>
               <span className="pill-tag">Networking</span>
               <span className="pill-tag">Cybersecurity</span>
@@ -487,7 +487,7 @@ function App() {
                 zIndex: 15,
               }}
             >
-              <span className="section-label-dark" style={{ fontSize: '0.55rem' }}>FULL STACK / NETWORKING / CYBER SECURITY</span>
+              <span className="section-label-dark" style={{ fontSize: '0.55rem' }}>FRONT END DEVELOPER/ NETWORKING / CYBER SECURITY</span>
               <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--gray)', lineHeight: 1.7, margin: '10px 0 20px' }}>
                 BSIT Student at PLV. Building modern web apps &amp; data-driven systems.
               </p>
@@ -522,7 +522,7 @@ function App() {
               }}
             >
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <span className="pill-tag">Full-Stack</span>
+                <span className="pill-tag">Front-End</span>
                 <span className="pill-tag">React</span>
                 <span className="pill-tag">Networking</span>
                 <span className="pill-tag">Cybersecurity</span>
@@ -547,7 +547,7 @@ function App() {
                 gap: '8px',
               }}
             >
-              {['REACT.JS', 'TYPESCRIPT', 'FIREBASE', 'GEMINI AI'].map(tech => (
+              {['REACT.JS', 'TYPESCRIPT', 'NETWORKING', 'GEMINI AI'].map(tech => (
                 <span
                   key={tech}
                   style={{
@@ -669,7 +669,7 @@ function App() {
               }}
             >
               <div className="reveal" style={{ maxWidth: '320px' }}>
-                <span className="section-label-dark" style={{ marginBottom: '8px' }}>FULL STACK DEVELOPER / NETWORKING / CYBER SECURITY</span>
+                <span className="section-label-dark" style={{ marginBottom: '8px' }}>FRONT END DEVELOPER / NETWORKING / CYBER SECURITY</span>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray)', lineHeight: 1.7, marginTop: '10px' }}>
                   BSIT Student at PLV. Building modern web apps &amp; data-driven systems. Specializing in React frontends with AI integrations.
                 </p>
@@ -759,7 +759,7 @@ function App() {
               <SkillGroup icon="⟨/⟩" title="Frontend" tags={['React.js', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind']} />
             </div>
             <div className="reveal delay-200">
-              <SkillGroup icon="⚙" title="Backend & APIs" tags={['Firebase', 'OpenAI API', 'Gemini API', 'Node.js']} />
+              <SkillGroup icon="⚙" title="Backend & APIs" tags={['OpenAI API', 'Gemini API', 'Node.js']} />
             </div>
             <div className="reveal delay-300">
               <SkillGroup icon="⬡" title="Networking" tags={['Protocols', 'Subnetting', 'IP Config', 'VLAN']} />
@@ -807,13 +807,74 @@ function App() {
               </div>
             </div>
 
-            {/* Center: numbered section markers */}
-            <div className="reveal delay-200" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-              {['01', '02', '03', '04'].map((n, i) => (
-                <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: i === 0 ? 'var(--red)' : 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>{n}</span>
-                  <div style={{ width: '24px', height: '2px', background: i === 0 ? 'var(--red)' : 'rgba(255,255,255,0.15)', borderRadius: '2px' }} />
-                </div>
+            {/* Center: numbered section nav links */}
+            <div className="reveal delay-200" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+              {[
+                { n: '01', label: 'ABOUT',    href: '#about'    },
+                { n: '02', label: 'SKILLS',   href: '#skills'   },
+                { n: '03', label: 'PROJECTS', href: '#projects' },
+                { n: '04', label: 'CONTACT',  href: '#contact'  },
+              ].map(({ n, label, href }, i) => (
+                <a
+                  key={n}
+                  href={href}
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget;
+                    (el.querySelector('.num-txt') as HTMLElement).style.color = 'var(--red)';
+                    (el.querySelector('.num-bar') as HTMLElement).style.background = 'var(--red)';
+                    (el.querySelector('.num-lbl') as HTMLElement).style.color = 'var(--red)';
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget;
+                    (el.querySelector('.num-txt') as HTMLElement).style.color = 'rgba(255,255,255,0.3)';
+                    (el.querySelector('.num-bar') as HTMLElement).style.background = 'rgba(255,255,255,0.15)';
+                    (el.querySelector('.num-lbl') as HTMLElement).style.color = 'rgba(255,255,255,0.35)';
+                  }}
+                >
+                  <span
+                    className="num-txt"
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.5rem',
+                      color: 'rgba(255,255,255,0.3)',
+                      letterSpacing: '0.05em',
+                      transition: 'color 0.2s',
+                    }}
+                  >
+                    {n}
+                  </span>
+                  <div
+                    className="num-bar"
+                    style={{
+                      width: '24px',
+                      height: '2px',
+                      background: 'rgba(255,255,255,0.15)',
+                      borderRadius: '2px',
+                      transition: 'background 0.2s',
+                    }}
+                  />
+                  <span
+                    className="num-lbl"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.5rem',
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.35)',
+                      transition: 'color 0.2s',
+                    }}
+                  >
+                    {label}
+                  </span>
+                </a>
               ))}
             </div>
 
@@ -825,7 +886,7 @@ function App() {
                   ['📍', 'Valenzuela City, PH'],
                   ['💼', 'Seeking Internship'],
                   ['💼', 'Freelance Web Developer'],
-                  ['🧠', 'Full-Stack + AI / NETWORKING / CYBER SECURITY'],
+                  ['🧠', 'Front-End+ AI / NETWORKING / CYBER SECURITY'],
                   ['📧', 'cjbaldonado11@gmail.com'],
                 ].map(([icon, text]) => (
                   <li key={text} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -873,7 +934,7 @@ function App() {
                 letterSpacing: '-0.01em',
               }}
             >
-              FULL STACK
+              DEVELOPED
             </span>
             <span
               style={{
@@ -1185,7 +1246,7 @@ function App() {
           </h2>
 
           <p className="reveal delay-200" style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--gray)', maxWidth: '480px', lineHeight: 1.8, marginBottom: '40px' }}>
-            I'm currently looking for an internship position and Freelance as Front End Developer. Let's discuss how my full-stack development skills,  AI experience, Networking, and Cybersecurity can contribute to your team.
+            I'm currently looking for an internship position and Freelance as Front End Developer. Let's discuss how my Front-End development skills,  AI experience, Networking, and Cybersecurity can contribute to your team.
           </p>
 
           {/* CTAs */}
