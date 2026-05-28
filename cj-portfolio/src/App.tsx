@@ -1,198 +1,969 @@
-import { useEffect } from 'react';
-import profileImg from './assets/profile.jpg';
-import JellyfishBackground from './JellyfishBackground';
+import { useEffect, useState } from 'react';
+import './App.css';
+import profileImg from './assets/profile.png';
+import FilmStrip from './FilmStrip';
 
+/* ─── Crosshair / Radar SVG Background ─── */
+function CrosshairBg() {
+  return (
+    <div className="crosshair-bg" aria-hidden="true">
+      <svg
+        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '900px', opacity: 0.07 }}
+        viewBox="0 0 900 900"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="450" cy="450" r="400" stroke="white" strokeWidth="1" />
+        <circle cx="450" cy="450" r="280" stroke="white" strokeWidth="1" />
+        <circle cx="450" cy="450" r="160" stroke="white" strokeWidth="1" />
+        <circle cx="450" cy="450" r="60"  stroke="white" strokeWidth="1" />
+        {/* crosshair lines */}
+        <line x1="450" y1="10"  x2="450" y2="130" stroke="white" strokeWidth="1" />
+        <line x1="450" y1="770" x2="450" y2="890" stroke="white" strokeWidth="1" />
+        <line x1="10"  y1="450" x2="130" y2="450" stroke="white" strokeWidth="1" />
+        <line x1="770" y1="450" x2="890" y2="450" stroke="white" strokeWidth="1" />
+        {/* tick marks */}
+        {[0,45,90,135,180,225,270,315].map(deg => {
+          const rad = (deg * Math.PI) / 180;
+          const cx = 450, cy = 450, r1 = 395, r2 = 415;
+          const x1 = cx + r1 * Math.cos(rad);
+          const y1 = cy + r1 * Math.sin(rad);
+          const x2 = cx + r2 * Math.cos(rad);
+          const y2 = cy + r2 * Math.sin(rad);
+          return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke="white" strokeWidth="1.5" />;
+        })}
+      </svg>
+      {/* Animated ping ring */}
+      <div
+        className="radar-ping"
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '600px',
+          height: '600px',
+          marginLeft: '-300px',
+          marginTop: '-300px',
+          borderRadius: '50%',
+          border: '1px solid rgba(227,30,36,0.3)',
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
+}
+
+/* ─── Stat Badge ─── */
+function StatBadge({ label, value, active = false }: { label: string; value: string; active?: boolean }) {
+  return (
+    <div className={`stat-badge ${active ? 'active-badge' : ''}`}>
+      <span className="stat-badge-value">{value}</span>
+      <span className="stat-badge-label">{label}</span>
+    </div>
+  );
+}
+
+/* ─── Star Rating ─── */
+function Stars({ filled = 4, total = 5 }: { filled?: number; total?: number }) {
+  return (
+    <div style={{ display: 'flex', gap: '2px' }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <span key={i} className={i < filled ? 'star' : 'star-empty'}>★</span>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Skill Group ─── */
+function SkillGroup({ icon, title, tags, dark = true }: { icon: string; title: string; tags: string[]; dark?: boolean }) {
+  return (
+    <div
+      style={{
+        padding: '28px',
+        borderRadius: '16px',
+        border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+        background: dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'border-color 0.3s, box-shadow 0.3s',
+      }}
+      className="interactive-card"
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+        <span style={{ fontSize: '1.1rem' }}>{icon}</span>
+        <span
+          style={{
+            fontFamily: 'var(--font-condensed)',
+            fontWeight: 700,
+            fontSize: '1rem',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: dark ? 'var(--white)' : '#111',
+          }}
+        >
+          {title}
+        </span>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        {tags.map(tag => (
+          <span key={tag} className={dark ? 'skill-tag' : 'skill-tag-light'}>{tag}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Project Card (dark booking-style) ─── */
+function ProjectCard({ title, stack, link, description, venue, date }: {
+  title: string;
+  stack: string[];
+  link: string;
+  description: string;
+  venue: string;
+  date: string;
+}) {
+  return (
+    <div className="project-card-dark interactive-card" style={{ maxWidth: '320px', width: '100%' }}>
+      {/* Card Header */}
+      <div style={{ background: 'var(--red)', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--white)', textTransform: 'uppercase' }}>Project</span>
+      </div>
+      {/* Card Body */}
+      <div style={{ padding: '24px 20px' }}>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', letterSpacing: '0.04em', color: 'var(--white)', marginBottom: '16px' }}>
+          {title}
+        </h3>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--gray-light)', lineHeight: 1.6, marginBottom: '20px' }}>
+          {description}
+        </p>
+        {/* Meta rows */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {stack.map(s => (
+              <span key={s} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', padding: '3px 8px', borderRadius: '4px', background: 'rgba(227,30,36,0.15)', border: '1px solid rgba(227,30,36,0.3)', color: '#ff8a8a', letterSpacing: '0.06em' }}>
+                {s}
+              </span>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>VENUE</div>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--white)', textTransform: 'uppercase' }}>{venue}</div>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>YEAR</div>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--white)' }}>{date}</div>
+            </div>
+          </div>
+        </div>
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-cta-red"
+          style={{ marginTop: '20px', width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}
+        >
+          View Project <span>↗</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════ */
+/*  MAIN APP                                                   */
+/* ══════════════════════════════════════════════════════════ */
 function App() {
-  // This hook handles the scroll reveal animations
-  useEffect(() => {
-    const reveals = document.querySelectorAll(".reveal");
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("active");
-                observer.unobserve(entry.target); 
-            }
-        });
-    }, {
-        threshold: 0.15,
-        rootMargin: "0px 0px -50px 0px"
-    });
-    
-    reveals.forEach(reveal => observer.observe(reveal));
+  const [menuOpen, setMenuOpen] = useState(false);
 
-    // Cleanup observer on unmount
+  /* Scroll reveal */
+  useEffect(() => {
+    const classes = ['.reveal', '.reveal-left', '.reveal-right'];
+    const selectors = classes.join(', ');
+    const reveals = document.querySelectorAll(selectors);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   return (
     <>
-      <JellyfishBackground />
-      
-      <nav className="fixed w-full bg-[#020615]/70 backdrop-blur-md border-b border-gray-900/50 z-50 transition-all duration-300">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="text-xl font-bold text-cyan-400 tracking-tight neon-text">CJ.Dev</div>
-            <div className="hidden md:flex space-x-8">
-              <a href="#about" className="text-gray-400 hover:text-cyan-400 transition">About</a>
-              <a href="#skills" className="text-gray-400 hover:text-cyan-400 transition">Skills</a>
-              <a href="#projects" className="text-gray-400 hover:text-cyan-400 transition">Projects</a>
-              <a href="#contact" className="text-gray-400 hover:text-cyan-400 transition">Contact</a>
-            </div>
+      {/* ────────────────────────────────────────── */}
+      {/* NAVBAR                                      */}
+      {/* ────────────────────────────────────────── */}
+      <nav
+        id="navbar"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+          background: 'rgba(13,13,13,0.85)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+        }}
+      >
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo */}
+          <a href="#about" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--white)' }}>CJ</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--red)', lineHeight: 1 }}>+</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--white)' }}>DEV</span>
+          </a>
+
+          {/* Desktop Nav */}
+          <div className="hidden md:flex" style={{ alignItems: 'center', gap: 0 }}>
+            {['About', 'Skills', 'Projects', 'Contact'].map((item, i) => (
+              <span key={item} style={{ display: 'flex', alignItems: 'center' }}>
+                {i > 0 && (
+                  <span style={{ color: 'var(--red)', fontSize: '0.4rem', margin: '0 10px', verticalAlign: 'middle' }}>●</span>
+                )}
+                <a
+                  href={`#${item.toLowerCase()}`}
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'var(--gray-light)',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
+                >
+                  {item}
+                </a>
+              </span>
+            ))}
+          </div>
+
+          {/* Right Icons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <a href="/Baldonado-Resume.pdf" download className="icon-btn" title="Download Resume" style={{ textDecoration: 'none', fontSize: '0.85rem' }}>
+              ↓
+            </a>
+            <a href="https://github.com/Akosidakdok" target="_blank" rel="noopener noreferrer" className="icon-btn" title="GitHub" style={{ textDecoration: 'none', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
+              GH
+            </a>
+            <button
+              className="icon-btn md:hidden"
+              onClick={() => setMenuOpen(v => !v)}
+              aria-label="Toggle menu"
+              style={{ fontSize: '1.2rem' }}
+            >
+              {menuOpen ? '✕' : '≡'}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div style={{ background: 'var(--bg-darker)', borderTop: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {['About', 'Skills', 'Projects', 'Contact'].map(item => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.85rem',
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: 'var(--white)',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  paddingBottom: '16px',
+                }}
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+        )}
       </nav>
 
-      
-      <section id="about" className="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 min-h-[80vh]">
-        <div className="md:w-1/2 reveal">
-          <h2 className="text-sm font-semibold text-cyan-400 tracking-widest uppercase mb-3 drop-shadow-md">Christian James D. Baldonado</h2>
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
-            Building modern web apps <br /> <span className="text-cyan-400 neon-text">& data-driven systems.</span>
+      {/* ────────────────────────────────────────── */}
+      {/* HERO SECTION                               */}
+      {/* ────────────────────────────────────────── */}
+      <section
+        id="about"
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          background: 'var(--bg-dark)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <CrosshairBg />
+
+        {/* Red circle behind profile */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -44%)',
+            width: '520px',
+            height: '520px',
+            borderRadius: '50%',
+            background: 'var(--red)',
+            opacity: 0.18,
+            filter: 'blur(60px)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Top meta row */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '80px',
+            left: 0,
+            right: 0,
+            padding: '0 32px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            zIndex: 5,
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          {/* Genre tags */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <span className="pill-tag">Full-Stack</span>
+            <span className="pill-tag">React</span>
+            <span className="pill-tag">AI Dev</span>
+            <span className="pill-tag">Networking</span>
+          </div>
+          {/* Release tag */}
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)' }}>
+            AVAILABLE [2026]
+          </span>
+        </div>
+
+        {/* Cast / tech row */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '140px',
+            left: 0,
+            right: 0,
+            padding: '0 32px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            zIndex: 5,
+            flexWrap: 'wrap',
+            gap: '8px',
+          }}
+        >
+          {['REACT.JS', 'TYPESCRIPT', 'FIREBASE', 'GEMINI AI'].map(tech => (
+            <span
+              key={tech}
+              style={{
+                fontFamily: 'var(--font-condensed)',
+                fontWeight: 700,
+                fontSize: 'clamp(0.7rem, 1.5vw, 1rem)',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.55)',
+              }}
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+
+        {/* GIANT TITLE */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 5,
+            textAlign: 'center',
+            padding: '0 16px',
+            pointerEvents: 'none',
+            marginBottom: '-24px',
+          }}
+        >
+          {/* "III" / edition marker */}
+          <div
+            className="reveal"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
+              color: 'var(--white)',
+              letterSpacing: '0.5em',
+              opacity: 0.8,
+              marginBottom: '-16px',
+            }}
+          >
+            ◆
+          </div>
+
+          {/* Main name */}
+          <h1
+            className="hero-title-clip reveal delay-100"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(6rem, 25vw, 24rem)',
+              lineHeight: 0.88,
+              letterSpacing: '-0.01em',
+              color: 'var(--white)',
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'clip',
+            }}
+          >
+            CJ BALDONADO
           </h1>
-          <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-            I'm a Bachelor of Science in Information Technology student at PLV actively seeking an internship. I specialize in full-stack web development, combining React frontends with scalable databases, AI integrations, Adept at integrating modern security tools, managing network protocols, and developing robust, efficient software systems within collaborative environments.
+        </div>
+
+        {/* Profile image breaking out of title */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '60px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 15,
+            width: 'clamp(260px, 30vw, 420px)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+          className="reveal delay-200"
+        >
+          <img
+            src={profileImg}
+            alt="Christian James D. Baldonado"
+            style={{
+              width: '100%',
+              height: 'auto',
+              objectFit: 'cover',
+              objectPosition: 'top center',
+              maxHeight: '520px',
+              display: 'block',
+              filter: 'drop-shadow(0 -20px 60px rgba(0,0,0,0.8))',
+            }}
+          />
+        </div>
+
+        {/* [2026] vertical text — right */}
+        <div
+          className="rotate-vert-cw reveal-right delay-300"
+          style={{
+            position: 'absolute',
+            right: '24px',
+            bottom: '120px',
+            zIndex: 20,
+            fontFamily: 'var(--font-display)',
+            fontSize: '1rem',
+            letterSpacing: '0.3em',
+            color: 'var(--white)',
+            opacity: 0.5,
+          }}
+        >
+          [2026]
+        </div>
+
+        {/* Bottom info row */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 20,
+            padding: '24px 32px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '16px',
+            background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0) 100%)',
+            paddingTop: '80px',
+          }}
+        >
+          {/* Left: bio snippet */}
+          <div className="reveal" style={{ maxWidth: '320px' }}>
+            <span className="section-label-dark" style={{ marginBottom: '8px' }}>FULL STACK DEVELOPER / NETWORKING / CYBER SECURITY</span>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray)', lineHeight: 1.7, marginTop: '10px' }}>
+              BSIT Student at PLV. Building modern web apps & data-driven systems. Specializing in React frontends with AI integrations.
+            </p>
+          </div>
+
+          {/* Right: CTAs */}
+          <div className="reveal delay-200" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <a href="#contact" className="btn-cta">
+              Hire Me <span>↗</span>
+            </a>
+            <a href="#projects" className="btn-cta-red">
+              View Work →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ────────────────────────────────────────── */}
+      {/* FILM STRIP                                 */}
+      {/* ────────────────────────────────────────── */}
+      <FilmStrip />
+
+      {/* ────────────────────────────────────────── */}
+      {/* SKILLS / PRODUCTION SECTION (Dark)         */}
+      {/* ────────────────────────────────────────── */}
+      <section
+        id="skills"
+        style={{
+          position: 'relative',
+          background: 'var(--bg-darker)',
+          padding: '80px 0 100px',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Faint radar bg */}
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.04, pointerEvents: 'none' }}>
+          <svg width="700" height="700" viewBox="0 0 700 700" fill="none">
+            <circle cx="350" cy="350" r="340" stroke="white" strokeWidth="1" />
+            <circle cx="350" cy="350" r="220" stroke="white" strokeWidth="1" />
+            <circle cx="350" cy="350" r="100" stroke="white" strokeWidth="1" />
+          </svg>
+        </div>
+
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 32px', position: 'relative', zIndex: 5 }}>
+
+          {/* Section header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', marginBottom: '60px' }}>
+            <div className="reveal">
+              <span className="section-label-dark">TECHNICAL ARSENAL</span>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '0.04em', color: 'var(--white)', marginTop: '8px', lineHeight: 1 }}>
+                SKILLS &amp; STACK
+              </h2>
+            </div>
+            {/* Stars + rating */}
+            <div className="reveal delay-200" style={{ textAlign: 'right' }}>
+              <Stars filled={4} total={5} />
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)', marginTop: '6px', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                Proficiency Rating
+              </p>
+            </div>
+          </div>
+
+          {/* Stat badges row */}
+          <div
+            className="reveal delay-100"
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '20px',
+              flexWrap: 'wrap',
+              marginBottom: '64px',
+            }}
+          >
+            <StatBadge label="YEARS EXP" value='3+"' />
+            <StatBadge label="PROJECTS" value="5+" active />
+            <StatBadge label="TECH STACK" value="5+" />
+            <StatBadge label="FRAMEWORKS" value="4+" />
+          </div>
+
+          {/* Quote */}
+          <div className="reveal delay-200" style={{ textAlign: 'center', maxWidth: '560px', margin: '0 auto 64px' }}>
+            <div className="quote-mark">"</div>
+            <p style={{ fontFamily: 'var(--font-condensed)', fontWeight: 600, fontSize: '1.15rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, textTransform: 'uppercase' }}>
+              Passionate about building modern, scalable systems — where clean code meets exceptional user experience.
+            </p>
+          </div>
+
+          {/* Skill groups grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+            <div className="reveal delay-100">
+              <SkillGroup icon="⟨/⟩" title="Frontend" tags={['React.js', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind']} />
+            </div>
+            <div className="reveal delay-200">
+              <SkillGroup icon="⚙" title="Backend & APIs" tags={['Firebase', 'OpenAI API', 'Gemini API', 'Node.js']} />
+            </div>
+            <div className="reveal delay-300">
+              <SkillGroup icon="⬡" title="Networking" tags={['Protocols', 'Subnetting', 'IP Config', 'VLAN']} />
+            </div>
+            <div className="reveal delay-400">
+              <SkillGroup icon="★" title="Core Strengths" tags={['Agile', 'Problem-Solving', 'Analytical', 'Team Collab']} />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ────────────────────────────────────────── */}
+      {/* FILM STRIP 2                               */}
+      {/* ────────────────────────────────────────── */}
+      <FilmStrip />
+
+      {/* ────────────────────────────────────────── */}
+      {/* DIRECTOR / ABOUT SPLIT SECTION             */}
+      {/* ────────────────────────────────────────── */}
+      <section
+        style={{
+          position: 'relative',
+          background: 'var(--bg-dark)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Top dark half */}
+        <div style={{ padding: '80px 32px 60px', maxWidth: '1280px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '32px' }}>
+
+            {/* Left: PLV badge */}
+            <div className="reveal" style={{ maxWidth: '300px' }}>
+              <span className="section-label-dark" style={{ marginBottom: '16px' }}>EDUCATION</span>
+              <div style={{ marginTop: '16px', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', letterSpacing: '0.1em', color: 'var(--white)', marginBottom: '4px' }}>
+                  PAMANTASAN
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', letterSpacing: '0.08em', color: 'var(--gray-light)' }}>
+                  NG LUNGSOD NG VALENZUELA
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)', marginTop: '8px', letterSpacing: '0.1em' }}>
+                  BSIT — GRADUATING 2027
+                </div>
+              </div>
+            </div>
+
+            {/* Center: numbered section markers */}
+            <div className="reveal delay-200" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+              {['01', '02', '03', '04'].map((n, i) => (
+                <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: i === 0 ? 'var(--red)' : 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>{n}</span>
+                  <div style={{ width: '24px', height: '2px', background: i === 0 ? 'var(--red)' : 'rgba(255,255,255,0.15)', borderRadius: '2px' }} />
+                </div>
+              ))}
+            </div>
+
+            {/* Right: quick facts */}
+            <div className="reveal delay-300" style={{ maxWidth: '260px' }}>
+              <span className="section-label-dark" style={{ marginBottom: '12px' }}>QUICK FACTS</span>
+              <ul style={{ listStyle: 'none', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[
+                  ['📍', 'Valenzuela City, PH'],
+                  ['💼', 'Seeking Internship'],
+                  ['🧠', 'Full-Stack + AI / NETWORKING / CYBER SECURITY'],
+                  ['📧', 'cjbaldonado11@gmail.com'],
+                ].map(([icon, text]) => (
+                  <li key={text} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.85rem' }}>{icon}</span>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray-light)' }}>{text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        {/* "DIRECTED BY" style full-width bold text */}
+        <div
+          style={{
+            background: 'var(--bg-light)',
+            overflow: 'hidden',
+            padding: '40px 0 32px',
+            borderTop: '1px solid rgba(0,0,0,0.1)',
+          }}
+        >
+          <div className="reveal" style={{ padding: '0 32px', marginBottom: '12px' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#999' }}>
+              GALLERY 01 / 04
+            </span>
+          </div>
+          <div
+            className="reveal"
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '20px',
+              padding: '0 32px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(3rem, 8vw, 7.5rem)',
+                color: '#111',
+                lineHeight: 0.9,
+                textTransform: 'uppercase',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              DEVELOPED
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-condensed)',
+                fontWeight: 400,
+                fontSize: 'clamp(1rem, 2.5vw, 2rem)',
+                color: '#888',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+              }}
+            >
+              BY
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(3rem, 8vw, 7.5rem)',
+                color: '#111',
+                lineHeight: 0.9,
+                textTransform: 'uppercase',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              PASSION
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ────────────────────────────────────────── */}
+      {/* PROJECTS SECTION (Light)                   */}
+      {/* ────────────────────────────────────────── */}
+      <section
+        id="projects"
+        style={{
+          background: 'var(--bg-light)',
+          padding: '80px 32px 100px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Numbered section markers */}
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', gap: '32px', marginBottom: '48px', alignItems: 'center' }}>
+            {['01', '02', '03', '04'].map((n, i) => (
+              <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: i === 1 ? 'var(--red)' : '#aaa', letterSpacing: '0.12em' }}>{n}</span>
+                <div style={{ width: '24px', height: '2px', background: i === 1 ? 'var(--red)' : 'rgba(0,0,0,0.15)', borderRadius: '2px' }} />
+              </div>
+            ))}
+          </div>
+
+          {/* Section title */}
+          <div className="reveal" style={{ marginBottom: '64px', textAlign: 'center' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 4rem)', color: '#111', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.05 }}>
+              FEATURED WORK:<br />PROJECTS &amp; BUILDS
+            </h2>
+            {/* Avatar row */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '-8px', marginTop: '24px' }}>
+              {['#E31E24', '#333', '#666', '#999'].map((c, i) => (
+                <div key={i} style={{ width: '36px', height: '36px', borderRadius: '50%', background: c, border: '3px solid var(--bg-light)', marginLeft: i > 0 ? '-10px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', color: 'white', fontFamily: 'var(--font-condensed)', fontWeight: 700 }}>
+                  {['CJ', 'TS', 'RX', 'AI'][i]}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3-column layout: side info | center card | side info */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '40px', alignItems: 'center', flexWrap: 'wrap' }}>
+
+            {/* Left project info */}
+            <div className="reveal-left" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'var(--red)' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PROJECT A</span>
+                </div>
+                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  FeasiFy System
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
+                  AI-assisted financial feasibility web system for BSBA FM students. Automates complex financial parameter generation using Gemini Flash AI.
+                </p>
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#333' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PROJECT B</span>
+                </div>
+                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  The Great Debate
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
+                  2D platform fighting game spin-off of Cyndikato tabletop series. Designed & published on itch.io with custom HTML/CSS web presence.
+                </p>
+              </div>
+            </div>
+
+            {/* Center: Dark project card */}
+            <div className="reveal delay-200" style={{ position: 'relative', zIndex: 10 }}>
+              <ProjectCard
+                title="FEASIFY"
+                stack={['React', 'TypeScript', 'Gemini AI', 'Firebase']}
+                link="https://github.com/Akosidakdok"
+                description="AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance."
+                venue="WEB APP"
+                date="2025"
+              />
+            </div>
+
+            {/* Right project info */}
+            <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'var(--red)' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PROJECT C</span>
+                </div>
+                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Portfolio Site
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
+                  This very portfolio. Built with React, TypeScript, Tailwind CSS. Cinematic editorial design with animated components and scroll reveals.
+                </p>
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#333' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PREMIERING</span>
+                </div>
+                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Open to Internship
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
+                  Currently seeking an internship opportunity where I can contribute my full-stack skills and grow alongside a talented team.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom nav arrows */}
+          <div className="reveal" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '60px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.12em', color: '#888' }}>
+              <span>←</span> <span>PREV</span>
+            </div>
+            <div style={{ width: '1px', height: '20px', background: 'rgba(0,0,0,0.15)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.12em', color: '#888' }}>
+              <span>NEXT</span> <span>→</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ────────────────────────────────────────── */}
+      {/* CONTACT / FOOTER (Dark)                    */}
+      {/* ────────────────────────────────────────── */}
+      <footer
+        id="contact"
+        style={{
+          background: 'var(--bg-dark)',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Large text */}
+        <div
+          style={{
+            padding: '80px 32px 0',
+            maxWidth: '1280px',
+            margin: '0 auto',
+          }}
+        >
+          <div className="reveal" style={{ marginBottom: '8px' }}>
+            <span className="section-label-dark">INITIALIZE CONNECTION</span>
+          </div>
+          <h2
+            className="reveal delay-100"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(3rem, 9vw, 8rem)',
+              lineHeight: 0.92,
+              letterSpacing: '-0.01em',
+              color: 'var(--white)',
+              textTransform: 'uppercase',
+              marginTop: '16px',
+              marginBottom: '40px',
+            }}
+          >
+            LET'S BUILD<br />
+            <span style={{ color: 'var(--red)' }}>SOMETHING</span><br />
+            GREAT.
+          </h2>
+
+          <p className="reveal delay-200" style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--gray)', maxWidth: '480px', lineHeight: 1.8, marginBottom: '40px' }}>
+            I'm currently looking for an internship position. Let's discuss how my full-stack development skills,  AI experience, Networking, and Cybersecurity can contribute to your team.
           </p>
-          <div className="flex gap-4">
-            <a href="/Baldonado-Resume.pdf" download className="bg-cyan-500 text-black px-6 py-3 rounded-lg font-bold hover:bg-cyan-400 transition shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:shadow-[0_0_25px_rgba(34,211,238,0.6)] transform hover:-translate-y-1">Download Resume</a>
-            <a href="#projects" className="bg-transparent text-cyan-400 border border-cyan-500 px-6 py-3 rounded-lg font-semibold hover:bg-cyan-950/30 transition transform hover:-translate-y-1">View Projects &rarr;</a>
+
+          {/* CTAs */}
+          <div className="reveal delay-300" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '60px' }}>
+            <a href="mailto:cjbaldonado11@gmail.com" className="btn-cta-red">
+              Send Email ↗
+            </a>
+            <a href="https://www.linkedin.com/in/christian-james-baldonado-7b7721410/" target="_blank" rel="noopener noreferrer" className="btn-cta">
+              LinkedIn ↗
+            </a>
           </div>
-        </div>
-        <div className="md:w-1/2 flex justify-center reveal delay-200">
-          <div className="w-72 h-72 rounded-full overflow-hidden border-2 border-gray-800 shadow-[0_0_40px_rgba(34,211,238,0.15)] relative group transition-all duration-700 hover:scale-105">
-            <div className="absolute inset-0 rounded-full border-2 border-cyan-400 opacity-20 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-500 z-10"></div>
-            <img src={profileImg} alt="Christian James D. Baldonado" className="w-full h-full object-cover" />
-          </div>
-        </div>
-      </section>
 
-      
-      <section id="skills" className="relative z-10 bg-[#0a0a0a]/30 py-24 border-y border-gray-900/30 backdrop-blur-[2px]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-4 text-white reveal">Technical Arsenal</h2>
-          <p className="text-gray-500 text-center mb-16 reveal">Technologies & skills I work with</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-            {/* Frontend Development */}
-            <div className="p-8 bg-[#050505]/50 rounded-2xl border border-gray-800/50 interactive-card reveal delay-100 group hover:border-cyan-900/50 transition-all duration-500 backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-cyan-950/50 border border-cyan-900/30 flex items-center justify-center text-cyan-400 text-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">&#60;/&#62;</div>
-                <h3 className="text-xl font-bold text-white">Frontend Development</h3>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">React.js</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">TypeScript</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">JavaScript</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">HTML5</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">CSS3</span>
-              </div>
-            </div>
-
-            {/* Backend & APIs */}
-            <div className="p-8 bg-[#050505]/50 rounded-2xl border border-gray-800/50 interactive-card reveal delay-200 group hover:border-cyan-900/50 transition-all duration-500 backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-cyan-950/50 border border-cyan-900/30 flex items-center justify-center text-cyan-400 text-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">&#9881;</div>
-                <h3 className="text-xl font-bold text-white">Backend & APIs</h3>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Firebase</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">OpenAI API</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Google Gemini API</span>
-              </div>
-            </div>
-
-            {/* Networking */}
-            <div className="p-8 bg-[#050505]/50 rounded-2xl border border-gray-800/50 interactive-card reveal delay-300 group hover:border-cyan-900/50 transition-all duration-500 backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-cyan-950/50 border border-cyan-900/30 flex items-center justify-center text-cyan-400 text-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">&#9993;</div>
-                <h3 className="text-xl font-bold text-white">Networking</h3>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Networking Protocols</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Subnetting</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">IP Configuration</span>
-              </div>
-            </div>
-
-            {/* Core Strengths */}
-            <div className="p-8 bg-[#050505]/50 rounded-2xl border border-gray-800/50 interactive-card reveal delay-400 group hover:border-cyan-900/50 transition-all duration-500 backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-cyan-950/50 border border-cyan-900/30 flex items-center justify-center text-cyan-400 text-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">&#9733;</div>
-                <h3 className="text-xl font-bold text-white">Core Strengths</h3>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Agile Development</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Analytical Thinking</span>
-                <span className="px-4 py-2 rounded-lg bg-cyan-950/20 border border-cyan-900/30 text-cyan-400 text-sm font-medium hover:bg-cyan-950/40 hover:border-cyan-500/50 hover:shadow-[0_0_10px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-default">Problem-Solving</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      
-      <section id="projects" className="relative z-10 py-24 bg-[#050505]/30 backdrop-blur-[2px]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-16 text-white reveal">Featured Work</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            
-            
-            <div className="bg-[#0a0a0a]/60 rounded-2xl overflow-hidden border border-gray-800/50 interactive-card reveal delay-100 flex flex-col backdrop-blur-md">
-              <div className="h-48 border-b border-gray-800/50 bg-black/40 flex items-center justify-center relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                <span className="text-gray-600 font-mono text-sm tracking-widest group-hover:text-cyan-400 transition duration-500">FEASIFY_UI.TSX</span>
-              </div>
-              <div className="p-8 flex-1 flex flex-col">
-                <div className="flex gap-2 mb-4 flex-wrap">
-                  <span className="text-xs font-mono bg-cyan-950 border border-cyan-900 text-cyan-400 px-2 py-1 rounded">React</span>
-                  <span className="text-xs font-mono bg-cyan-950 border border-cyan-900 text-cyan-400 px-2 py-1 rounded">TypeScript</span>
-                  <span className="text-xs font-mono bg-cyan-950 border border-cyan-900 text-cyan-400 px-2 py-1 rounded">Gemini Flash</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-3 text-white">FeasiFy System</h3>
-                <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-1">An AI-assisted web-based financial feasibility system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture.</p>
-                <a href="https://github.com/Akosidakdok"target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-cyan-400 font-semibold hover:text-cyan-300 transition group mt-auto">
-                  View Repository 
-                  <span className="ml-2 transform group-hover:translate-x-2 transition">&rarr;</span>
+          {/* Social links row */}
+          <div
+            className="reveal delay-400"
+            style={{
+              display: 'flex',
+              gap: 0,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              borderTop: '1px solid rgba(255,255,255,0.06)',
+              paddingTop: '32px',
+              paddingBottom: '40px',
+            }}
+          >
+            {[
+              { label: 'GitHub', href: 'https://github.com/Akosidakdok' },
+              { label: 'LinkedIn', href: 'https://www.linkedin.com/in/christian-james-baldonado-7b7721410/' },
+              { label: 'Email', href: 'mailto:cjbaldonado11@gmail.com' },
+            ].map((link, i) => (
+              <span key={link.label} style={{ display: 'flex', alignItems: 'center' }}>
+                {i > 0 && (
+                  <span style={{ color: 'var(--red)', fontSize: '0.4rem', margin: '0 16px' }}>●</span>
+                )}
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'var(--gray)',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray)')}
+                >
+                  {link.label}
                 </a>
-              </div>
-            </div>
+              </span>
+            ))}
 
-            
-            <div className="bg-[#0a0a0a]/60 rounded-2xl overflow-hidden border border-gray-800/50 interactive-card reveal delay-200 flex flex-col backdrop-blur-md">
-              <div className="h-48 border-b border-gray-800/50 bg-black/40 flex items-center justify-center relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                <span className="text-gray-600 font-mono text-sm tracking-widest group-hover:text-cyan-400 transition duration-500">ITCH_IO_LAUNCH.HTML</span>
-              </div>
-              <div className="p-8 flex-1 flex flex-col">
-                <div className="flex gap-2 mb-4 flex-wrap">
-                  <span className="text-xs font-mono bg-cyan-950 border border-cyan-900 text-cyan-400 px-2 py-1 rounded">Game Dev</span>
-                  <span className="text-xs font-mono bg-cyan-950 border border-cyan-900 text-cyan-400 px-2 py-1 rounded">HTML/CSS</span>
-                  <span className="text-xs font-mono bg-cyan-950 border border-cyan-900 text-cyan-400 px-2 py-1 rounded">UI Design</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-3 text-white">The Great Debate</h3>
-                <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-1">A 2D platform fighting game spin-off of the Cyndikato tabletop game. Designed and launched on itch.io, handling the layout, descriptions, and web presence.</p>
-                <a href="#" className="inline-flex items-center text-cyan-400 font-semibold hover:text-cyan-300 transition group mt-auto">
-                  View on itch.io 
-                  <span className="ml-2 transform group-hover:translate-x-2 transition">&rarr;</span>
-                </a>
-              </div>
-            </div>
-
+            <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)' }}>
+              © 2026 CJ BALDONADO · SYSTEM ONLINE.
+            </span>
           </div>
-        </div>
-      </section>
-
-      
-      <footer id="contact" className="relative z-10 bg-[#0a0a0a]/30 border-t border-gray-900/30 py-16 backdrop-blur-[2px]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
-          <h2 className="text-3xl font-bold mb-6 text-white">Initialize Connection</h2>
-          <p className="text-gray-400 mb-10 text-lg">I am currently looking for an internship position. Let's discuss how my full-stack web development skills can contribute to your team.</p>
-          <div className="flex justify-center gap-8 mb-12 font-mono">
-            <a href="https://github.com/Akosidakdok" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyan-400 hover:neon-text transform hover:-translate-y-1 transition text-sm tracking-widest uppercase">GitHub</a>
-            <a href="https://www.linkedin.com/in/christian-james-baldonado-7b7721410/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyan-400 hover:neon-text transform hover:-translate-y-1 transition text-sm tracking-widest uppercase">LinkedIn</a>
-            <a href="mailto:cjbaldonado11@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyan-400 hover:neon-text transform hover:-translate-y-1 transition text-sm tracking-widest uppercase">Email</a>
-          </div>
-          <p className="text-gray-600 text-xs font-mono uppercase tracking-widest">&copy; 2026 Christian James D. Baldonado. System Online.</p>
         </div>
       </footer>
     </>
