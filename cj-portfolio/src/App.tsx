@@ -830,7 +830,7 @@ function App() {
                     const el = e.currentTarget;
                     (el.querySelector('.num-txt') as HTMLElement).style.color = 'var(--red)';
                     (el.querySelector('.num-bar') as HTMLElement).style.background = 'var(--red)';
-                    (el.querySelector('.num-lbl') as HTMLElement).style.color = 'var(--red)'
+                    (el.querySelector('.num-lbl') as HTMLElement).style.color = 'var(--red)';
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget;
@@ -844,7 +844,7 @@ function App() {
                     style={{
                       fontFamily: 'var(--font-display)',
                       fontSize: '1.5rem',
-                       color: 'rgba(255,255,255,0.3)',
+                      color: 'rgba(255,255,255,0.3)',
                       letterSpacing: '0.05em',
                       transition: 'color 0.2s',
                     }}
@@ -869,7 +869,6 @@ function App() {
                       letterSpacing: '0.15em',
                       textTransform: 'uppercase',
                       color: 'rgba(255,255,255,0.35)',
-                      opacity: 1,
                       transition: 'color 0.2s',
                     }}
                   >
