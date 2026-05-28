@@ -244,6 +244,13 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeProject, setActiveProject] = useState(0);
   const [cardVisible, setCardVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const switchProject = useCallback((nextIndex: number) => {
     setCardVisible(false);
@@ -390,7 +397,8 @@ function App() {
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-end',
+          justifyContent: isMobile ? 'flex-start' : 'flex-end',
+          paddingTop: isMobile ? '80px' : 0,
         }}
       >
         <CrosshairBg />
@@ -403,8 +411,8 @@ function App() {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -44%)',
-            width: '520px',
-            height: '520px',
+            width: isMobile ? '320px' : '520px',
+            height: isMobile ? '320px' : '520px',
             borderRadius: '50%',
             background: 'var(--red)',
             opacity: 0.18,
@@ -414,192 +422,265 @@ function App() {
           }}
         />
 
-        {/* Top meta row */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '80px',
-            left: 0,
-            right: 0,
-            padding: '0 32px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            zIndex: 5,
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
-          {/* Genre tags */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <span className="pill-tag">Full-Stack</span>
-            <span className="pill-tag">React</span>
-            <span className="pill-tag">Networking</span>
-            <span className="pill-tag">Cybersecurity</span>
-          </div>
-          {/* Release tag */}
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)' }}>
-            AVAILABLE [2026]
-          </span>
-        </div>
+        {/* ── MOBILE LAYOUT ── */}
+        {isMobile ? (
+          <div style={{ position: 'relative', zIndex: 5, display: 'flex', flexDirection: 'column', flex: 1 }}>
 
-        {/* Cast / tech row */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '140px',
-            left: 0,
-            right: 0,
-            padding: '0 32px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            zIndex: 5,
-            flexWrap: 'wrap',
-            gap: '8px',
-          }}
-        >
-          {['REACT.JS', 'TYPESCRIPT', 'FIREBASE', 'GEMINI AI'].map(tech => (
-            <span
-              key={tech}
+            {/* Top tags row */}
+            <div style={{ padding: '12px 20px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <span className="pill-tag">Full-Stack</span>
+              <span className="pill-tag">React</span>
+              <span className="pill-tag">Networking</span>
+              <span className="pill-tag">Cybersecurity</span>
+            </div>
+
+            {/* Giant title */}
+            <div style={{ textAlign: 'center', padding: '0 12px', marginTop: '8px' }}>
+              <h1
+                className="reveal"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(3.8rem, 18vw, 6rem)',
+                  lineHeight: 0.9,
+                  color: 'var(--white)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                CJ BALDONADO
+              </h1>
+            </div>
+
+            {/* Profile image — in flow on mobile */}
+            <div
+              className="reveal delay-100"
               style={{
-                fontFamily: 'var(--font-condensed)',
-                fontWeight: 700,
-                fontSize: 'clamp(0.7rem, 1.5vw, 1rem)',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.55)',
+                width: '72%',
+                maxWidth: '300px',
+                margin: '0 auto',
+                position: 'relative',
+                zIndex: 10,
+                marginTop: '-16px',
               }}
             >
-              {tech}
-            </span>
-          ))}
-        </div>
+              <img
+                src={profileImg}
+                alt="Christian James D. Baldonado"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  objectFit: 'cover',
+                  objectPosition: 'top center',
+                  display: 'block',
+                  filter: 'drop-shadow(0 -12px 40px rgba(0,0,0,0.9))',
+                }}
+              />
+            </div>
 
-        {/* GIANT TITLE */}
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 5,
-            textAlign: 'center',
-            padding: '0 16px',
-            pointerEvents: 'none',
-            marginBottom: '-24px',
-          }}
-        >
-          {/* "III" / edition marker */}
-          <div
-            className="reveal"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
-              color: 'var(--white)',
-              letterSpacing: '0.5em',
-              opacity: 0.8,
-              marginBottom: '-16px',
-            }}
-          >
-            ◆
+            {/* Bottom info */}
+            <div
+              style={{
+                background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0.95) 100%)',
+                padding: '20px 20px 32px',
+                marginTop: '-32px',
+                position: 'relative',
+                zIndex: 15,
+              }}
+            >
+              <span className="section-label-dark" style={{ fontSize: '0.55rem' }}>FULL STACK / NETWORKING / CYBER SECURITY</span>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--gray)', lineHeight: 1.7, margin: '10px 0 20px' }}>
+                BSIT Student at PLV. Building modern web apps &amp; data-driven systems.
+              </p>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <a href="#contact" className="btn-cta" style={{ fontSize: '0.72rem', padding: '11px 20px' }}>
+                  Hire Me ↗
+                </a>
+                <a href="#projects" className="btn-cta-red" style={{ fontSize: '0.72rem', padding: '11px 20px' }}>
+                  View Work →
+                </a>
+              </div>
+            </div>
           </div>
 
-          {/* Main name */}
-          <h1
-            className="hero-title-clip reveal delay-100"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(6rem, 25vw, 24rem)',
-              lineHeight: 0.88,
-              letterSpacing: '-0.01em',
-              color: 'var(--white)',
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'clip',
-            }}
-          >
-            CJ BALDONADO
-          </h1>
-        </div>
+        ) : (
+          /* ── DESKTOP LAYOUT ── */
+          <>
+            {/* Top meta row */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '80px',
+                left: 0,
+                right: 0,
+                padding: '0 32px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                zIndex: 5,
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <span className="pill-tag">Full-Stack</span>
+                <span className="pill-tag">React</span>
+                <span className="pill-tag">Networking</span>
+                <span className="pill-tag">Cybersecurity</span>
+              </div>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)' }}>
+                AVAILABLE [2026]
+              </span>
+            </div>
 
-        {/* Profile image breaking out of title */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '60px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 15,
-            width: 'clamp(260px, 30vw, 420px)',
-            pointerEvents: 'none',
-            userSelect: 'none',
-          }}
-          className="reveal delay-200"
-        >
-          <img
-            src={profileImg}
-            alt="Christian James D. Baldonado"
-            style={{
-              width: '100%',
-              height: 'auto',
-              objectFit: 'cover',
-              objectPosition: 'top center',
-              maxHeight: '520px',
-              display: 'block',
-              filter: 'drop-shadow(0 -20px 60px rgba(0,0,0,0.8))',
-            }}
-          />
-        </div>
+            {/* Cast / tech row */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '140px',
+                left: 0,
+                right: 0,
+                padding: '0 32px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                zIndex: 5,
+                flexWrap: 'wrap',
+                gap: '8px',
+              }}
+            >
+              {['REACT.JS', 'TYPESCRIPT', 'FIREBASE', 'GEMINI AI'].map(tech => (
+                <span
+                  key={tech}
+                  style={{
+                    fontFamily: 'var(--font-condensed)',
+                    fontWeight: 700,
+                    fontSize: 'clamp(0.7rem, 1.5vw, 1rem)',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.55)',
+                  }}
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
 
-        {/* [2026] vertical text — right */}
-        <div
-          className="rotate-vert-cw reveal-right delay-300"
-          style={{
-            position: 'absolute',
-            right: '24px',
-            bottom: '120px',
-            zIndex: 20,
-            fontFamily: 'var(--font-display)',
-            fontSize: '1rem',
-            letterSpacing: '0.3em',
-            color: 'var(--white)',
-            opacity: 0.5,
-          }}
-        >
-          [2026]
-        </div>
+            {/* GIANT TITLE */}
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 5,
+                textAlign: 'center',
+                padding: '0 16px',
+                pointerEvents: 'none',
+                marginBottom: '-24px',
+              }}
+            >
+              <div
+                className="reveal"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
+                  color: 'var(--white)',
+                  letterSpacing: '0.5em',
+                  opacity: 0.8,
+                  marginBottom: '-16px',
+                }}
+              >
+                ◆
+              </div>
+              <h1
+                className="hero-title-clip reveal delay-100"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(6rem, 15vw, 14rem)',
+                  lineHeight: 0.88,
+                  letterSpacing: '-0.01em',
+                  color: 'var(--white)',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'clip',
+                }}
+              >
+                CJ BALDONADO
+              </h1>
+            </div>
 
-        {/* Bottom info row */}
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 20,
-            padding: '24px 32px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            flexWrap: 'wrap',
-            gap: '16px',
-            background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0) 100%)',
-            paddingTop: '80px',
-          }}
-        >
-          {/* Left: bio snippet */}
-          <div className="reveal" style={{ maxWidth: '320px' }}>
-            <span className="section-label-dark" style={{ marginBottom: '8px' }}>FULL STACK DEVELOPER / NETWORKING / CYBER SECURITY</span>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray)', lineHeight: 1.7, marginTop: '10px' }}>
-              BSIT Student at PLV. Building modern web apps & data-driven systems. Specializing in React frontends with AI integrations.
-            </p>
-          </div>
+            {/* Profile image */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '60px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 15,
+                width: 'clamp(260px, 30vw, 420px)',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }}
+              className="reveal delay-200"
+            >
+              <img
+                src={profileImg}
+                alt="Christian James D. Baldonado"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  objectFit: 'cover',
+                  objectPosition: 'top center',
+                  maxHeight: '520px',
+                  display: 'block',
+                  filter: 'drop-shadow(0 -20px 60px rgba(0,0,0,0.8))',
+                }}
+              />
+            </div>
 
-          {/* Right: CTAs */}
-          <div className="reveal delay-200" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <a href="#contact" className="btn-cta">
-              Hire Me <span>↗</span>
-            </a>
-            <a href="#projects" className="btn-cta-red">
-              View Work →
-            </a>
-          </div>
-        </div>
+            {/* [2026] vertical text */}
+            <div
+              className="rotate-vert-cw reveal-right delay-300"
+              style={{
+                position: 'absolute',
+                right: '24px',
+                bottom: '120px',
+                zIndex: 20,
+                fontFamily: 'var(--font-display)',
+                fontSize: '1rem',
+                letterSpacing: '0.3em',
+                color: 'var(--white)',
+                opacity: 0.5,
+              }}
+            >
+              [2026]
+            </div>
+
+            {/* Bottom info row */}
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 20,
+                padding: '24px 32px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                flexWrap: 'wrap',
+                gap: '16px',
+                background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0) 100%)',
+                paddingTop: '80px',
+              }}
+            >
+              <div className="reveal" style={{ maxWidth: '320px' }}>
+                <span className="section-label-dark" style={{ marginBottom: '8px' }}>FULL STACK DEVELOPER / NETWORKING / CYBER SECURITY</span>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray)', lineHeight: 1.7, marginTop: '10px' }}>
+                  BSIT Student at PLV. Building modern web apps &amp; data-driven systems. Specializing in React frontends with AI integrations.
+                </p>
+              </div>
+              <div className="reveal delay-200" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <a href="#contact" className="btn-cta">Hire Me <span>↗</span></a>
+                <a href="#projects" className="btn-cta-red">View Work →</a>
+              </div>
+            </div>
+          </>
+        )}
       </section>
 
       {/* ────────────────────────────────────────── */}
@@ -890,114 +971,102 @@ function App() {
             </div>
           </div>
 
-          {/* 3-column layout: prev info | center card | next info */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto 1fr',
-              gap: '40px',
-              alignItems: 'center',
-            }}
-          >
-            {/* Left — previous project info */}
-            {(() => {
-              const prev = PROJECTS[(activeProject - 1 + PROJECTS.length) % PROJECTS.length];
-              return (
-                <div
-                  style={{
-                    display: 'flex', flexDirection: 'column', gap: '12px',
-                    opacity: cardVisible ? 1 : 0,
-                    transition: 'opacity 0.28s ease',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: prev.color }} />
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{prev.label}</span>
-                  </div>
-                  <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    {prev.title}
-                  </h3>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>
-                    {prev.longDesc}
-                  </p>
-                  <button
-                    onClick={goPrev}
-                    style={{
-                      all: 'unset', cursor: 'pointer',
-                      display: 'inline-flex', alignItems: 'center', gap: '6px',
-                      fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
-                      letterSpacing: '0.12em', textTransform: 'uppercase',
-                      color: 'var(--red)', marginTop: '4px',
-                      transition: 'gap 0.2s',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.gap = '12px')}
-                    onMouseLeave={e => (e.currentTarget.style.gap = '6px')}
-                  >
-                    ← PREV
-                  </button>
+          {/* Responsive layout: 3-col desktop / single-col mobile */}
+          {isMobile ? (
+            /* ── MOBILE: stacked card + active info ── */
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px' }}>
+              {/* Active card */}
+              <div
+                style={{
+                  width: '100%', maxWidth: '340px',
+                  opacity: cardVisible ? 1 : 0,
+                  transform: cardVisible ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.97)',
+                  transition: 'opacity 0.28s ease, transform 0.28s ease',
+                }}
+              >
+                <ProjectCard
+                  title={PROJECTS[activeProject].title}
+                  stack={PROJECTS[activeProject].stack}
+                  link={PROJECTS[activeProject].link}
+                  description={PROJECTS[activeProject].description}
+                  venue={PROJECTS[activeProject].venue}
+                  date={PROJECTS[activeProject].date}
+                />
+              </div>
+              {/* Active project description below card */}
+              <div
+                style={{
+                  width: '100%', maxWidth: '340px',
+                  opacity: cardVisible ? 1 : 0,
+                  transition: 'opacity 0.28s ease',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: PROJECTS[activeProject].color }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>
+                    {PROJECTS[activeProject].label}
+                  </span>
                 </div>
-              );
-            })()}
-
-            {/* Center — active project card */}
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: '#555', lineHeight: 1.7 }}>
+                  {PROJECTS[activeProject].longDesc}
+                </p>
+              </div>
+            </div>
+          ) : (
+            /* ── DESKTOP: 3-column ── */
             <div
               style={{
-                position: 'relative', zIndex: 10,
-                opacity: cardVisible ? 1 : 0,
-                transform: cardVisible ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.97)',
-                transition: 'opacity 0.28s ease, transform 0.28s ease',
+                display: 'grid',
+                gridTemplateColumns: '1fr auto 1fr',
+                gap: '40px',
+                alignItems: 'center',
               }}
             >
-              <ProjectCard
-                title={PROJECTS[activeProject].title}
-                stack={PROJECTS[activeProject].stack}
-                link={PROJECTS[activeProject].link}
-                description={PROJECTS[activeProject].description}
-                venue={PROJECTS[activeProject].venue}
-                date={PROJECTS[activeProject].date}
-              />
-            </div>
-
-            {/* Right — next project info */}
-            {(() => {
-              const next = PROJECTS[(activeProject + 1) % PROJECTS.length];
-              return (
-                <div
-                  style={{
-                    display: 'flex', flexDirection: 'column', gap: '12px',
-                    opacity: cardVisible ? 1 : 0,
-                    transition: 'opacity 0.28s ease',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: next.color }} />
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{next.label}</span>
+              {/* Left — previous project info */}
+              {(() => {
+                const prev = PROJECTS[(activeProject - 1 + PROJECTS.length) % PROJECTS.length];
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: cardVisible ? 1 : 0, transition: 'opacity 0.28s ease' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: prev.color }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{prev.label}</span>
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{prev.title}</h3>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>{prev.longDesc}</p>
+                    <button onClick={goPrev} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>← PREV</button>
                   </div>
-                  <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    {next.title}
-                  </h3>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>
-                    {next.longDesc}
-                  </p>
-                  <button
-                    onClick={goNext}
-                    style={{
-                      all: 'unset', cursor: 'pointer',
-                      display: 'inline-flex', alignItems: 'center', gap: '6px',
-                      fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
-                      letterSpacing: '0.12em', textTransform: 'uppercase',
-                      color: 'var(--red)', marginTop: '4px',
-                      transition: 'gap 0.2s',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.gap = '12px')}
-                    onMouseLeave={e => (e.currentTarget.style.gap = '6px')}
-                  >
-                    NEXT →
-                  </button>
-                </div>
-              );
-            })()}
-          </div>
+                );
+              })()}
+
+              {/* Center — active project card */}
+              <div style={{ position: 'relative', zIndex: 10, opacity: cardVisible ? 1 : 0, transform: cardVisible ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.97)', transition: 'opacity 0.28s ease, transform 0.28s ease' }}>
+                <ProjectCard
+                  title={PROJECTS[activeProject].title}
+                  stack={PROJECTS[activeProject].stack}
+                  link={PROJECTS[activeProject].link}
+                  description={PROJECTS[activeProject].description}
+                  venue={PROJECTS[activeProject].venue}
+                  date={PROJECTS[activeProject].date}
+                />
+              </div>
+
+              {/* Right — next project info */}
+              {(() => {
+                const next = PROJECTS[(activeProject + 1) % PROJECTS.length];
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: cardVisible ? 1 : 0, transition: 'opacity 0.28s ease' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: next.color }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{next.label}</span>
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{next.title}</h3>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>{next.longDesc}</p>
+                    <button onClick={goNext} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>NEXT →</button>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
 
           {/* Bottom nav bar with circular prev/next buttons + dot indicators */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px', marginTop: '60px' }}>
