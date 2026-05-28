@@ -188,31 +188,31 @@ interface Project {
 
 const PROJECTS: Project[] = [
   {
-    id: 'A',
+    id: '1',
     label: 'PROJECT A',
     title: 'FEASIFY',
     stack: ['React', 'TypeScript', 'Gemini AI', 'Firebase'],
     link: 'https://github.com/Akosidakdok',
     description: 'AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance.',
     venue: 'WEB APP',
-    date: '2025',
+    date: '2026',
     longDesc: 'AI-assisted financial feasibility web system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture using Gemini Flash AI.',
     color: '#E31E24',
   },
   {
-    id: 'B',
+    id: '2',
     label: 'PROJECT B',
-    title: 'THE GREAT DEBATE',
-    stack: ['Game Dev', 'HTML/CSS', 'UI Design'],
+    title: 'Barangay-Equipment-Borrowing-and-Tracking-System',
+    stack: ['Software Developtment', 'HTML/CSS', 'Firebase'],
     link: '#',
-    description: '2D platform fighting game published on itch.io. Designed the full web presence, layout, and launch page.',
-    venue: 'ITCH.IO',
-    date: '2024',
-    longDesc: 'A 2D platform fighting game spin-off of the Cyndikato tabletop game. Designed and launched on itch.io, handling layout, descriptions, and the entire web presence.',
+    description: 'Developed a web-based application for tracking and borrowing local barangay equipment, streamlining the inventory management process',
+    venue: 'WEB APP',
+    date: '2025',
+    longDesc: 'Designed and implemented a responsive interface using HTML5 and CSS3, ensuring seamless navigation for community users and staff.',
     color: '#333333',
   },
   {
-    id: 'C',
+    id: '3',
     label: 'PROJECT C',
     title: 'PORTFOLIO SITE',
     stack: ['React', 'TypeScript', 'Tailwind', 'Vite'],
@@ -221,6 +221,18 @@ const PROJECTS: Project[] = [
     venue: 'WEB APP',
     date: '2026',
     longDesc: 'Personal portfolio built with React and TypeScript. Features a cinematic black/red editorial aesthetic inspired by bold film UI design, with Bebas Neue display typography and animated components.',
+    color: '#6B21A8',
+  },
+  {
+    id: '4',
+    label: 'PROJECT D',
+    title: 'Mang Delfins Putong Pulo Website',
+    stack: ['HTML/CSS', 'JavaScript', 'PHP'],
+    link: '#about',
+    description: 'Engineered a highly responsive, multi-page marketing and storefront platform to showcase local delicacies, significantly enhancing the business digital presence and customer accessibility.',
+    venue: 'WEB APP',
+    date: '2025',
+    longDesc: 'Built interactive product carousels, a custom branch locator, and dynamic product overlay modals utilizing semantic HTML5, CSS3 structural grids, and JavaScript, resulting in a user-friendly experience that boosted online engagement and sales for the local delicacy business.',
     color: '#6B21A8',
   },
 ];
@@ -422,8 +434,8 @@ function App() {
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className="pill-tag">Full-Stack</span>
             <span className="pill-tag">React</span>
-            <span className="pill-tag">AI Dev</span>
             <span className="pill-tag">Networking</span>
+            <span className="pill-tag">Cybersecurity</span>
           </div>
           {/* Release tag */}
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)' }}>
@@ -731,6 +743,7 @@ function App() {
                 {[
                   ['📍', 'Valenzuela City, PH'],
                   ['💼', 'Seeking Internship'],
+                  ['💼', 'Freelance Web Developer'],
                   ['🧠', 'Full-Stack + AI / NETWORKING / CYBER SECURITY'],
                   ['📧', 'cjbaldonado11@gmail.com'],
                 ].map(([icon, text]) => (
@@ -1103,7 +1116,7 @@ function App() {
           </h2>
 
           <p className="reveal delay-200" style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--gray)', maxWidth: '480px', lineHeight: 1.8, marginBottom: '40px' }}>
-            I'm currently looking for an internship position. Let's discuss how my full-stack development skills,  AI experience, Networking, and Cybersecurity can contribute to your team.
+            I'm currently looking for an internship position and Freelance as Front End Developer. Let's discuss how my full-stack development skills,  AI experience, Networking, and Cybersecurity can contribute to your team.
           </p>
 
           {/* CTAs */}
