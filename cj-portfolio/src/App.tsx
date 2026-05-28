@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import './App.css';
 import profileImg from './assets/profile.png';
 import FilmStrip from './FilmStrip';
@@ -171,10 +171,83 @@ function ProjectCard({ title, stack, link, description, venue, date }: {
 }
 
 /* ══════════════════════════════════════════════════════════ */
+/*  PROJECT DATA                                               */
+/* ══════════════════════════════════════════════════════════ */
+interface Project {
+  id: string;
+  label: string;
+  title: string;
+  stack: string[];
+  link: string;
+  description: string;
+  venue: string;
+  date: string;
+  longDesc: string;
+  color: string;
+}
+
+const PROJECTS: Project[] = [
+  {
+    id: 'A',
+    label: 'PROJECT A',
+    title: 'FEASIFY',
+    stack: ['React', 'TypeScript', 'Gemini AI', 'Firebase'],
+    link: 'https://github.com/Akosidakdok',
+    description: 'AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance.',
+    venue: 'WEB APP',
+    date: '2025',
+    longDesc: 'AI-assisted financial feasibility web system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture using Gemini Flash AI.',
+    color: '#E31E24',
+  },
+  {
+    id: 'B',
+    label: 'PROJECT B',
+    title: 'THE GREAT DEBATE',
+    stack: ['Game Dev', 'HTML/CSS', 'UI Design'],
+    link: '#',
+    description: '2D platform fighting game published on itch.io. Designed the full web presence, layout, and launch page.',
+    venue: 'ITCH.IO',
+    date: '2024',
+    longDesc: 'A 2D platform fighting game spin-off of the Cyndikato tabletop game. Designed and launched on itch.io, handling layout, descriptions, and the entire web presence.',
+    color: '#333333',
+  },
+  {
+    id: 'C',
+    label: 'PROJECT C',
+    title: 'PORTFOLIO SITE',
+    stack: ['React', 'TypeScript', 'Tailwind', 'Vite'],
+    link: '#about',
+    description: 'This very portfolio. Cinematic editorial design with animated film strips, crosshair motifs, and scroll reveals.',
+    venue: 'WEB APP',
+    date: '2026',
+    longDesc: 'Personal portfolio built with React and TypeScript. Features a cinematic black/red editorial aesthetic inspired by bold film UI design, with Bebas Neue display typography and animated components.',
+    color: '#6B21A8',
+  },
+];
+
+/* ══════════════════════════════════════════════════════════ */
 /*  MAIN APP                                                   */
 /* ══════════════════════════════════════════════════════════ */
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState(0);
+  const [cardVisible, setCardVisible] = useState(true);
+
+  const switchProject = useCallback((nextIndex: number) => {
+    setCardVisible(false);
+    setTimeout(() => {
+      setActiveProject(nextIndex);
+      setCardVisible(true);
+    }, 280);
+  }, []);
+
+  const goPrev = () => {
+    switchProject((activeProject - 1 + PROJECTS.length) % PROJECTS.length);
+  };
+
+  const goNext = () => {
+    switchProject((activeProject + 1) % PROJECTS.length);
+  };
 
   /* Scroll reveal */
   useEffect(() => {
@@ -706,7 +779,7 @@ function App() {
                 letterSpacing: '-0.01em',
               }}
             >
-              DEVELOPED
+              FULL STACK
             </span>
             <span
               style={{
@@ -737,8 +810,6 @@ function App() {
       </section>
 
       {/* ────────────────────────────────────────── */}
-      {/* PROJECTS SECTION (Light)                   */}
-      {/* ────────────────────────────────────────── */}
       <section
         id="projects"
         style={{
@@ -748,14 +819,30 @@ function App() {
           overflow: 'hidden',
         }}
       >
-        {/* Numbered section markers */}
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+
+          {/* Numbered section tabs — active follows activeProject */}
           <div style={{ display: 'flex', gap: '32px', marginBottom: '48px', alignItems: 'center' }}>
-            {['01', '02', '03', '04'].map((n, i) => (
-              <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: i === 1 ? 'var(--red)' : '#aaa', letterSpacing: '0.12em' }}>{n}</span>
-                <div style={{ width: '24px', height: '2px', background: i === 1 ? 'var(--red)' : 'rgba(0,0,0,0.15)', borderRadius: '2px' }} />
-              </div>
+            {PROJECTS.map((p, i) => (
+              <button
+                key={p.id}
+                onClick={() => switchProject(i)}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: '4px',
+                  transition: 'opacity 0.2s',
+                  opacity: i === activeProject ? 1 : 0.45,
+                }}
+              >
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: i === activeProject ? 'var(--red)' : '#aaa', letterSpacing: '0.12em' }}>
+                  0{i + 1}
+                </span>
+                <div style={{ width: '24px', height: '2px', background: i === activeProject ? 'var(--red)' : 'rgba(0,0,0,0.15)', borderRadius: '2px', transition: 'background 0.3s' }} />
+              </button>
             ))}
           </div>
 
@@ -764,101 +851,213 @@ function App() {
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 4rem)', color: '#111', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.05 }}>
               FEATURED WORK:<br />PROJECTS &amp; BUILDS
             </h2>
-            {/* Avatar row */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '-8px', marginTop: '24px' }}>
-              {['#E31E24', '#333', '#666', '#999'].map((c, i) => (
-                <div key={i} style={{ width: '36px', height: '36px', borderRadius: '50%', background: c, border: '3px solid var(--bg-light)', marginLeft: i > 0 ? '-10px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', color: 'white', fontFamily: 'var(--font-condensed)', fontWeight: 700 }}>
-                  {['CJ', 'TS', 'RX', 'AI'][i]}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+              {PROJECTS.map((p, i) => (
+                <div
+                  key={p.id}
+                  style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: p.color,
+                    border: '3px solid var(--bg-light)',
+                    marginLeft: i > 0 ? '-10px' : 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.65rem', color: 'white',
+                    fontFamily: 'var(--font-condensed)', fontWeight: 700,
+                    opacity: i === activeProject ? 1 : 0.5,
+                    transition: 'opacity 0.3s',
+                    cursor: 'pointer',
+                    zIndex: i === activeProject ? 2 : 1,
+                    position: 'relative',
+                  }}
+                  onClick={() => switchProject(i)}
+                >
+                  {p.id}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 3-column layout: side info | center card | side info */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '40px', alignItems: 'center', flexWrap: 'wrap' }}>
-
-            {/* Left project info */}
-            <div className="reveal-left" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'var(--red)' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PROJECT A</span>
+          {/* 3-column layout: prev info | center card | next info */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto 1fr',
+              gap: '40px',
+              alignItems: 'center',
+            }}
+          >
+            {/* Left — previous project info */}
+            {(() => {
+              const prev = PROJECTS[(activeProject - 1 + PROJECTS.length) % PROJECTS.length];
+              return (
+                <div
+                  style={{
+                    display: 'flex', flexDirection: 'column', gap: '12px',
+                    opacity: cardVisible ? 1 : 0,
+                    transition: 'opacity 0.28s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: prev.color }} />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{prev.label}</span>
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {prev.title}
+                  </h3>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>
+                    {prev.longDesc}
+                  </p>
+                  <button
+                    onClick={goPrev}
+                    style={{
+                      all: 'unset', cursor: 'pointer',
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+                      letterSpacing: '0.12em', textTransform: 'uppercase',
+                      color: 'var(--red)', marginTop: '4px',
+                      transition: 'gap 0.2s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.gap = '12px')}
+                    onMouseLeave={e => (e.currentTarget.style.gap = '6px')}
+                  >
+                    ← PREV
+                  </button>
                 </div>
-                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  FeasiFy System
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
-                  AI-assisted financial feasibility web system for BSBA FM students. Automates complex financial parameter generation using Gemini Flash AI.
-                </p>
-              </div>
+              );
+            })()}
 
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#333' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PROJECT B</span>
-                </div>
-                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  The Great Debate
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
-                  2D platform fighting game spin-off of Cyndikato tabletop series. Designed & published on itch.io with custom HTML/CSS web presence.
-                </p>
-              </div>
-            </div>
-
-            {/* Center: Dark project card */}
-            <div className="reveal delay-200" style={{ position: 'relative', zIndex: 10 }}>
+            {/* Center — active project card */}
+            <div
+              style={{
+                position: 'relative', zIndex: 10,
+                opacity: cardVisible ? 1 : 0,
+                transform: cardVisible ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.97)',
+                transition: 'opacity 0.28s ease, transform 0.28s ease',
+              }}
+            >
               <ProjectCard
-                title="FEASIFY"
-                stack={['React', 'TypeScript', 'Gemini AI', 'Firebase']}
-                link="https://github.com/Akosidakdok"
-                description="AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance."
-                venue="WEB APP"
-                date="2025"
+                title={PROJECTS[activeProject].title}
+                stack={PROJECTS[activeProject].stack}
+                link={PROJECTS[activeProject].link}
+                description={PROJECTS[activeProject].description}
+                venue={PROJECTS[activeProject].venue}
+                date={PROJECTS[activeProject].date}
               />
             </div>
 
-            {/* Right project info */}
-            <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'var(--red)' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PROJECT C</span>
+            {/* Right — next project info */}
+            {(() => {
+              const next = PROJECTS[(activeProject + 1) % PROJECTS.length];
+              return (
+                <div
+                  style={{
+                    display: 'flex', flexDirection: 'column', gap: '12px',
+                    opacity: cardVisible ? 1 : 0,
+                    transition: 'opacity 0.28s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: next.color }} />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{next.label}</span>
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {next.title}
+                  </h3>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>
+                    {next.longDesc}
+                  </p>
+                  <button
+                    onClick={goNext}
+                    style={{
+                      all: 'unset', cursor: 'pointer',
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+                      letterSpacing: '0.12em', textTransform: 'uppercase',
+                      color: 'var(--red)', marginTop: '4px',
+                      transition: 'gap 0.2s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.gap = '12px')}
+                    onMouseLeave={e => (e.currentTarget.style.gap = '6px')}
+                  >
+                    NEXT →
+                  </button>
                 </div>
-                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Portfolio Site
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
-                  This very portfolio. Built with React, TypeScript, Tailwind CSS. Cinematic editorial design with animated components and scroll reveals.
-                </p>
-              </div>
-
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#333' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#666' }}>PREMIERING</span>
-                </div>
-                <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.1rem', color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Open to Internship
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#555', lineHeight: 1.7 }}>
-                  Currently seeking an internship opportunity where I can contribute my full-stack skills and grow alongside a talented team.
-                </p>
-              </div>
-            </div>
-
+              );
+            })()}
           </div>
 
-          {/* Bottom nav arrows */}
-          <div className="reveal" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '60px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.12em', color: '#888' }}>
-              <span>←</span> <span>PREV</span>
+          {/* Bottom nav bar with circular prev/next buttons + dot indicators */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px', marginTop: '60px' }}>
+            {/* Prev circular button */}
+            <button
+              id="proj-prev"
+              onClick={goPrev}
+              aria-label="Previous project"
+              style={{
+                width: '52px', height: '52px', borderRadius: '50%',
+                border: '2px solid rgba(0,0,0,0.2)',
+                background: 'transparent',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', fontSize: '1.1rem', color: '#333',
+                transition: 'background 0.2s, border-color 0.2s, color 0.2s',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'var(--red)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--red)';
+                (e.currentTarget as HTMLButtonElement).style.color = 'white';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.2)';
+                (e.currentTarget as HTMLButtonElement).style.color = '#333';
+              }}
+            >
+              ←
+            </button>
+
+            {/* Dot indicators */}
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              {PROJECTS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => switchProject(i)}
+                  aria-label={`Go to project ${i + 1}`}
+                  style={{
+                    all: 'unset', cursor: 'pointer',
+                    width: i === activeProject ? '28px' : '8px',
+                    height: '8px',
+                    borderRadius: '999px',
+                    background: i === activeProject ? 'var(--red)' : 'rgba(0,0,0,0.2)',
+                    transition: 'width 0.3s ease, background 0.3s ease',
+                  }}
+                />
+              ))}
             </div>
-            <div style={{ width: '1px', height: '20px', background: 'rgba(0,0,0,0.15)' }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.12em', color: '#888' }}>
-              <span>NEXT</span> <span>→</span>
-            </div>
+
+            {/* Next circular button */}
+            <button
+              id="proj-next"
+              onClick={goNext}
+              aria-label="Next project"
+              style={{
+                width: '52px', height: '52px', borderRadius: '50%',
+                background: 'var(--red)',
+                border: '2px solid var(--red)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', fontSize: '1.1rem', color: 'white',
+                transition: 'background 0.2s, transform 0.2s',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+              }}
+            >
+              →
+            </button>
           </div>
+
         </div>
       </section>
 
