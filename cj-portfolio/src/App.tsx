@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import './App.css';
 import profileImg from './assets/profile.png';
 import FilmStrip from './FilmStrip';
+import Chatbot from './Chatbot';
 
 /* ─── Crosshair / Radar SVG Background ─── */
 function CrosshairBg() {
@@ -133,7 +134,7 @@ function ProjectCard({ title, stack, link, description, venue, date }: {
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', letterSpacing: '0.04em', color: 'var(--white)', marginBottom: '16px' }}>
           {title}
         </h3>
-        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--gray-light)', lineHeight: 1.6, marginBottom: '20px' }}>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--gray-light)', lineHeight: 1.6, marginBottom: '20px', whiteSpace: 'pre-line' }}>
           {description}
         </p>
         {/* Meta rows */}
@@ -192,8 +193,8 @@ const PROJECTS: Project[] = [
     label: 'PROJECT A',
     title: 'FEASIFY',
     stack: ['React', 'TypeScript', 'Gemini AI', 'Firebase'],
-    link: 'https://github.com/Akosidakdok',
-    description: 'AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance.',
+    link: 'https://feasify-ten.vercel.app/',
+    description: 'AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance.\n-------------------------------------------------\nTo Login, use this credentials:\nuser:baldonado@gmail.com\npassword: BALDONADO-1111',
     venue: 'WEB APP',
     date: '2026',
     longDesc: 'AI-assisted financial feasibility web system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture using Gemini Flash AI.',
@@ -204,7 +205,7 @@ const PROJECTS: Project[] = [
     label: 'PROJECT B',
     title: 'Barangay-Equipment-Borrowing-and-Tracking-System',
     stack: ['Software Developtment', 'HTML/CSS', 'Firebase'],
-    link: '#',
+    link: 'https://barangay-equipment-borrowing-and-tr-eight.vercel.app/',
     description: 'Developed a web-based application for tracking and borrowing local barangay equipment, streamlining the inventory management process',
     venue: 'WEB APP',
     date: '2025',
@@ -216,7 +217,7 @@ const PROJECTS: Project[] = [
     label: 'PROJECT C',
     title: 'PORTFOLIO SITE',
     stack: ['React', 'TypeScript', 'Tailwind', 'Vite'],
-    link: '#about',
+    link: 'https://baldonadoportfolio.vercel.app/',
     description: 'This very portfolio. Cinematic editorial design with animated film strips, crosshair motifs, and scroll reveals.',
     venue: 'WEB APP',
     date: '2026',
@@ -228,7 +229,7 @@ const PROJECTS: Project[] = [
     label: 'PROJECT D',
     title: 'Mang Delfins Putong Pulo Website',
     stack: ['HTML/CSS', 'JavaScript', 'PHP'],
-    link: '#about',
+    link: 'https://mang-delfins-putong-pulo.vercel.app/',
     description: 'Engineered a highly responsive, multi-page marketing and storefront platform to showcase local delicacies, significantly enhancing the business digital presence and customer accessibility.',
     venue: 'WEB APP',
     date: '2025',
@@ -814,7 +815,7 @@ function App() {
                 { n: '02', label: 'SKILLS',   href: '#skills'   },
                 { n: '03', label: 'PROJECTS', href: '#projects' },
                 { n: '04', label: 'CONTACT',  href: '#contact'  },
-              ].map(({ n, label, href }) => (
+              ].map(({ n, label, href }, i) => (
                 <a
                   key={n}
                   href={href}
@@ -1307,6 +1308,9 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* ── AI CHATBOT ── */}
+      <Chatbot />
     </>
   );
 }
