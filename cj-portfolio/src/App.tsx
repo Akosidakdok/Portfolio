@@ -815,7 +815,7 @@ function App() {
                 { n: '02', label: 'SKILLS',   href: '#skills'   },
                 { n: '03', label: 'PROJECTS', href: '#projects' },
                 { n: '04', label: 'CONTACT',  href: '#contact'  },
-              ].map(({ n, label, href }, i) => (
+              ].map(({ n, label, href }) => (
                 <a
                   key={n}
                   href={href}
