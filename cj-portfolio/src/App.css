@@ -65,16 +65,47 @@
   animation: bounce 2s ease-in-out infinite;
 }
 
-/* Film strip scroll */
+/* Film strip & Tech Ticker scroll */
 @keyframes filmScroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes tickerScrollLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes tickerScrollRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
 .film-strip-inner {
   animation: filmScroll 28s linear infinite;
   display: flex;
   width: max-content;
+}
+
+.ticker-track-left {
+  animation: tickerScrollLeft 34s linear infinite;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+}
+
+.ticker-track-right {
+  animation: tickerScrollRight 38s linear infinite;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+}
+
+.ticker-container:hover .ticker-track-left,
+.ticker-container:hover .ticker-track-right {
+  animation-play-state: paused;
 }
 
 /* Section number fade in */

@@ -80,6 +80,12 @@ Experience: 3+ years, 7+ projects, 8+ tech stacks, 6+ frameworks
    - Live at: https://itms-armd-directory-two.vercel.app/
    - Repository: https://github.com/Akosidakdok/ITMS-ARMD-Directory
 
+--- CERTIFICATIONS & CREDENTIALS ---
+1. freeCodeCamp: Front-End Development Libraries V8 (July 22, 2026, ~300 hours) - Verified: https://freecodecamp.org/certification/jay-baldonado/front-end-development-libraries
+2. freeCodeCamp: Legacy Responsive Web Design V8 (July 22, 2026, ~300 hours) - Verified: https://freecodecamp.org/certification/jay-baldonado/responsive-web-design
+3. Code.org: AI for Oceans Hour of Code (2026) - Computer Science & AI ML Classification concepts
+
+
 --- CONTACT ---
 GitHub: https://github.com/Akosidakdok
 Portfolio: This website you are currently on!
@@ -95,8 +101,8 @@ Portfolio: This website you are currently on!
 const QUICK_QUESTIONS = [
   "What are CJ's skills?",
   "Tell me about his projects.",
+  "What certifications does CJ have?",
   "How can I contact CJ?",
-  "What is FEASIFY?",
 ];
 
 /* ─── AI call via Groq (free tier, OpenAI-compatible) ─── */
