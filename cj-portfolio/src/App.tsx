@@ -3,6 +3,14 @@ import './App.css';
 import profileImg from './assets/profile.png';
 import FilmStrip from './FilmStrip';
 import Chatbot from './Chatbot';
+import feasifyImg from './assets/projects/feasify.png';
+import barangayImg from './assets/projects/barangay.png';
+import portfolioThumbImg from './assets/projects/portfolio.png';
+import mangDelfinsImg from './assets/projects/mang-delfins.png';
+import alertoPhImg from './assets/projects/alerto-ph.png';
+import pIdtmsImg from './assets/projects/p-idtms.png';
+import paisImg from './assets/projects/pais.png';
+
 
 /* ─── Crosshair / Radar SVG Background ─── */
 function CrosshairBg() {
@@ -76,7 +84,7 @@ function Stars({ filled = 4, total = 5 }: { filled?: number; total?: number }) {
 }
 
 /* ─── Skill Group ─── */
-function SkillGroup({ icon, title, tags, dark = true }: { icon: string; title: string; tags: string[]; dark?: boolean }) {
+function SkillGroup({ icon, title, tags, dark = true }: { icon: React.ReactNode; title: string; tags: string[]; dark?: boolean }) {
   return (
     <div
       style={{
@@ -90,8 +98,23 @@ function SkillGroup({ icon, title, tags, dark = true }: { icon: string; title: s
       }}
       className="interactive-card"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-        <span style={{ fontSize: '1.1rem' }}>{icon}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            background: 'rgba(227,30,36,0.12)',
+            border: '1px solid rgba(227,30,36,0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#ff6b6b',
+            flexShrink: 0,
+          }}
+        >
+          {icon}
+        </div>
         <span
           style={{
             fontFamily: 'var(--font-condensed)',
@@ -115,26 +138,118 @@ function SkillGroup({ icon, title, tags, dark = true }: { icon: string; title: s
 }
 
 /* ─── Project Card (dark booking-style) ─── */
-function ProjectCard({ title, stack, link, description, venue, date }: {
+function ProjectCard({ title, stack, link, description, venue, date, image }: {
   title: string;
   stack: string[];
   link: string;
   description: string;
   venue: string;
   date: string;
+  image: string;
 }) {
   return (
-    <div className="project-card-dark interactive-card" style={{ maxWidth: '320px', width: '100%' }}>
+    <div className="project-card-dark interactive-card" style={{ maxWidth: '340px', width: '100%' }}>
       {/* Card Header */}
-      <div style={{ background: 'var(--red)', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+      <div style={{ background: 'var(--red)', padding: '7px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--white)', textTransform: 'uppercase' }}>Project</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.92)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+          <svg width="8" height="8" viewBox="0 0 76 65" fill="#fff">
+            <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+          </svg>
+          VERCEL DEPLOYED
+        </span>
       </div>
+
+      {/* Card Thumbnail Preview (Vercel) */}
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="project-thumb-container"
+        title={`Visit ${title} live on Vercel`}
+        style={{
+          display: 'block',
+          position: 'relative',
+          width: '100%',
+          height: '175px',
+          overflow: 'hidden',
+          backgroundColor: '#0a0a0a',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          textDecoration: 'none',
+        }}
+      >
+        <img
+          src={image}
+          alt={`${title} Live Vercel Preview`}
+          className="project-thumb-img"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'top',
+            display: 'block',
+            transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease',
+          }}
+        />
+        {/* Overlay gradient & live pill */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.7) 100%)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+            padding: '10px 14px',
+            pointerEvents: 'none',
+          }}
+        >
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.58rem',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              background: 'rgba(0,0,0,0.75)',
+              backdropFilter: 'blur(6px)',
+              border: '1px solid rgba(255,255,255,0.18)',
+              color: '#fff',
+              padding: '3px 9px',
+              borderRadius: '999px',
+            }}
+          >
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px #22c55e' }} />
+            Live Preview
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.62rem',
+              fontWeight: 600,
+              color: '#fff',
+              letterSpacing: '0.06em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+              background: 'rgba(227,30,36,0.9)',
+              padding: '3px 8px',
+              borderRadius: '4px',
+            }}
+          >
+            Vercel ↗
+          </span>
+        </div>
+      </a>
+
       {/* Card Body */}
-      <div style={{ padding: '24px 20px' }}>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', letterSpacing: '0.04em', color: 'var(--white)', marginBottom: '16px' }}>
+      <div style={{ padding: '20px' }}>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', letterSpacing: '0.04em', color: 'var(--white)', marginBottom: '14px', lineHeight: 1.1 }}>
           {title}
         </h3>
-        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--gray-light)', lineHeight: 1.6, marginBottom: '20px', whiteSpace: 'pre-line' }}>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--gray-light)', lineHeight: 1.6, marginBottom: '18px', whiteSpace: 'pre-line' }}>
           {description}
         </p>
         {/* Meta rows */}
@@ -164,7 +279,7 @@ function ProjectCard({ title, stack, link, description, venue, date }: {
           className="btn-cta-red"
           style={{ marginTop: '20px', width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}
         >
-          View Project <span>↗</span>
+          View Live Project <span>↗</span>
         </a>
       </div>
     </div>
@@ -185,6 +300,7 @@ interface Project {
   date: string;
   longDesc: string;
   color: string;
+  image: string;
 }
 
 const PROJECTS: Project[] = [
@@ -199,18 +315,20 @@ const PROJECTS: Project[] = [
     date: '2026',
     longDesc: 'AI-assisted financial feasibility web system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture using Gemini Flash AI.',
     color: '#E31E24',
+    image: feasifyImg,
   },
   {
     id: '2',
     label: 'PROJECT B',
     title: 'Barangay-Equipment-Borrowing-and-Tracking-System',
-    stack: ['Software Developtment', 'HTML/CSS', 'Firebase'],
-    link: 'https://barangay-equipment-borrowing-and-tr-eight.vercel.app/',
-    description: 'Developed a web-based application for tracking and borrowing local barangay equipment, streamlining the inventory management process',
+    stack: ['Software Development', 'HTML/CSS', 'Firebase'],
+    link: 'https://barangaymapulanglupa.vercel.app/',
+    description: 'Developed a web-based application for tracking and borrowing local barangay equipment, streamlining the inventory management process.',
     venue: 'WEB APP',
     date: '2025',
     longDesc: 'Designed and implemented a responsive interface using HTML5 and CSS3, ensuring seamless navigation for community users and staff.',
-    color: '#333333',
+    color: '#374151',
+    image: barangayImg,
   },
   {
     id: '3',
@@ -222,7 +340,8 @@ const PROJECTS: Project[] = [
     venue: 'WEB APP',
     date: '2026',
     longDesc: 'Personal portfolio built with React and TypeScript. Features a cinematic black/red editorial aesthetic inspired by bold film UI design, with Bebas Neue display typography and animated components.',
-    color: '#6B21A8',
+    color: '#7C3AED',
+    image: portfolioThumbImg,
   },
   {
     id: '4',
@@ -234,7 +353,47 @@ const PROJECTS: Project[] = [
     venue: 'WEB APP',
     date: '2025',
     longDesc: 'Built interactive product carousels, a custom branch locator, and dynamic product overlay modals utilizing semantic HTML5, CSS3 structural grids, and JavaScript, resulting in a user-friendly experience that boosted online engagement and sales for the local delicacy business.',
-    color: '#6B21A8',
+    color: '#EC4899',
+    image: mangDelfinsImg,
+  },
+  {
+    id: '5',
+    label: 'PROJECT E',
+    title: 'AlertoPH',
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Leaflet', 'Node.js'],
+    link: 'https://alerto-ph.vercel.app/',
+    description: 'Community-powered flood monitoring, early-warning, and disaster resilience platform for Filipinos with real-time hazard reporting and GIS navigation.',
+    venue: 'WEB APP',
+    date: '2026',
+    longDesc: 'Combines citizen crowdsourcing, Leaflet.js GIS mapping, and PAGASA meteorological telemetry to deliver street-by-street flood monitoring, drainage hazard tracking, and automated safe bypass routing.',
+    color: '#0284C7',
+    image: alertoPhImg,
+  },
+  {
+    id: '6',
+    label: 'PROJECT F',
+    title: 'P-IDTMS',
+    stack: ['React', 'TypeScript', 'Node.js', 'Express', 'Supabase'],
+    link: 'https://pnp-itms-internship-attendance.vercel.app/',
+    description: 'PNP-ITMS Internship Daily Time Record Management System. Comprehensive web application for tracking attendance, managing intern evaluations, and automating DTR workflows.',
+    venue: 'WEB APP',
+    date: '2026',
+    longDesc: 'A secure enterprise attendance and internship management system for PNP ITMS, featuring QR/identity-assisted attendance verification, automated DTR generation, document workflows, and role-based access control.',
+    color: '#059669',
+    image: pIdtmsImg,
+  },
+  {
+    id: '7',
+    label: 'PROJECT G',
+    title: 'PAIS 2.0',
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Express', 'Supabase'],
+    link: 'https://itms-armd-directory-two.vercel.app/',
+    description: 'PNP-ITMS Personnel and Assignment Information System. Full-scale enterprise HR and personnel management platform for uniformed and civilian personnel.',
+    venue: 'ENTERPRISE APP',
+    date: '2026',
+    longDesc: 'Architected an enterprise personnel management information system for PNP-ITMS ARMD, automating rank-aware time-in-grade calculations, promotion tracking, service histories, leave workflows, and PDF report generation.',
+    color: '#D97706',
+    image: paisImg,
   },
 ];
 
@@ -548,7 +707,7 @@ function App() {
                 gap: '8px',
               }}
             >
-              {['REACT.JS', 'TYPESCRIPT', 'NETWORKING', 'GEMINI AI'].map(tech => (
+              {['REACT.JS', 'TYPESCRIPT', 'NETWORKING', 'GEMINI AI', 'OPEN AI'].map(tech => (
                 <span
                   key={tech}
                   style={{
@@ -740,10 +899,10 @@ function App() {
               marginBottom: '64px',
             }}
           >
-            <StatBadge label="YEARS EXP" value='3+"' />
-            <StatBadge label="PROJECTS" value="5+" active />
-            <StatBadge label="TECH STACK" value="5+" />
-            <StatBadge label="FRAMEWORKS" value="4+" />
+            <StatBadge label="YEARS EXP" value="3+" />
+            <StatBadge label="PROJECTS" value="7+" active />
+            <StatBadge label="TECH STACK" value="6+" />
+            <StatBadge label="FRAMEWORKS" value="5+" />
           </div>
 
           {/* Quote */}
@@ -755,18 +914,68 @@ function App() {
           </div>
 
           {/* Skill groups grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div className="reveal delay-100">
-              <SkillGroup icon="⟨/⟩" title="Frontend" tags={['React.js', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind']} />
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" />
+                  </svg>
+                }
+                title="Frontend"
+                tags={['React.js', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'HTML5', 'CSS3', 'Leaflet.js', 'Vite']}
+              />
             </div>
             <div className="reveal delay-200">
-              <SkillGroup icon="⚙" title="Backend & APIs" tags={['OpenAI API', 'Gemini API', 'Node.js']} />
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+                    <line x1="6" y1="6" x2="6.01" y2="6" />
+                    <line x1="6" y1="18" x2="6.01" y2="18" />
+                  </svg>
+                }
+                title="Backend & APIs"
+                tags={['Node.js', 'Express.js', 'PHP', 'REST APIs', 'Gemini AI', 'OpenAI API', 'GroqCloud']}
+              />
             </div>
             <div className="reveal delay-300">
-              <SkillGroup icon="⬡" title="Networking" tags={['Protocols', 'Subnetting', 'IP Config', 'VLAN']} />
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                  </svg>
+                }
+                title="Database & Cloud"
+                tags={['Supabase', 'Firebase', 'PostgreSQL', 'Firestore', 'Vercel']}
+              />
             </div>
             <div className="reveal delay-400">
-              <SkillGroup icon="★" title="Core Strengths" tags={['Agile', 'Problem-Solving', 'Analytical', 'Team Collab']} />
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                }
+                title="Networking & Security"
+                tags={['Protocols', 'Subnetting', 'IP Config', 'VLAN', 'RBAC']}
+              />
+            </div>
+            <div className="reveal delay-500">
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                }
+                title="Core Strengths"
+                tags={['Agile', 'Problem-Solving', 'Analytical', 'Team Collab']}
+              />
             </div>
           </div>
 
@@ -880,19 +1089,102 @@ function App() {
             </div>
 
             {/* Right: quick facts */}
-            <div className="reveal delay-300" style={{ maxWidth: '260px' }}>
+            <div className="reveal delay-300" style={{ maxWidth: '280px' }}>
               <span className="section-label-dark" style={{ marginBottom: '12px' }}>QUICK FACTS</span>
               <ul style={{ listStyle: 'none', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {[
-                  ['📍', 'Valenzuela City, PH'],
-                  ['💼', 'Seeking Internship'],
-                  ['💼', 'Freelance Web Developer'],
-                  ['🧠', 'Front-End+ AI / NETWORKING / CYBER SECURITY'],
-                  ['📧', 'cjbaldonado11@gmail.com'],
-                ].map(([icon, text]) => (
-                  <li key={text} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.85rem' }}>{icon}</span>
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray-light)' }}>{text}</span>
+                  {
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                    ),
+                    text: 'Valenzuela City, PH',
+                  },
+                  {
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                      </svg>
+                    ),
+                    text: 'Seeking Internship',
+                  },
+                  {
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                    ),
+                    text: 'Freelance Web Developer',
+                  },
+                  {
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                        <rect x="9" y="9" width="6" height="6" />
+                        <line x1="9" y1="1" x2="9" y2="4" />
+                        <line x1="15" y1="1" x2="15" y2="4" />
+                        <line x1="9" y1="20" x2="9" y2="23" />
+                        <line x1="15" y1="20" x2="15" y2="23" />
+                        <line x1="20" y1="9" x2="23" y2="9" />
+                        <line x1="20" y1="14" x2="23" y2="14" />
+                        <line x1="1" y1="9" x2="4" y2="9" />
+                        <line x1="1" y1="14" x2="4" y2="14" />
+                      </svg>
+                    ),
+                    text: 'Front-End+ AI / NETWORKING / CYBER SECURITY',
+                  },
+                  {
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    ),
+                    text: 'cjbaldonado11@gmail.com',
+                    href: 'mailto:cjbaldonado11@gmail.com',
+                  },
+                ].map((item, idx) => (
+                  <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        width: '26px',
+                        height: '26px',
+                        borderRadius: '6px',
+                        background: 'rgba(227,30,36,0.12)',
+                        border: '1px solid rgba(227,30,36,0.25)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ff6b6b',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {item.icon}
+                    </div>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        style={{
+                          fontFamily: 'var(--font-body)',
+                          fontSize: '0.78rem',
+                          color: 'var(--gray-light)',
+                          textDecoration: 'none',
+                          transition: 'color 0.2s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#ff6b6b')}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
+                      >
+                        {item.text}
+                      </a>
+                    ) : (
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray-light)' }}>
+                        {item.text}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -978,7 +1270,7 @@ function App() {
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
 
           {/* Numbered section tabs — active follows activeProject */}
-          <div style={{ display: 'flex', gap: '32px', marginBottom: '48px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '28px', marginBottom: '48px', alignItems: 'center', flexWrap: 'wrap' }}>
             {PROJECTS.map((p, i) => (
               <button
                 key={p.id}
@@ -1053,6 +1345,7 @@ function App() {
                   description={PROJECTS[activeProject].description}
                   venue={PROJECTS[activeProject].venue}
                   date={PROJECTS[activeProject].date}
+                  image={PROJECTS[activeProject].image}
                 />
               </div>
               {/* Active project description below card */}
@@ -1088,13 +1381,59 @@ function App() {
               {(() => {
                 const prev = PROJECTS[(activeProject - 1 + PROJECTS.length) % PROJECTS.length];
                 return (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: cardVisible ? 1 : 0, transition: 'opacity 0.28s ease' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', opacity: cardVisible ? 1 : 0, transition: 'opacity 0.28s ease' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: prev.color }} />
                       <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{prev.label}</span>
                     </div>
-                    <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{prev.title}</h3>
-                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>{prev.longDesc}</p>
+
+                    {/* Prev project thumbnail preview */}
+                    <div
+                      onClick={goPrev}
+                      title={`Previous: ${prev.title}`}
+                      style={{
+                        cursor: 'pointer',
+                        position: 'relative',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        height: '115px',
+                        maxWidth: '240px',
+                        border: '1px solid rgba(0,0,0,0.12)',
+                        boxShadow: '0 6px 18px rgba(0,0,0,0.07)',
+                        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.transform = 'translateY(-3px)';
+                        e.currentTarget.style.boxShadow = '0 10px 24px rgba(227,30,36,0.18)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 6px 18px rgba(0,0,0,0.07)';
+                      }}
+                    >
+                      <img
+                        src={prev.image}
+                        alt={prev.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%)',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                          padding: '8px 10px',
+                        }}
+                      >
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                          ← PREV PREVIEW
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.05rem', color: '#333', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{prev.title}</h3>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#666', lineHeight: 1.7 }}>{prev.longDesc}</p>
                     <button onClick={goPrev} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>← PREV</button>
                   </div>
                 );
@@ -1109,6 +1448,7 @@ function App() {
                   description={PROJECTS[activeProject].description}
                   venue={PROJECTS[activeProject].venue}
                   date={PROJECTS[activeProject].date}
+                  image={PROJECTS[activeProject].image}
                 />
               </div>
 
@@ -1116,13 +1456,60 @@ function App() {
               {(() => {
                 const next = PROJECTS[(activeProject + 1) % PROJECTS.length];
                 return (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: cardVisible ? 1 : 0, transition: 'opacity 0.28s ease' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', opacity: cardVisible ? 1 : 0, transition: 'opacity 0.28s ease' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: next.color }} />
                       <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>{next.label}</span>
                     </div>
-                    <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{next.title}</h3>
-                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#777', lineHeight: 1.7 }}>{next.longDesc}</p>
+
+                    {/* Next project thumbnail preview */}
+                    <div
+                      onClick={goNext}
+                      title={`Next: ${next.title}`}
+                      style={{
+                        cursor: 'pointer',
+                        position: 'relative',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        height: '115px',
+                        maxWidth: '240px',
+                        border: '1px solid rgba(0,0,0,0.12)',
+                        boxShadow: '0 6px 18px rgba(0,0,0,0.07)',
+                        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.transform = 'translateY(-3px)';
+                        e.currentTarget.style.boxShadow = '0 10px 24px rgba(227,30,36,0.18)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 6px 18px rgba(0,0,0,0.07)';
+                      }}
+                    >
+                      <img
+                        src={next.image}
+                        alt={next.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%)',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                          padding: '8px 10px',
+                        }}
+                      >
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                          NEXT PREVIEW →
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.05rem', color: '#333', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{next.title}</h3>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#666', lineHeight: 1.7 }}>{next.longDesc}</p>
                     <button onClick={goNext} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>NEXT →</button>
                   </div>
                 );

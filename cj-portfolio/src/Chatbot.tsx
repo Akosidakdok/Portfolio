@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import robotImg from './assets/robot_avatar.png';
+import sussyAvatarImg from './assets/sussy_avatar.png';
+import sussyIdleWebp from './assets/sussy_idle.webp';
+import sussyWaveWebp from './assets/sussy_wave.webp';
+import sussyRunWebp from './assets/sussy_run.webp';
 
 /* ─── Types ─── */
 interface Message {
@@ -8,7 +11,7 @@ interface Message {
 }
 
 /* ─── Portfolio System Prompt ─── */
-const SYSTEM_PROMPT = `You are "CJ Bot", the personal AI assistant for CJ Baldonado's portfolio website.
+const SYSTEM_PROMPT = `You are "CJ Bot" (accompanied by Sussy, the cute coral bean astronaut from Codex Pets: https://codex-pets.net/share/sussy), the personal AI assistant for CJ Baldonado's portfolio website.
 Your ONLY purpose is to answer questions about CJ Baldonado — his skills, projects, education, experience, and contact info.
 Keep answers friendly, concise (2-4 sentences max unless listing things), and professional.
 If someone asks ANYTHING unrelated to CJ (e.g. general trivia, other people, random topics), politely decline and redirect them to ask about CJ.
@@ -23,12 +26,12 @@ Availability: Open to opportunities in 2026
 Personality: Passionate, detail-oriented, loves building modern & scalable systems
 
 --- SKILLS ---
-Frontend: React.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS
-Backend & APIs: Gemini AI API, OpenAI API, Node.js, Firebase
-Networking: Protocols, Subnetting, IP Configuration, VLAN
-Database: Firebase Firestore, Firebase Authentication
+Frontend: React.js, TypeScript, JavaScript, Tailwind CSS, HTML5, CSS3, Leaflet.js, Vite
+Backend & APIs: Node.js, Express.js, PHP, REST APIs, Gemini AI API, OpenAI API, GroqCloud
+Database & Cloud: Supabase (PostgreSQL), Firebase (Firestore), Cloud Storage, Vercel
+Networking & Security: Protocols, Subnetting, IP Configuration, VLAN, RBAC
 Core strengths: Agile methodology, Problem-Solving, Analytical thinking, Team Collaboration
-Experience: 3+ years, 5+ projects, 5+ tech stacks, 4+ frameworks
+Experience: 3+ years, 7+ projects, 8+ tech stacks, 6+ frameworks
 
 --- PROJECTS ---
 1. FEASIFY (2026)
@@ -42,16 +45,40 @@ Experience: 3+ years, 5+ projects, 5+ tech stacks, 4+ frameworks
    - Web-based application for tracking and borrowing local barangay equipment
    - Streamlines inventory management for community staff
    - Tech: HTML/CSS, Firebase
+   - Live at: https://barangaymapulanglupa.vercel.app/
 
 3. Portfolio Site (2026)
    - CJ's personal portfolio with cinematic editorial black/red design
    - Animated film strips, crosshair motifs, and scroll reveal animations
    - Tech: React, TypeScript, Tailwind, Vite
+   - Live at: https://baldonadoportfolio.vercel.app/
 
 4. Mang Delfins Putong Pulo Website (2025)
    - Marketing and storefront platform for a local delicacy business
    - Interactive product carousels, custom branch locator, product modals
    - Tech: HTML/CSS, JavaScript, PHP
+   - Live at: https://mang-delfins-putong-pulo.vercel.app/
+
+5. AlertoPH (2026)
+   - Community-powered flood monitoring, early-warning, and disaster resilience platform for Filipinos
+   - Real-time hazard crowdsourcing, Leaflet.js GIS mapping, PAGASA weather telemetry, and safe bypass routing
+   - Tech: React, TypeScript, Tailwind CSS, Leaflet, Node.js
+   - Live at: https://alerto-ph.vercel.app/
+   - Repository: https://github.com/Akosidakdok/BantayBaha
+
+6. P-IDTMS (2026)
+   - PNP-ITMS Internship Daily Time Record Management System
+   - Enterprise web application for tracking intern attendance via QR/identity verification, DTR logging, and supervisor evaluations
+   - Tech: React, TypeScript, Node.js, Express, Supabase
+   - Live at: https://pnp-itms-internship-attendance.vercel.app/
+   - Repository: https://github.com/Akosidakdok/PNP-ITMS-INTERNSHIP-ATTENDANCE
+
+7. PAIS 2.0 (2026)
+   - PNP-ITMS Personnel and Assignment Information System
+   - Comprehensive enterprise HR directory automating promotions, rank-aware time-in-grade calculations, service histories, and PDF report generation
+   - Tech: React, TypeScript, Tailwind CSS, Express, Supabase
+   - Live at: https://itms-armd-directory-two.vercel.app/
+   - Repository: https://github.com/Akosidakdok/ITMS-ARMD-Directory
 
 --- CONTACT ---
 GitHub: https://github.com/Akosidakdok
@@ -127,13 +154,32 @@ async function askGemini(history: Message[], newUserText: string): Promise<strin
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', text: "Hey there! 👋 I'm CJ Bot, your guide to everything about CJ Baldonado. Ask me anything about his skills, projects, or how to get in touch!" },
+    { role: 'assistant', text: "Hey there! 👋 I'm CJ Bot (accompanied by Sussy from Codex Pets!). Ask me anything about CJ's skills, projects, or background — and feel free to drag me anywhere on your screen!" },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [pulse, setPulse] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /* Draggable state */
+  const [position, setPosition] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === 'undefined') return { x: 0, y: 0 };
+    return {
+      x: Math.max(16, window.innerWidth - 78 - 24),
+      y: Math.max(16, window.innerHeight - 78 - 24),
+    };
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const dragStartRef = useRef<{
+    startX: number;
+    startY: number;
+    origX: number;
+    origY: number;
+    hasMoved: boolean;
+  }>({ startX: 0, startY: 0, origX: 0, origY: 0, hasMoved: false });
 
   /* Auto-scroll to bottom */
   useEffect(() => {
@@ -148,6 +194,84 @@ export default function Chatbot() {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [open]);
+
+  /* Keep Sussy within viewport on window resize */
+  useEffect(() => {
+    const handleResize = () => {
+      setPosition(prev => {
+        const btnSize = 78;
+        return {
+          x: Math.min(Math.max(12, prev.x), window.innerWidth - btnSize - 12),
+          y: Math.min(Math.max(12, prev.y), window.innerHeight - btnSize - 12),
+        };
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  /* Pointer drag handler for both mouse and touch */
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return; // primary button only
+    e.preventDefault();
+
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: position.x,
+      origY: position.y,
+      hasMoved: false,
+    };
+
+    const handlePointerMove = (moveEvt: PointerEvent) => {
+      const dx = moveEvt.clientX - dragStartRef.current.startX;
+      const dy = moveEvt.clientY - dragStartRef.current.startY;
+
+      if (!dragStartRef.current.hasMoved && Math.hypot(dx, dy) > 4) {
+        dragStartRef.current.hasMoved = true;
+        setIsDragging(true);
+      }
+
+      if (dragStartRef.current.hasMoved) {
+        const btnSize = 78;
+        const newX = Math.min(
+          Math.max(12, dragStartRef.current.origX + dx),
+          window.innerWidth - btnSize - 12
+        );
+        const newY = Math.min(
+          Math.max(12, dragStartRef.current.origY + dy),
+          window.innerHeight - btnSize - 12
+        );
+        setPosition({ x: newX, y: newY });
+      }
+    };
+
+    const handlePointerUp = () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+
+      if (dragStartRef.current.hasMoved) {
+        // It was a drag: don't toggle chat window
+        setTimeout(() => setIsDragging(false), 50);
+      } else {
+        // It was a click: toggle chat window
+        setIsDragging(false);
+        setOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+  };
+
+  /* Dynamic Sussy animation frame */
+  const sussySprite = isDragging
+    ? sussyRunWebp
+    : isHovered && !open
+    ? sussyWaveWebp
+    : sussyIdleWebp;
 
   /* Pulse the robot every few seconds when closed */
   useEffect(() => {
@@ -211,8 +335,8 @@ export default function Chatbot() {
           40%           { transform: translateY(-6px); }
         }
         @keyframes glow-pulse {
-          0%, 100% { box-shadow: 0 0 16px rgba(59,130,246,0.4), 0 0 32px rgba(239,68,68,0.2); }
-          50%       { box-shadow: 0 0 28px rgba(59,130,246,0.7), 0 0 56px rgba(239,68,68,0.4); }
+          0%, 100% { box-shadow: 0 0 16px rgba(6,182,212,0.4), 0 0 32px rgba(225,29,72,0.2); }
+          50%       { box-shadow: 0 0 28px rgba(6,182,212,0.7), 0 0 56px rgba(225,29,72,0.4); }
         }
         .bot-float { animation: bot-float 3s ease-in-out infinite; }
         .bot-blink { animation: bot-blink 4s ease-in-out infinite; }
@@ -223,89 +347,102 @@ export default function Chatbot() {
         .dot3 { animation: dot-bounce 1.2s ease-in-out 0.3s infinite; }
         .cj-chat-scrollbar::-webkit-scrollbar { width: 4px; }
         .cj-chat-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .cj-chat-scrollbar::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 4px; }
-        .quick-btn:hover { background: rgba(239,68,68,0.15) !important; border-color: #ef4444 !important; color: #ef4444 !important; transform: translateY(-1px); }
-        .send-btn:hover { background: #2563eb !important; transform: scale(1.05); }
+        .cj-chat-scrollbar::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.35); border-radius: 4px; }
+        .quick-btn:hover { background: rgba(225,29,72,0.15) !important; border-color: #f43f5e !important; color: #f43f5e !important; transform: translateY(-1px); }
+        .send-btn:hover { background: #0284c7 !important; transform: scale(1.05); }
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-        .chat-toggle-btn:hover { transform: scale(1.08); }
+        .chat-toggle-btn:hover { transform: scale(1.06); }
       `}</style>
 
-      {/* ════════════════════════════════════════ */}
-      {/*  FIXED WRAPPER — stays on lower right   */}
-      {/* ════════════════════════════════════════ */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 9999,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          gap: '12px',
-          pointerEvents: 'none',
-        }}
-      >
-        {/* ── CHAT WINDOW ── */}
-        {open && (
+      {/* ── CHAT WINDOW (Anchored to Draggable Sussy) ── */}
+      {open && (() => {
+        const w = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        const h = typeof window !== 'undefined' ? window.innerHeight : 768;
+        const chatWidth = Math.min(380, w - 32);
+        const chatHeight = Math.min(520, h - 120);
+
+        let left: number;
+        let top: number;
+
+        if (position.x + 78 / 2 > w / 2) {
+          left = position.x + 78 - chatWidth;
+        } else {
+          left = position.x;
+        }
+        left = Math.max(16, Math.min(left, w - chatWidth - 16));
+
+        if (position.y > chatHeight + 24) {
+          top = position.y - chatHeight - 14;
+        } else {
+          top = position.y + 78 + 14;
+        }
+        top = Math.max(16, Math.min(top, h - chatHeight - 16));
+
+        return (
           <div
             className="chat-slide-up"
             style={{
-              width: 'min(380px, calc(100vw - 48px))',
-              height: '520px',
+              position: 'fixed',
+              left: `${left}px`,
+              top: `${top}px`,
+              width: `${chatWidth}px`,
+              height: `${chatHeight}px`,
               borderRadius: '20px',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              border: '1px solid rgba(59,130,246,0.3)',
-              background: 'rgba(8,8,20,0.97)',
+              border: '1px solid rgba(6,182,212,0.35)',
+              background: 'rgba(8,12,24,0.97)',
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(59,130,246,0.15), 0 0 40px rgba(59,130,246,0.1)',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(6,182,212,0.15), 0 0 40px rgba(6,182,212,0.15)',
               pointerEvents: 'all',
+              zIndex: 9998,
             }}
           >
             {/* ── HEADER ── */}
             <div
               style={{
                 padding: '14px 16px',
-                background: 'linear-gradient(135deg, rgba(10,10,30,0.98) 0%, rgba(20,10,30,0.98) 100%)',
-                borderBottom: '1px solid rgba(59,130,246,0.2)',
+                background: 'linear-gradient(135deg, rgba(15,23,42,0.98) 0%, rgba(30,15,35,0.98) 100%)',
+                borderBottom: '1px solid rgba(6,182,212,0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
                 flexShrink: 0,
               }}
             >
-              {/* Robot icon in header */}
+              {/* Sussy icon in header */}
               <div
                 style={{
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #1e3a8a, #7f1d1d)',
-                  border: '1.5px solid rgba(59,130,246,0.5)',
+                  background: 'linear-gradient(135deg, #0284c7, #e11d48)',
+                  border: '1.5px solid rgba(6,182,212,0.6)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
                   flexShrink: 0,
+                  boxShadow: '0 0 12px rgba(6,182,212,0.35)',
                 }}
               >
-                <img src={robotImg} alt="CJ Bot" style={{ width: '130%', height: '130%', objectFit: 'cover', objectPosition: 'top' }} />
+                <img src={sussyAvatarImg} alt="Sussy" style={{ width: '85%', height: '85%', objectFit: 'contain' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'var(--font-condensed, sans-serif)', fontWeight: 700, fontSize: '0.9rem', color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  CJ BOT
+                <div style={{ fontFamily: 'var(--font-condensed, sans-serif)', fontWeight: 700, fontSize: '0.92rem', color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>CJ BOT</span>
+                  <span style={{ fontSize: '0.55rem', padding: '1px 5px', borderRadius: '4px', background: 'rgba(6,182,212,0.2)', color: '#38bdf8', border: '1px solid rgba(6,182,212,0.4)', letterSpacing: '0.05em' }}>SUSSY</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e', flexShrink: 0 }} />
-                  <span style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                    AI · Online
+                  <span style={{ fontFamily: 'monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    AI · Online · Draggable
                   </span>
                 </div>
               </div>
-              {/* Red accent line */}
-              <div style={{ width: '3px', height: '32px', borderRadius: '2px', background: 'linear-gradient(to bottom, #3b82f6, #ef4444)', flexShrink: 0 }} />
+              {/* Cyan to Pink accent line */}
+              <div style={{ width: '3px', height: '32px', borderRadius: '2px', background: 'linear-gradient(to bottom, #06b6d4, #e11d48)', flexShrink: 0 }} />
               {/* Close button */}
               <button
                 onClick={() => setOpen(false)}
@@ -345,8 +482,8 @@ export default function Chatbot() {
                   }}
                 >
                   {msg.role === 'assistant' && (
-                    <div style={{ width: '26px', height: '26px', borderRadius: '50%', overflow: 'hidden', background: 'linear-gradient(135deg,#1e3a8a,#7f1d1d)', border: '1px solid rgba(59,130,246,0.4)', flexShrink: 0 }}>
-                      <img src={robotImg} alt="" style={{ width: '140%', height: '140%', objectFit: 'cover', objectPosition: 'top', marginLeft: '-20%' }} />
+                    <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', background: 'linear-gradient(135deg,#0284c7,#e11d48)', border: '1px solid rgba(6,182,212,0.4)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={sussyAvatarImg} alt="Sussy" style={{ width: '85%', height: '85%', objectFit: 'contain' }} />
                     </div>
                   )}
                   <div
@@ -355,10 +492,10 @@ export default function Chatbot() {
                       padding: '10px 14px',
                       borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                       background: msg.role === 'user'
-                        ? 'linear-gradient(135deg, #1d4ed8, #7f1d1d)'
+                        ? 'linear-gradient(135deg, #0284c7, #e11d48)'
                         : 'rgba(255,255,255,0.06)',
                       border: msg.role === 'user'
-                        ? '1px solid rgba(59,130,246,0.4)'
+                        ? '1px solid rgba(6,182,212,0.4)'
                         : '1px solid rgba(255,255,255,0.08)',
                       fontFamily: 'system-ui, sans-serif',
                       fontSize: '0.78rem',
@@ -376,13 +513,13 @@ export default function Chatbot() {
               {/* Loading indicator */}
               {loading && (
                 <div className="msg-pop" style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
-                  <div style={{ width: '26px', height: '26px', borderRadius: '50%', overflow: 'hidden', background: 'linear-gradient(135deg,#1e3a8a,#7f1d1d)', border: '1px solid rgba(59,130,246,0.4)', flexShrink: 0 }}>
-                    <img src={robotImg} alt="" style={{ width: '140%', height: '140%', objectFit: 'cover', objectPosition: 'top', marginLeft: '-20%' }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', background: 'linear-gradient(135deg,#0284c7,#e11d48)', border: '1px solid rgba(6,182,212,0.4)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={sussyAvatarImg} alt="Sussy" style={{ width: '85%', height: '85%', objectFit: 'contain' }} />
                   </div>
                   <div style={{ padding: '12px 16px', borderRadius: '16px 16px 16px 4px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '5px', alignItems: 'center' }}>
-                    <span className="dot1" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
-                    <span className="dot2" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
-                    <span className="dot3" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
+                    <span className="dot1" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#06b6d4', display: 'inline-block' }} />
+                    <span className="dot2" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#06b6d4', display: 'inline-block' }} />
+                    <span className="dot3" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#06b6d4', display: 'inline-block' }} />
                   </div>
                 </div>
               )}
@@ -401,8 +538,8 @@ export default function Chatbot() {
                     whiteSpace: 'nowrap',
                     padding: '5px 11px',
                     borderRadius: '20px',
-                    border: '1px solid rgba(59,130,246,0.3)',
-                    background: 'rgba(59,130,246,0.08)',
+                    border: '1px solid rgba(6,182,212,0.3)',
+                    background: 'rgba(6,182,212,0.08)',
                     color: 'rgba(255,255,255,0.65)',
                     fontFamily: 'system-ui, sans-serif',
                     fontSize: '0.65rem',
@@ -420,12 +557,12 @@ export default function Chatbot() {
             {/* ── INPUT BAR ── */}
             <div
               style={{
-                padding: '10px 12px 14px',
+                padding: '12px 14px',
+                borderTop: '1px solid rgba(6,182,212,0.2)',
+                background: 'rgba(15,23,42,0.98)',
                 display: 'flex',
-                gap: '8px',
                 alignItems: 'center',
-                background: 'rgba(5,5,15,0.6)',
-                borderTop: '1px solid rgba(59,130,246,0.15)',
+                gap: '8px',
                 flexShrink: 0,
               }}
             >
@@ -435,33 +572,33 @@ export default function Chatbot() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKey}
-                placeholder="Ask about CJ..."
+                placeholder="Ask about CJ's work, skills..."
                 disabled={loading}
                 style={{
                   flex: 1,
-                  padding: '9px 14px',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '12px',
-                  border: '1px solid rgba(59,130,246,0.25)',
-                  background: 'rgba(255,255,255,0.05)',
+                  padding: '9px 13px',
                   color: '#fff',
+                  fontSize: '0.78rem',
                   fontFamily: 'system-ui, sans-serif',
-                  fontSize: '0.8rem',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={e => (e.target.style.borderColor = 'rgba(59,130,246,0.6)')}
-                onBlur={e => (e.target.style.borderColor = 'rgba(59,130,246,0.25)')}
+                onFocus={e => (e.target.style.borderColor = 'rgba(6,182,212,0.6)')}
+                onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
               />
               <button
                 className="send-btn"
                 onClick={() => sendMessage(input)}
                 disabled={loading || !input.trim()}
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '12px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
                   border: 'none',
-                  background: 'linear-gradient(135deg, #1d4ed8, #7f1d1d)',
+                  background: 'linear-gradient(135deg, #0284c7, #e11d48)',
                   color: '#fff',
                   cursor: 'pointer',
                   fontSize: '1rem',
@@ -477,119 +614,192 @@ export default function Chatbot() {
               </button>
             </div>
           </div>
-        )}
+        );
+      })()}
 
-        {/* ── FLOATING ROBOT BUTTON ── */}
-        <div style={{ position: 'relative', pointerEvents: 'all' }}>
-          {/* Pulse ring when closed */}
-          {!open && pulse && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: '-4px',
-                borderRadius: '50%',
-                border: '2px solid rgba(59,130,246,0.5)',
-                animation: 'bot-pulse-ring 0.6s ease-out forwards',
-                pointerEvents: 'none',
-              }}
-            />
-          )}
-
-          {/* Glow orb behind robot */}
+      {/* ── DRAGGABLE SUSSY PET BUTTON ── */}
+      <div
+        style={{
+          position: 'fixed',
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          zIndex: 9999,
+          touchAction: 'none',
+          userSelect: 'none',
+          pointerEvents: 'all',
+        }}
+      >
+        {/* Pulse ring when closed */}
+        {!open && pulse && (
           <div
             style={{
               position: 'absolute',
-              bottom: '-8px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '70px',
-              height: '20px',
+              inset: '-6px',
               borderRadius: '50%',
-              background: open ? 'rgba(239,68,68,0.3)' : 'rgba(59,130,246,0.3)',
-              filter: 'blur(8px)',
-              transition: 'background 0.4s',
-              animation: 'glow-pulse 2.5s ease-in-out infinite',
+              border: '2px solid rgba(6,182,212,0.6)',
+              animation: 'bot-pulse-ring 0.6s ease-out forwards',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+
+        {/* Glow orb behind Sussy */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-6px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '74px',
+            height: '22px',
+            borderRadius: '50%',
+            background: open
+              ? 'rgba(239,68,68,0.35)'
+              : isDragging
+              ? 'rgba(6,182,212,0.6)'
+              : 'rgba(6,182,212,0.35)',
+            filter: 'blur(9px)',
+            transition: 'background 0.4s',
+            animation: !isDragging ? 'glow-pulse 2.5s ease-in-out infinite' : 'none',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Sussy interactive draggable button */}
+        <div
+          role="button"
+          tabIndex={0}
+          onPointerDown={handlePointerDown}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          aria-label={open ? 'Close CJ Bot (Sussy)' : 'Open CJ Bot (Sussy - Draggable)'}
+          className={`chat-toggle-btn ${!open && !isDragging ? 'bot-float' : ''}`}
+          title="Drag to reposition · Click to chat"
+          style={{
+            width: '78px',
+            height: '78px',
+            borderRadius: '50%',
+            border: `2.5px solid ${
+              open
+                ? 'rgba(239,68,68,0.7)'
+                : isDragging
+                ? 'rgba(6,182,212,0.95)'
+                : 'rgba(6,182,212,0.65)'
+            }`,
+            background: 'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(28,12,32,0.95) 100%)',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            transition: isDragging
+              ? 'none'
+              : 'border-color 0.3s, transform 0.2s, box-shadow 0.3s',
+            boxShadow: open
+              ? '0 0 0 3px rgba(239,68,68,0.25), 0 8px 32px rgba(0,0,0,0.7)'
+              : isDragging
+              ? '0 0 0 4px rgba(6,182,212,0.4), 0 16px 40px rgba(0,0,0,0.85), 0 0 24px rgba(6,182,212,0.5)'
+              : '0 0 0 3px rgba(6,182,212,0.18), 0 8px 30px rgba(0,0,0,0.65), 0 0 16px rgba(6,182,212,0.25)',
+            transform: isDragging ? 'scale(1.12)' : undefined,
+            position: 'relative',
+          }}
+        >
+          {/* Inner radial tint */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              background: 'radial-gradient(circle at 50% 35%, rgba(6,182,212,0.18) 0%, transparent 75%)',
               pointerEvents: 'none',
             }}
           />
 
-          {/* Robot toggle button */}
-          <button
-            className={`chat-toggle-btn ${!open ? 'bot-float' : ''}`}
-            onClick={() => setOpen(v => !v)}
-            aria-label={open ? 'Close CJ Bot' : 'Open CJ Bot'}
+          {/* Sussy character sprite */}
+          <img
+            src={sussySprite}
+            alt="Sussy Codex Pet"
+            draggable={false}
             style={{
-              width: '76px',
-              height: '76px',
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.5))',
+              pointerEvents: 'none',
+              transform: isDragging ? 'scale(1.05)' : undefined,
+              transition: 'transform 0.15s ease',
+            }}
+          />
+
+          {/* Online status indicator */}
+          <span
+            style={{
+              position: 'absolute',
+              bottom: '4px',
+              right: '4px',
+              width: '12px',
+              height: '12px',
               borderRadius: '50%',
-              border: `2.5px solid ${open ? 'rgba(239,68,68,0.6)' : 'rgba(59,130,246,0.6)'}`,
-              background: 'linear-gradient(135deg, rgba(10,10,30,0.95), rgba(20,5,15,0.95))',
-              cursor: 'pointer',
-              padding: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              transition: 'border-color 0.4s, transform 0.2s, box-shadow 0.4s',
-              boxShadow: open
-                ? '0 0 0 3px rgba(239,68,68,0.2), 0 8px 30px rgba(0,0,0,0.6)'
-                : '0 0 0 3px rgba(59,130,246,0.15), 0 8px 30px rgba(0,0,0,0.6)',
-              position: 'relative',
+              background: '#22c55e',
+              border: '2px solid rgba(15,23,42,0.95)',
+              boxShadow: '0 0 8px #22c55e',
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
+
+        {/* "ASK ME!" label tag - only when closed */}
+        {!open && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '-10px',
+              right: '-4px',
+              background: isDragging
+                ? 'linear-gradient(135deg, #0284c7, #06b6d4)'
+                : 'linear-gradient(135deg, #0284c7, #e11d48)',
+              color: '#fff',
+              fontFamily: 'monospace',
+              fontSize: '0.52rem',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              padding: '3px 8px',
+              borderRadius: '20px',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.5)',
+              pointerEvents: 'none',
             }}
           >
-            <img
-              src={robotImg}
-              alt="CJ Bot"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                objectPosition: 'top center',
-                borderRadius: '50%',
-                filter: 'drop-shadow(0 0 6px rgba(59,130,246,0.5))',
-                transition: 'filter 0.3s',
-              }}
-            />
-            {/* Online indicator badge */}
-            <span
-              style={{
-                position: 'absolute',
-                bottom: '4px',
-                right: '4px',
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                background: '#22c55e',
-                border: '2px solid rgba(10,10,30,0.95)',
-                boxShadow: '0 0 8px #22c55e',
-              }}
-            />
-          </button>
+            {isDragging ? 'DRAGGING...' : 'ASK ME!'}
+          </div>
+        )}
 
-          {/* "Ask me!" label tag - only when closed */}
-          {!open && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '-10px',
-                right: '-4px',
-                background: 'linear-gradient(135deg, #1d4ed8, #7f1d1d)',
-                color: '#fff',
-                fontFamily: 'monospace',
-                fontSize: '0.5rem',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                padding: '3px 8px',
-                borderRadius: '20px',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-                pointerEvents: 'none',
-              }}
-            >
-              Ask me!
-            </div>
-          )}
-        </div>
+        {/* Drag tooltip hint on hover when closed */}
+        {!open && isHovered && !isDragging && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-22px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'rgba(0,0,0,0.85)',
+              backdropFilter: 'blur(6px)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: '#94a3b8',
+              fontFamily: 'monospace',
+              fontSize: '0.48rem',
+              letterSpacing: '0.1em',
+              padding: '2px 7px',
+              borderRadius: '6px',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+            }}
+          >
+            DRAGGABLE · CLICK
+          </div>
+        )}
       </div>
     </>
   );
