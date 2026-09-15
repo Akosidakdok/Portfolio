@@ -1,32 +1,6 @@
-/* App.css — Cinematic Portfolio */
+/* App.css — Sleek Modern Tech Portfolio (Linear / Vercel Aesthetic) */
 
-/* Vertical rotated text */
-.rotate-vert-cw {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-}
-
-/* Hero title clip effect */
-.hero-title-clip {
-  position: relative;
-  display: block;
-  line-height: 0.88;
-  letter-spacing: -0.01em;
-}
-
-/* Radar circle animation */
-@keyframes radarPing {
-  0%   { transform: translate(-50%,-50%) scale(0.8); opacity: 0.3; }
-  50%  { opacity: 0.15; }
-  100% { transform: translate(-50%,-50%) scale(1.05); opacity: 0; }
-}
-
-.radar-ping {
-  animation: radarPing 4s ease-out infinite;
-}
-
-/* Tech Ticker scroll */
+/* Tech Ribbon & Ticker */
 @keyframes tickerScrollLeft {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -38,7 +12,7 @@
 }
 
 .ticker-track-left {
-  animation: tickerScrollLeft 34s linear infinite;
+  animation: tickerScrollLeft 36s linear infinite;
   display: flex;
   align-items: center;
   width: max-content;
@@ -46,7 +20,7 @@
 }
 
 .ticker-track-right {
-  animation: tickerScrollRight 38s linear infinite;
+  animation: tickerScrollRight 40s linear infinite;
   display: flex;
   align-items: center;
   width: max-content;
@@ -60,61 +34,61 @@
 
 /* Quote mark style */
 .quote-mark {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 5rem;
+  font-family: var(--font-display);
+  font-size: 4rem;
   line-height: 0.8;
-  color: var(--red);
-  opacity: 0.6;
+  color: var(--accent);
+  opacity: 0.4;
 }
 
 /* Skill tag (dark bg) */
 .skill-tag {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  padding: 6px 14px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  letter-spacing: 0.04em;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--white);
   cursor: default;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
 .skill-tag:hover {
-  background: rgba(227, 30, 36, 0.16);
-  border-color: rgba(227, 30, 36, 0.8);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(227, 30, 36, 0.25);
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
 }
 
 /* Skill tag (light bg) */
 .skill-tag-light {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  padding: 6px 14px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  color: #333;
+  letter-spacing: 0.04em;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #334155;
   cursor: default;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
 .skill-tag-light:hover {
-  background: rgba(227, 30, 36, 0.1);
-  border-color: var(--red);
-  color: var(--red);
-  transform: translateY(-1px);
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
 }
 
 /* Tech Stack View Mode Switcher */
@@ -134,8 +108,8 @@
   padding: 8px 18px;
   border-radius: 9999px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gray-light);
   transition: all 0.25s ease;
@@ -149,18 +123,18 @@
 }
 
 .stack-toggle-btn.active {
-  background: var(--red);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 0 16px rgba(227, 30, 36, 0.5);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.4);
 }
 
 /* Plain List Grid Container */
 .plain-list-container {
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
-  padding: 32px;
+  padding: 28px;
   position: relative;
   overflow: hidden;
 }
@@ -170,21 +144,21 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--white);
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: default;
 }
 
 .plain-list-item:hover {
-  background: rgba(227, 30, 36, 0.12);
-  border-color: rgba(227, 30, 36, 0.6);
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.4);
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 12px rgba(227, 30, 36, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 16px rgba(99, 102, 241, 0.15);
 }
 

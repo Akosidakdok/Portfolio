@@ -70,8 +70,8 @@ const TECH_ITEMS: TickerItem[] = [
     id: 'telemetry-sys',
     type: 'telemetry',
     label: 'SYS: OPERATIONAL',
-    icon: <Activity className="w-3.5 h-3.5 text-[#E31E24]" />,
-    accentColor: '#E31E24',
+    icon: <Activity className="w-3.5 h-3.5 text-[#10B981]" />,
+    accentColor: '#10B981',
   },
   {
     id: 'node',
@@ -163,8 +163,8 @@ const TECH_ITEMS: TickerItem[] = [
     id: 'telemetry-lat',
     type: 'telemetry',
     label: 'LATENCY: < 12MS',
-    icon: <Radio className="w-3.5 h-3.5 text-[#E31E24]" />,
-    accentColor: '#E31E24',
+    icon: <Radio className="w-3.5 h-3.5 text-[#6366f1]" />,
+    accentColor: '#6366f1',
   },
 ];
 
@@ -174,8 +174,8 @@ const PHILOSOPHY_ITEMS: TickerItem[] = [
     type: 'highlight',
     label: 'REAL-TIME GIS & DISASTER RESPONSE',
     badge: 'ALERTOPH',
-    icon: <MapPin className="w-3.5 h-3.5 text-[#E31E24]" />,
-    accentColor: '#E31E24',
+    icon: <MapPin className="w-3.5 h-3.5 text-[#38bdf8]" />,
+    accentColor: '#38bdf8',
   },
   {
     id: 'phil-pnp',
@@ -222,8 +222,8 @@ const PHILOSOPHY_ITEMS: TickerItem[] = [
     type: 'highlight',
     label: 'HIGH-PERFORMANCE REACT & TS',
     badge: 'FRONTEND',
-    icon: <Boxes className="w-3.5 h-3.5 text-[#E31E24]" />,
-    accentColor: '#E31E24',
+    icon: <Boxes className="w-3.5 h-3.5 text-[#6366f1]" />,
+    accentColor: '#6366f1',
   },
   {
     id: 'phil-uptime',
@@ -261,18 +261,18 @@ export const TechTicker: React.FC<TechTickerProps> = ({
     <div
       className={`ticker-container relative w-full overflow-hidden select-none z-20 ${className}`}
       style={{
-        background: 'linear-gradient(180deg, #09090c 0%, #060608 100%)',
-        borderTop: '1px solid rgba(227, 30, 36, 0.35)',
-        borderBottom: '1px solid rgba(227, 30, 36, 0.35)',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04)',
+        background: 'linear-gradient(180deg, #09090b 0%, #030304 100%)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.07)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)',
         padding: '10px 0',
       }}
     >
-      {/* Subtle ambient red background glow in the center */}
+      {/* Subtle ambient indigo background glow in the center */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-40"
+        className="absolute inset-0 pointer-events-none opacity-25"
         style={{
-          background: 'radial-gradient(ellipse 60% 80% at 50% 50%, rgba(227, 30, 36, 0.12), transparent 75%)',
+          background: 'radial-gradient(ellipse 60% 80% at 50% 50%, rgba(99, 102, 241, 0.15), transparent 75%)',
         }}
       />
 
@@ -313,7 +313,7 @@ export const TechTicker: React.FC<TechTickerProps> = ({
               return (
                 <div
                   key={`${item.id}-${idx}`}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/[0.02] border border-white/10 text-neutral-300 font-mono text-xs tracking-wider shrink-0 transition-all duration-300 hover:border-red-500/50 hover:text-white hover:bg-red-950/20"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/[0.02] border border-white/10 text-neutral-300 font-mono text-xs tracking-wider shrink-0 transition-all duration-300 hover:border-indigo-500/50 hover:text-white hover:bg-indigo-950/20"
                 >
                   {item.icon}
                   <span className="text-[11px] font-medium">{item.label}</span>
@@ -325,12 +325,12 @@ export const TechTicker: React.FC<TechTickerProps> = ({
               return (
                 <div
                   key={`${item.id}-${idx}`}
-                  className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-200 font-mono text-xs tracking-wide shrink-0 transition-all duration-300 hover:border-red-500 hover:bg-red-950/30 hover:text-white"
+                  className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-neutral-200 font-mono text-xs tracking-wide shrink-0 transition-all duration-300 hover:border-indigo-500 hover:bg-indigo-950/30 hover:text-white"
                 >
                   {item.icon}
                   <span className="font-semibold text-xs text-white">{item.label}</span>
                   {item.badge && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider bg-red-600/20 text-red-400 border border-red-500/30">
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
                       {item.badge}
                     </span>
                   )}
@@ -342,7 +342,7 @@ export const TechTicker: React.FC<TechTickerProps> = ({
             return (
               <div
                 key={`${item.id}-${idx}`}
-                className="ticker-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-950/60 border border-neutral-800 text-neutral-200 font-mono text-xs tracking-wide shrink-0 transition-all duration-300 hover:border-red-500/80 hover:bg-red-950/20 hover:text-white"
+                className="ticker-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-950/60 border border-neutral-800 text-neutral-200 font-mono text-xs tracking-wide shrink-0 transition-all duration-300 hover:border-indigo-500/80 hover:bg-indigo-950/20 hover:text-white"
               >
                 {item.icon}
                 <span className="font-medium text-xs text-neutral-200">{item.label}</span>

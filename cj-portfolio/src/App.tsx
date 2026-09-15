@@ -17,55 +17,7 @@ import TechIcon from './components/TechIcon';
 
 
 
-/* ─── Crosshair / Radar SVG Background ─── */
-function CrosshairBg() {
-  return (
-    <div className="crosshair-bg" aria-hidden="true">
-      <svg
-        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '900px', height: '900px', opacity: 0.07 }}
-        viewBox="0 0 900 900"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="450" cy="450" r="400" stroke="white" strokeWidth="1" />
-        <circle cx="450" cy="450" r="280" stroke="white" strokeWidth="1" />
-        <circle cx="450" cy="450" r="160" stroke="white" strokeWidth="1" />
-        <circle cx="450" cy="450" r="60"  stroke="white" strokeWidth="1" />
-        {/* crosshair lines */}
-        <line x1="450" y1="10"  x2="450" y2="130" stroke="white" strokeWidth="1" />
-        <line x1="450" y1="770" x2="450" y2="890" stroke="white" strokeWidth="1" />
-        <line x1="10"  y1="450" x2="130" y2="450" stroke="white" strokeWidth="1" />
-        <line x1="770" y1="450" x2="890" y2="450" stroke="white" strokeWidth="1" />
-        {/* tick marks */}
-        {[0,45,90,135,180,225,270,315].map(deg => {
-          const rad = (deg * Math.PI) / 180;
-          const cx = 450, cy = 450, r1 = 395, r2 = 415;
-          const x1 = cx + r1 * Math.cos(rad);
-          const y1 = cy + r1 * Math.sin(rad);
-          const x2 = cx + r2 * Math.cos(rad);
-          const y2 = cy + r2 * Math.sin(rad);
-          return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke="white" strokeWidth="1.5" />;
-        })}
-      </svg>
-      {/* Animated ping ring */}
-      <div
-        className="radar-ping"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: '600px',
-          height: '600px',
-          marginLeft: '-300px',
-          marginTop: '-300px',
-          borderRadius: '50%',
-          border: '1px solid rgba(227,30,36,0.3)',
-          pointerEvents: 'none',
-        }}
-      />
-    </div>
-  );
-}
+
 
 /* ─── Stat Badge ─── */
 function StatBadge({ label, value, active = false }: { label: string; value: string; active?: boolean }) {
@@ -122,10 +74,10 @@ function SkillGroup({ icon, title, tags, dark = true }: { icon: React.ReactNode;
         </div>
         <span
           style={{
-            fontFamily: 'var(--font-condensed)',
-            fontWeight: 700,
-            fontSize: '1rem',
-            letterSpacing: '0.08em',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            letterSpacing: '0.03em',
             textTransform: 'uppercase',
             color: dark ? 'var(--white)' : '#111',
           }}
@@ -158,7 +110,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
   return (
     <div className="project-card-dark interactive-card" style={{ maxWidth: '340px', width: '100%' }}>
       {/* Card Header */}
-      <div style={{ background: 'var(--red)', padding: '7px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', padding: '7px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--white)', textTransform: 'uppercase' }}>Project</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.92)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
           <svg width="8" height="8" viewBox="0 0 76 65" fill="#fff">
@@ -272,11 +224,11 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>VENUE</div>
-              <div style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--white)', textTransform: 'uppercase' }}>{venue}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.85rem', color: 'var(--white)', textTransform: 'uppercase' }}>{venue}</div>
             </div>
             <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>YEAR</div>
-              <div style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--white)' }}>{date}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.85rem', color: 'var(--white)' }}>{date}</div>
             </div>
           </div>
         </div>
@@ -322,7 +274,7 @@ const PROJECTS: Project[] = [
     venue: 'WEB APP',
     date: '2026',
     longDesc: 'AI-assisted financial feasibility web system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture using Gemini Flash AI.',
-    color: '#E31E24',
+    color: '#6366F1',
     image: feasifyImg,
   },
   {
@@ -801,7 +753,7 @@ function CertificationModal({
             zIndex: 10,
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'var(--red)';
+            e.currentTarget.style.background = 'var(--accent)';
             e.currentTarget.style.transform = 'scale(1.08)';
           }}
           onMouseLeave={e => {
@@ -814,14 +766,14 @@ function CertificationModal({
 
         {/* Certificate Frame Header */}
         <div style={{ textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '22px', marginBottom: '24px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '999px', background: 'rgba(227,30,36,0.15)', border: '1px solid rgba(227,30,36,0.3)', color: '#ff6b6b', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '14px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '999px', background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#818cf8', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '14px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 8px #22c55e' }} />
             OFFICIAL CREDENTIAL RECORD
           </div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', color: '#fff', letterSpacing: '0.04em', textTransform: 'uppercase', margin: 0, lineHeight: 1.1 }}>
             {cert.title}
           </h2>
-          <div style={{ marginTop: '10px', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#ff8a8a', letterSpacing: '0.08em' }}>
+          <div style={{ marginTop: '10px', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#a5b4fc', letterSpacing: '0.08em' }}>
             ISSUED BY: {cert.issuer} ({cert.organization}) · {cert.date}
           </div>
         </div>
@@ -860,7 +812,7 @@ function CertificationModal({
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>
               RECIPIENT / HOLDER
             </div>
-            <div style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.25rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.25rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
               Christian James Baldonado
             </div>
             {cert.signatory && (
@@ -875,7 +827,7 @@ function CertificationModal({
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#888' }}>
                   WORKLOAD
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#ff8a8a', fontWeight: 600 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#818cf8', fontWeight: 600 }}>
                   {cert.workHours}
                 </div>
               </div>
@@ -893,7 +845,7 @@ function CertificationModal({
 
         {/* Detailed Competencies & Description */}
         <div style={{ marginBottom: '24px' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginBottom: '8px' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '8px' }}>
             CREDENTIAL OVERVIEW &amp; SCOPE
           </div>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: '#ccc', lineHeight: 1.7, margin: 0 }}>
@@ -1121,7 +1073,7 @@ function App() {
           {/* Logo */}
           <a href="#about" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--white)' }}>CJ</span>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--red)', lineHeight: 1 }}>+</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--accent)', lineHeight: 1 }}>+</span>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--white)' }}>DEV</span>
           </a>
 
@@ -1130,7 +1082,7 @@ function App() {
             {['About', 'Skills', 'Projects', 'Certifications', 'Contact'].map((item, i) => (
               <span key={item} style={{ display: 'flex', alignItems: 'center' }}>
                 {i > 0 && (
-                  <span style={{ color: 'var(--red)', fontSize: '0.4rem', margin: '0 10px', verticalAlign: 'middle' }}>●</span>
+                  <span style={{ color: 'var(--accent)', fontSize: '0.4rem', margin: '0 10px', verticalAlign: 'middle' }}>●</span>
                 )}
                 <a
                   href={`#${item.toLowerCase()}`}
@@ -1205,7 +1157,7 @@ function App() {
                   fontSize: '0.85rem',
                   letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: (item.toLowerCase() === 'projects' && activeSectionTab === 'projects') || (item.toLowerCase() === 'certifications' && activeSectionTab === 'certifications') ? 'var(--red)' : 'var(--white)',
+                  color: (item.toLowerCase() === 'projects' && activeSectionTab === 'projects') || (item.toLowerCase() === 'certifications' && activeSectionTab === 'certifications') ? 'var(--accent)' : 'var(--white)',
                   textDecoration: 'none',
                   borderBottom: '1px solid rgba(255,255,255,0.06)',
                   paddingBottom: '16px',
@@ -1219,301 +1171,294 @@ function App() {
       </nav>
 
       {/* ────────────────────────────────────────── */}
-      {/* HERO SECTION                               */}
+      {/* HERO SECTION — Sleek Modern Tech (Linear/Vercel) */}
       {/* ────────────────────────────────────────── */}
       <section
         id="about"
         style={{
           position: 'relative',
-          minHeight: '100vh',
-          background: 'var(--bg-dark)',
+          minHeight: isMobile ? 'auto' : '90vh',
+          background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent 70%), var(--bg-dark)',
           overflow: 'hidden',
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: isMobile ? 'flex-start' : 'flex-end',
-          paddingTop: isMobile ? '80px' : 0,
+          alignItems: 'center',
+          paddingTop: isMobile ? '100px' : '120px',
+          paddingBottom: isMobile ? '60px' : '80px',
         }}
       >
-        <CrosshairBg />
-
-        {/* Red circle behind profile */}
+        {/* Subtle high-tech ambient grid overlay */}
         <div
           aria-hidden="true"
           style={{
             position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -44%)',
-            width: isMobile ? '320px' : '520px',
-            height: isMobile ? '320px' : '520px',
-            borderRadius: '50%',
-            background: 'var(--red)',
-            opacity: 0.18,
-            filter: 'blur(60px)',
-            zIndex: 1,
+            inset: 0,
+            backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+            maskImage: 'radial-gradient(ellipse 60% 60% at 50% 40%, black 20%, transparent 80%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at 50% 40%, black 20%, transparent 80%)',
             pointerEvents: 'none',
+            zIndex: 1,
           }}
         />
 
-        {/* ── MOBILE LAYOUT ── */}
-        {isMobile ? (
-          <div style={{ position: 'relative', zIndex: 5, display: 'flex', flexDirection: 'column', flex: 1 }}>
-
-            {/* Top tags row */}
-            <div style={{ padding: '12px 20px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              <span className="pill-tag">Front-End</span>
-              <span className="pill-tag">React</span>
-              <span className="pill-tag">Full-Stack</span>
-              <span className="pill-tag">Networking</span>
-            </div>
-
-            {/* Giant title */}
-            <div style={{ textAlign: 'center', padding: '0 12px', marginTop: '8px' }}>
-              <h1
-                className="reveal"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(3.8rem, 18vw, 6rem)',
-                  lineHeight: 0.9,
-                  color: 'var(--white)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '-0.01em',
-                }}
-              >
-                CJ BALDONADO
-              </h1>
-            </div>
-
-            {/* Profile image — in flow on mobile */}
+        <div
+          style={{
+            maxWidth: '1280px',
+            width: '100%',
+            margin: '0 auto',
+            padding: '0 32px',
+            position: 'relative',
+            zIndex: 5,
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1.15fr 0.85fr',
+            gap: isMobile ? '48px' : '64px',
+            alignItems: 'center',
+          }}
+        >
+          {/* Left Column: Developer Info & Value Proposition */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
+            
+            {/* Live Availability Badge */}
             <div
+              className="reveal"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                background: 'rgba(16, 185, 129, 0.08)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                color: '#34d399',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.72rem',
+                letterSpacing: '0.06em',
+                marginBottom: '24px',
+              }}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>Available for Full-Stack &amp; Front-End Roles [2026]</span>
+            </div>
+
+            {/* High Impact Modern Headline */}
+            <h1
               className="reveal delay-100"
               style={{
-                width: '72%',
-                maxWidth: '300px',
-                margin: '0 auto',
-                position: 'relative',
-                zIndex: 10,
-                marginTop: '-16px',
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(2.4rem, 4.2vw, 4.4rem)',
+                fontWeight: 800,
+                lineHeight: 1.08,
+                letterSpacing: '-0.03em',
+                color: 'var(--white)',
+                marginBottom: '20px',
               }}
             >
-              <img
-                src={profileImg}
-                alt="Christian James D. Baldonado"
+              Building scalable web systems &amp;{' '}
+              <span
                 style={{
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'cover',
-                  objectPosition: 'top center',
-                  display: 'block',
-                  filter: 'drop-shadow(0 -12px 40px rgba(0,0,0,0.9))',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #38bdf8 50%, #a855f7 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
                 }}
-              />
+              >
+                intelligent interfaces.
+              </span>
+            </h1>
+
+            {/* Subtext Developer Bio */}
+            <p
+              className="reveal delay-200"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.95rem, 1.1vw, 1.08rem)',
+                color: 'var(--gray-light)',
+                lineHeight: 1.7,
+                maxWidth: '560px',
+                marginBottom: '32px',
+              }}
+            >
+              Hi, I'm <strong style={{ color: '#fff', fontWeight: 600 }}>Christian James (CJ) Baldonado</strong> — a Front-End &amp; Full-Stack Developer specializing in React, TypeScript, Node.js, and modern AI integrations. Focused on high-performance architecture and polished digital experiences.
+            </p>
+
+            {/* CTA Button Row */}
+            <div
+              className="reveal delay-300"
+              style={{
+                display: 'flex',
+                gap: '14px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: isMobile ? 'center' : 'flex-start',
+                marginBottom: '40px',
+              }}
+            >
+              <a href="#projects" className="btn-cta-red">
+                Explore Projects ↓
+              </a>
+              <a
+                href="/Baldonado-Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-cta"
+              >
+                Resume ↗
+              </a>
+              <a
+                href="#contact"
+                className="btn-cta"
+                style={{ background: 'transparent', borderColor: 'rgba(255,255,255,0.1)' }}
+              >
+                Contact Me
+              </a>
             </div>
 
-            {/* Bottom info */}
+            {/* Quick Metrics Bento Row */}
             <div
+              className="reveal delay-400"
               style={{
-                background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0.95) 100%)',
-                padding: '20px 20px 32px',
-                marginTop: '-32px',
-                position: 'relative',
-                zIndex: 15,
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '12px',
+                width: '100%',
+                maxWidth: '520px',
+                paddingTop: '20px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
               }}
             >
-              <span className="section-label-dark" style={{ fontSize: '0.55rem' }}>FRONT END DEVELOPER / NETWORKING</span>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--gray)', lineHeight: 1.7, margin: '10px 0 20px' }}>
-                BSIT Student at PLV. Building modern web apps &amp; data-driven systems.
-              </p>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <a href="#contact" className="btn-cta" style={{ fontSize: '0.72rem', padding: '11px 20px' }}>
-                  Hire Me ↗
-                </a>
-                <a href="#projects" className="btn-cta-red" style={{ fontSize: '0.72rem', padding: '11px 20px' }}>
-                  View Work →
-                </a>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>5+</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Years Building</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: '#6366f1' }}>7+</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Featured Projects</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: '#38bdf8' }}>31+</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Tech Stack &amp; Tools</div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Column: Modern Developer Portrait Card */}
+          <div
+            className="reveal delay-200"
+            style={{
+              position: 'relative',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {/* Ambient backlight glow */}
+            <div
+              style={{
+                position: 'absolute',
+                width: isMobile ? '280px' : '380px',
+                height: isMobile ? '280px' : '380px',
+                background: 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(56, 189, 248, 0.12) 50%, transparent 70%)',
+                filter: 'blur(50px)',
+                borderRadius: '50%',
+                zIndex: 0,
+                pointerEvents: 'none',
+              }}
+            />
+
+            {/* Glassmorphic Card Container */}
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 2,
+                width: '100%',
+                maxWidth: '380px',
+                borderRadius: '24px',
+                background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(16px)',
+                padding: '16px',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Photo Frame */}
+              <div
+                style={{
+                  position: 'relative',
+                  borderRadius: '18px',
+                  overflow: 'hidden',
+                  background: 'radial-gradient(ellipse at 50% 30%, rgba(99, 102, 241, 0.18) 0%, rgba(15, 23, 42, 0.6) 55%, #09090b 85%)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                }}
+              >
+                <img
+                  src={profileImg}
+                  alt="Christian James Baldonado"
+                  style={{
+                    width: '100%',
+                    height: isMobile ? '340px' : '410px',
+                    objectFit: 'cover',
+                    objectPosition: 'top center',
+                    display: 'block',
+                    filter: 'contrast(1.04) brightness(1.02)',
+                  }}
+                />
+              </div>
+
+              {/* Card Identity & Details Below Photo */}
+              <div style={{ marginTop: '14px', padding: '0 4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+                    Christian James Baldonado
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.62rem',
+                      fontWeight: 600,
+                      color: '#34d399',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    PLV BSIT
+                  </div>
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#94a3b8', letterSpacing: '0.02em', marginBottom: '14px' }}>
+                  Full-Stack &amp; Front-End Developer
+                </div>
+
+                {/* Tech Chips */}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    flexWrap: 'wrap',
+                    paddingTop: '10px',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                  }}
+                >
+                  <span className="skill-tag" style={{ fontSize: '0.68rem', padding: '5px 10px' }}>
+                    <TechIcon name="React" size={13} /> React
+                  </span>
+                  <span className="skill-tag" style={{ fontSize: '0.68rem', padding: '5px 10px' }}>
+                    <TechIcon name="TypeScript" size={13} /> TypeScript
+                  </span>
+                  <span className="skill-tag" style={{ fontSize: '0.68rem', padding: '5px 10px' }}>
+                    <TechIcon name="Gemini" size={13} /> Gemini AI
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-        ) : (
-          /* ── DESKTOP LAYOUT ── */
-          <>
-            {/* Top meta row */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '80px',
-                left: 0,
-                right: 0,
-                padding: '0 32px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                zIndex: 5,
-                flexWrap: 'wrap',
-                gap: '12px',
-              }}
-            >
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <span className="pill-tag">Front-End</span>
-                <span className="pill-tag">React</span>
-                <span className="pill-tag">Full-Stack</span>
-                <span className="pill-tag">Networking</span>
-              </div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)' }}>
-                AVAILABLE [2026]
-              </span>
-            </div>
-
-            {/* Cast / tech row */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '140px',
-                left: 0,
-                right: 0,
-                padding: '0 32px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                zIndex: 5,
-                flexWrap: 'wrap',
-                gap: '8px',
-              }}
-            >
-              {['REACT.JS', 'TYPESCRIPT', 'NETWORKING', 'GEMINI AI', 'OPEN AI'].map(tech => (
-                <span
-                  key={tech}
-                  style={{
-                    fontFamily: 'var(--font-condensed)',
-                    fontWeight: 700,
-                    fontSize: 'clamp(0.7rem, 1.5vw, 1rem)',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.55)',
-                  }}
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {/* GIANT TITLE */}
-            <div
-              style={{
-                position: 'relative',
-                zIndex: 5,
-                textAlign: 'center',
-                padding: '0 16px',
-                pointerEvents: 'none',
-                marginBottom: '-24px',
-              }}
-            >
-              <div
-                className="reveal"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
-                  color: 'var(--white)',
-                  letterSpacing: '0.5em',
-                  opacity: 0.8,
-                  marginBottom: '-16px',
-                }}
-              >
-                ◆
-              </div>
-              <h1
-                className="hero-title-clip reveal delay-100"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(6rem, 15vw, 14rem)',
-                  lineHeight: 0.88,
-                  letterSpacing: '-0.01em',
-                  color: 'var(--white)',
-                  textTransform: 'uppercase',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'clip',
-                }}
-              >
-                CJ BALDONADO
-              </h1>
-            </div>
-
-            {/* Profile image */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '60px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 15,
-                width: 'clamp(260px, 30vw, 420px)',
-                pointerEvents: 'none',
-                userSelect: 'none',
-              }}
-              className="reveal delay-200"
-            >
-              <img
-                src={profileImg}
-                alt="Christian James D. Baldonado"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'cover',
-                  objectPosition: 'top center',
-                  maxHeight: '520px',
-                  display: 'block',
-                  filter: 'drop-shadow(0 -20px 60px rgba(0,0,0,0.8))',
-                }}
-              />
-            </div>
-
-            {/* [2026] vertical text */}
-            <div
-              className="rotate-vert-cw reveal-right delay-300"
-              style={{
-                position: 'absolute',
-                right: '24px',
-                bottom: '120px',
-                zIndex: 20,
-                fontFamily: 'var(--font-display)',
-                fontSize: '1rem',
-                letterSpacing: '0.3em',
-                color: 'var(--white)',
-                opacity: 0.5,
-              }}
-            >
-              [2026]
-            </div>
-
-            {/* Bottom info row */}
-            <div
-              style={{
-                position: 'relative',
-                zIndex: 20,
-                padding: '24px 32px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                flexWrap: 'wrap',
-                gap: '16px',
-                background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0) 100%)',
-                paddingTop: '80px',
-              }}
-            >
-              <div className="reveal" style={{ maxWidth: '320px' }}>
-                <span className="section-label-dark" style={{ marginBottom: '8px' }}>FRONT END DEVELOPER / NETWORKING</span>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray)', lineHeight: 1.7, marginTop: '10px' }}>
-                  BSIT Student at PLV. Building modern web apps &amp; data-driven systems. Specializing in React frontends with AI integrations.
-                </p>
-              </div>
-              <div className="reveal delay-200" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <a href="#contact" className="btn-cta">Hire Me <span>↗</span></a>
-                <a href="#projects" className="btn-cta-red">View Work →</a>
-              </div>
-            </div>
-          </>
-        )}
+        </div>
       </section>
 
       {/* ────────────────────────────────────────── */}
@@ -1533,14 +1478,21 @@ function App() {
           overflow: 'hidden',
         }}
       >
-        {/* Faint radar bg */}
-        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.04, pointerEvents: 'none' }}>
-          <svg width="700" height="700" viewBox="0 0 700 700" fill="none">
-            <circle cx="350" cy="350" r="340" stroke="white" strokeWidth="1" />
-            <circle cx="350" cy="350" r="220" stroke="white" strokeWidth="1" />
-            <circle cx="350" cy="350" r="100" stroke="white" strokeWidth="1" />
-          </svg>
-        </div>
+        {/* Subtle ambient glow */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '20%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '600px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%)',
+            pointerEvents: 'none',
+            filter: 'blur(60px)',
+          }}
+        />
 
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 32px', position: 'relative', zIndex: 5 }}>
 
@@ -1548,7 +1500,7 @@ function App() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', marginBottom: '60px' }}>
             <div className="reveal">
               <span className="section-label-dark">TECHNICAL ARSENAL</span>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '0.04em', color: 'var(--white)', marginTop: '8px', lineHeight: 1 }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '0.02em', color: 'var(--white)', marginTop: '8px', lineHeight: 1 }}>
                 SKILLS &amp; STACK
               </h2>
             </div>
@@ -1572,17 +1524,16 @@ function App() {
               marginBottom: '64px',
             }}
           >
-            <StatBadge label="YEARS EXP" value="3+" />
+            <StatBadge label="YEARS EXP" value="5+" />
             <StatBadge label="PROJECTS" value="7+" active />
             <StatBadge label="TECH STACK" value="31+" />
             <StatBadge label="DOMAINS" value="9" />
           </div>
 
           {/* Quote */}
-          <div className="reveal delay-200" style={{ textAlign: 'center', maxWidth: '560px', margin: '0 auto 40px' }}>
-            <div className="quote-mark">"</div>
-            <p style={{ fontFamily: 'var(--font-condensed)', fontWeight: 600, fontSize: '1.15rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, textTransform: 'uppercase' }}>
-              Passionate about building modern, scalable systems — where clean code meets exceptional user experience.
+          <div className="reveal delay-200" style={{ textAlign: 'center', maxWidth: '620px', margin: '0 auto 40px' }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: '1.05rem', color: 'var(--gray-light)', lineHeight: 1.7 }}>
+              "Passionate about building modern, scalable systems — where clean code meets exceptional user experience."
             </p>
           </div>
 
@@ -1737,7 +1688,7 @@ function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '28px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '20px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--red)', background: 'rgba(227,30,36,0.12)', padding: '3px 10px', borderRadius: '4px', border: '1px solid rgba(227,30,36,0.25)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.1)', padding: '3px 10px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
                       OFFICIAL CATALOG
                     </span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray-light)', letterSpacing: '0.08em' }}>
@@ -1769,7 +1720,7 @@ function App() {
                       outline: 'none',
                       transition: 'border-color 0.2s',
                     }}
-                    onFocus={e => (e.target.style.borderColor = 'var(--red)')}
+                    onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                     onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.14)')}
                   />
                   <svg
@@ -1886,9 +1837,9 @@ function App() {
                             fontSize: '0.52rem',
                             padding: '2px 6px',
                             borderRadius: '4px',
-                            background: 'rgba(227,30,36,0.12)',
-                            border: '1px solid rgba(227,30,36,0.25)',
-                            color: '#ff8a8a',
+                            background: 'rgba(99,102,241,0.12)',
+                            border: '1px solid rgba(99,102,241,0.25)',
+                            color: '#a5b4fc',
                             letterSpacing: '0.06em',
                             flexShrink: 0,
                           }}
@@ -1915,8 +1866,8 @@ function App() {
                     style={{
                       marginTop: '12px',
                       background: 'transparent',
-                      border: '1px solid var(--red)',
-                      color: 'var(--red)',
+                      border: '1px solid var(--accent)',
+                      color: 'var(--accent)',
                       padding: '6px 14px',
                       borderRadius: '6px',
                       fontFamily: 'var(--font-mono)',
@@ -1986,8 +1937,8 @@ function App() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--red)', display: 'inline-block', boxShadow: '0 0 8px var(--red)' }} />
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: 'var(--red)', textTransform: 'uppercase', fontWeight: 700 }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: '#34d399', textTransform: 'uppercase', fontWeight: 700 }}>
                         PLV OJT
                       </span>
                     </div>
@@ -2099,12 +2050,12 @@ function App() {
                         width: '26px',
                         height: '26px',
                         borderRadius: '6px',
-                        background: 'rgba(227,30,36,0.12)',
-                        border: '1px solid rgba(227,30,36,0.25)',
+                        background: 'rgba(99,102,241,0.1)',
+                        border: '1px solid rgba(99,102,241,0.2)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#ff6b6b',
+                        color: 'var(--accent)',
                         flexShrink: 0,
                       }}
                     >
@@ -2120,7 +2071,7 @@ function App() {
                           textDecoration: 'none',
                           transition: 'color 0.2s',
                         }}
-                        onMouseEnter={e => (e.currentTarget.style.color = '#ff6b6b')}
+                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
                         onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
                       >
                         {item.text}
@@ -2138,66 +2089,27 @@ function App() {
           </div>
         </div>
 
-        {/* "DIRECTED BY" style full-width bold text */}
+        {/* Modern Section Transition Header */}
         <div
           style={{
             background: 'var(--bg-light)',
             overflow: 'hidden',
-            padding: '40px 0 32px',
-            borderTop: '1px solid rgba(0,0,0,0.1)',
+            padding: '36px 32px 24px',
+            borderTop: '1px solid rgba(0,0,0,0.08)',
           }}
         >
-          <div className="reveal" style={{ padding: '0 32px', marginBottom: '12px' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#999' }}>
-              GALLERY 01 / 04
-            </span>
-          </div>
-          <div
-            className="reveal"
-            style={{
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: '20px',
-              padding: '0 32px',
-              flexWrap: 'wrap',
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(3rem, 8vw, 7.5rem)',
-                color: '#111',
-                lineHeight: 0.9,
-                textTransform: 'uppercase',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              DEVELOPED
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-condensed)',
-                fontWeight: 400,
-                fontSize: 'clamp(1rem, 2.5vw, 2rem)',
-                color: '#888',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-              }}
-            >
-              BY
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(3rem, 8vw, 7.5rem)',
-                color: '#111',
-                lineHeight: 0.9,
-                textTransform: 'uppercase',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              PASSION
-            </span>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+            <div className="reveal">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#64748b' }}>
+                SHOWCASE // ARCHIVE
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', marginTop: '4px' }}>
+                Featured Engineering &amp; Work
+              </h3>
+            </div>
+            <div className="reveal delay-100" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#64748b', background: 'rgba(0,0,0,0.04)', padding: '6px 14px', borderRadius: '9999px' }}>
+              Full-Stack &amp; Front-End Solutions
+            </div>
           </div>
         </div>
       </section>
@@ -2238,15 +2150,15 @@ function App() {
                   gap: '8px',
                   padding: '10px 24px',
                   borderRadius: '999px',
-                  fontFamily: 'var(--font-condensed)',
-                  fontWeight: 700,
-                  fontSize: '0.92rem',
-                  letterSpacing: '0.08em',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 600,
+                  fontSize: '0.88rem',
+                  letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                   transition: 'all 0.25s ease',
-                  background: activeSectionTab === 'projects' ? 'var(--red)' : 'transparent',
+                  background: activeSectionTab === 'projects' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'transparent',
                   color: activeSectionTab === 'projects' ? 'white' : '#666',
-                  boxShadow: activeSectionTab === 'projects' ? '0 4px 14px rgba(227,30,36,0.35)' : 'none',
+                  boxShadow: activeSectionTab === 'projects' ? '0 4px 16px rgba(99, 102, 241, 0.4)' : 'none',
                 }}
               >
                 <span>01</span>
@@ -2274,15 +2186,15 @@ function App() {
                   gap: '8px',
                   padding: '10px 24px',
                   borderRadius: '999px',
-                  fontFamily: 'var(--font-condensed)',
-                  fontWeight: 700,
-                  fontSize: '0.92rem',
-                  letterSpacing: '0.08em',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 600,
+                  fontSize: '0.88rem',
+                  letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                   transition: 'all 0.25s ease',
-                  background: activeSectionTab === 'certifications' ? 'var(--red)' : 'transparent',
+                  background: activeSectionTab === 'certifications' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'transparent',
                   color: activeSectionTab === 'certifications' ? 'white' : '#666',
-                  boxShadow: activeSectionTab === 'certifications' ? '0 4px 14px rgba(227,30,36,0.35)' : 'none',
+                  boxShadow: activeSectionTab === 'certifications' ? '0 4px 16px rgba(99, 102, 241, 0.4)' : 'none',
                 }}
               >
                 <span>02</span>
@@ -2306,7 +2218,7 @@ function App() {
           <div className="reveal" style={{ marginBottom: activeSectionTab === 'projects' ? '64px' : '44px', textAlign: 'center' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 4rem)', color: '#111', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.05 }}>
               FEATURED WORK:<br />
-              <span style={{ color: activeSectionTab === 'projects' ? '#111' : 'var(--red)' }}>
+              <span style={{ color: activeSectionTab === 'projects' ? '#111' : 'var(--accent)' }}>
                 {activeSectionTab === 'projects' ? 'PROJECTS & BUILDS' : 'CERTIFICATIONS & LICENSES'}
               </span>
             </h2>
@@ -2324,7 +2236,7 @@ function App() {
                       marginLeft: i > 0 ? '-10px' : 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '0.65rem', color: 'white',
-                      fontFamily: 'var(--font-condensed)', fontWeight: 700,
+                      fontFamily: 'var(--font-mono)', fontWeight: 600,
                       opacity: i === activeProject ? 1 : 0.5,
                       transition: 'opacity 0.3s',
                       cursor: 'pointer',
@@ -2347,7 +2259,7 @@ function App() {
                       marginLeft: i > 0 ? '-10px' : 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '0.65rem', color: 'white',
-                      fontFamily: 'var(--font-condensed)', fontWeight: 700,
+                      fontFamily: 'var(--font-mono)', fontWeight: 600,
                       cursor: 'pointer',
                       position: 'relative',
                       zIndex: 1,
@@ -2444,7 +2356,7 @@ function App() {
                           }}
                           onMouseEnter={e => {
                             e.currentTarget.style.transform = 'translateY(-3px)';
-                            e.currentTarget.style.boxShadow = '0 10px 24px rgba(227,30,36,0.18)';
+                            e.currentTarget.style.boxShadow = '0 10px 24px rgba(99, 102, 241, 0.22)';
                           }}
                           onMouseLeave={e => {
                             e.currentTarget.style.transform = 'translateY(0)';
@@ -2472,9 +2384,9 @@ function App() {
                           </div>
                         </div>
 
-                        <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.05rem', color: '#333', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{prev.title}</h3>
+                        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '1.05rem', color: '#111', letterSpacing: '0.02em' }}>{prev.title}</h3>
                         <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#666', lineHeight: 1.7 }}>{prev.longDesc}</p>
-                        <button onClick={goPrev} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>← PREV</button>
+                        <button onClick={goPrev} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>← PREV</button>
                       </div>
                     );
                   })()}
@@ -2519,7 +2431,7 @@ function App() {
                           }}
                           onMouseEnter={e => {
                             e.currentTarget.style.transform = 'translateY(-3px)';
-                            e.currentTarget.style.boxShadow = '0 10px 24px rgba(227,30,36,0.18)';
+                            e.currentTarget.style.boxShadow = '0 10px 24px rgba(99, 102, 241, 0.22)';
                           }}
                           onMouseLeave={e => {
                             e.currentTarget.style.transform = 'translateY(0)';
@@ -2548,9 +2460,9 @@ function App() {
                           </div>
                         </div>
 
-                        <h3 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.05rem', color: '#333', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{next.title}</h3>
+                        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '1.05rem', color: '#111', letterSpacing: '0.02em' }}>{next.title}</h3>
                         <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#666', lineHeight: 1.7 }}>{next.longDesc}</p>
-                        <button onClick={goNext} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--red)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>NEXT →</button>
+                        <button onClick={goNext} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>NEXT →</button>
                       </div>
                     );
                   })()}
@@ -2566,21 +2478,23 @@ function App() {
                   aria-label="Previous project"
                   style={{
                     width: '52px', height: '52px', borderRadius: '50%',
-                    border: '2px solid rgba(0,0,0,0.2)',
+                    border: '2px solid rgba(0,0,0,0.15)',
                     background: 'transparent',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', fontSize: '1.1rem', color: '#333',
-                    transition: 'background 0.2s, border-color 0.2s, color 0.2s',
+                    transition: 'background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s',
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLButtonElement).style.background = 'var(--red)';
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--red)';
+                    (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = '#6366f1';
                     (e.currentTarget as HTMLButtonElement).style.color = 'white';
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.35)';
                   }}
                   onMouseLeave={e => {
                     (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.2)';
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.15)';
                     (e.currentTarget as HTMLButtonElement).style.color = '#333';
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
                   }}
                 >
                   ←
@@ -2598,7 +2512,7 @@ function App() {
                         width: i === activeProject ? '28px' : '8px',
                         height: '8px',
                         borderRadius: '999px',
-                        background: i === activeProject ? 'var(--red)' : 'rgba(0,0,0,0.2)',
+                        background: i === activeProject ? 'var(--accent)' : 'rgba(0,0,0,0.2)',
                         transition: 'width 0.3s ease, background 0.3s ease',
                       }}
                     />
@@ -2612,17 +2526,20 @@ function App() {
                   aria-label="Next project"
                   style={{
                     width: '52px', height: '52px', borderRadius: '50%',
-                    background: 'var(--red)',
-                    border: '2px solid var(--red)',
+                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    border: 'none',
+                    boxShadow: '0 4px 16px rgba(99, 102, 241, 0.35)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', fontSize: '1.1rem', color: 'white',
-                    transition: 'background 0.2s, transform 0.2s',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.1)';
+                    (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)';
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.5)';
                   }}
                   onMouseLeave={e => {
                     (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.35)';
                   }}
                 >
                   →
@@ -2667,7 +2584,7 @@ function App() {
                           fontSize: '0.6rem',
                           padding: '1px 6px',
                           borderRadius: '999px',
-                          background: isSelected ? 'var(--red)' : 'rgba(0,0,0,0.08)',
+                          background: isSelected ? 'var(--accent)' : 'rgba(0,0,0,0.08)',
                           color: '#fff',
                         }}
                       >
@@ -2759,7 +2676,7 @@ function App() {
             }}
           >
             LET'S BUILD<br />
-            <span style={{ color: 'var(--red)' }}>SOMETHING</span><br />
+            <span style={{ background: 'linear-gradient(135deg, #6366f1 0%, #38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SOMETHING</span><br />
             GREAT.
           </h2>
 
@@ -2796,7 +2713,7 @@ function App() {
             ].map((link, i) => (
               <span key={link.label} style={{ display: 'flex', alignItems: 'center' }}>
                 {i > 0 && (
-                  <span style={{ color: 'var(--red)', fontSize: '0.4rem', margin: '0 16px' }}>●</span>
+                  <span style={{ color: 'var(--accent)', fontSize: '0.4rem', margin: '0 16px' }}>●</span>
                 )}
                 <a
                   href={link.href}

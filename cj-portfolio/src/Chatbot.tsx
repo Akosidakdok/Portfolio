@@ -452,7 +452,7 @@ export default function Chatbot() {
                 <img src={sussyAvatarImg} alt="Sussy" style={{ width: '85%', height: '85%', objectFit: 'contain' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'var(--font-condensed, sans-serif)', fontWeight: 700, fontSize: '0.92rem', color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontFamily: 'var(--font-display, sans-serif)', fontWeight: 600, fontSize: '0.92rem', color: '#fff', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span>CJ BOT</span>
                   <span style={{ fontSize: '0.55rem', padding: '1px 5px', borderRadius: '4px', background: 'rgba(6,182,212,0.2)', color: '#38bdf8', border: '1px solid rgba(6,182,212,0.4)', letterSpacing: '0.05em' }}>SUSSY</span>
                 </div>

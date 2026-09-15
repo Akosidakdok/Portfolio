@@ -310,7 +310,7 @@ export const TechIcon: React.FC<TechIconProps> = ({
           <linearGradient id="geminiGradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
             <stop stopColor="#4E82EE" />
             <stop offset="0.5" stopColor="#9B72CF" />
-            <stop offset="1" stopColor="#E31E24" />
+            <stop offset="1" stopColor="#38BDF8" />
           </linearGradient>
         </defs>
       </svg>
@@ -321,7 +321,7 @@ export const TechIcon: React.FC<TechIconProps> = ({
   if (norm === 'antigravity' || norm === 'google antigravity' || norm === 'agy') {
     return (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-        <circle cx="12" cy="12" r="10" stroke="#E31E24" strokeWidth="1.5" strokeDasharray="3 2" />
+        <circle cx="12" cy="12" r="10" stroke="#6366F1" strokeWidth="1.5" strokeDasharray="3 2" />
         <path d="M12 4L19 17H5L12 4Z" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinejoin="round" />
         <circle cx="12" cy="13" r="2.5" fill="#4285F4" />
         <circle cx="12" cy="13" r="1" fill="#FFFFFF" />
@@ -559,7 +559,7 @@ export const TechIcon: React.FC<TechIconProps> = ({
 
   if (norm === 'team collab' || norm === 'team collaboration') {
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ color: color || '#E31E24' }}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ color: color || '#6366F1' }}>
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />

@@ -1,24 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 /* ─── Custom Properties ─────────────────────────────── */
 :root {
-  --bg-dark:    #0d0d0d;
-  --bg-darker:  #080808;
-  --bg-card:    #1a1a1a;
-  --bg-light:   #f0eeeb;
-  --bg-light-2: #e8e4df;
-  --red:        #E31E24;
-  --red-dark:   #b31519;
-  --red-glow:   rgba(227, 30, 36, 0.25);
+  --bg-dark:    #09090b;
+  --bg-darker:  #030304;
+  --bg-card:    #121215;
+  --bg-card-hover: #18181b;
+  --bg-light:   #f8fafc;
+  --bg-light-2: #f1f5f9;
+  --accent:     #6366f1;
+  --accent-cyan:#38bdf8;
+  --accent-glow:rgba(99, 102, 241, 0.25);
   --white:      #ffffff;
-  --off-white:  #e8e4df;
-  --gray:       #888888;
-  --gray-light: #aaaaaa;
-  --border-dark: rgba(255,255,255,0.08);
-  --border-light: rgba(0,0,0,0.10);
+  --off-white:  #f4f4f5;
+  --gray:       #71717a;
+  --gray-light: #a1a1aa;
+  --border-dark: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(0, 0, 0, 0.08);
 
-  --font-display: 'Bebas Neue', 'Barlow Condensed', sans-serif;
-  --font-condensed: 'Barlow Condensed', sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-condensed: 'Plus Jakarta Sans', 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'DM Mono', monospace;
 }
@@ -46,11 +47,11 @@ html {
     color: var(--white);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
-    selection-color: var(--red);
+    selection-color: var(--accent);
   }
 
   ::selection {
-    background: var(--red);
+    background: var(--accent);
     color: var(--white);
   }
 }
@@ -108,50 +109,52 @@ html {
   /* ─── Pill Tags ──────────────────── */
   .pill-tag {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 999px;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
     color: var(--white);
-    background: transparent;
-    transition: border-color 0.2s, background 0.2s;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
     cursor: default;
   }
 
   .pill-tag:hover {
-    border-color: var(--red);
-    background: rgba(227, 30, 36, 0.1);
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, 0.15);
   }
 
   /* ─── Stat Badges ────────────────── */
   .stat-badge {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 2px solid var(--white);
-    background: transparent;
+    width: 130px;
+    height: 96px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    transition: background 0.3s, border-color 0.3s;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: default;
   }
 
   .stat-badge:hover,
   .stat-badge.active-badge {
-    background: var(--red);
-    border-color: var(--red);
+    background: rgba(99, 102, 241, 0.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 24px var(--accent-glow);
+    transform: translateY(-2px);
   }
 
   .stat-badge-label {
     font-family: var(--font-body);
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--gray-light);
   }
@@ -159,52 +162,44 @@ html {
   .stat-badge-value {
     font-family: var(--font-display);
     font-size: 1.6rem;
-    line-height: 1;
+    font-weight: 700;
+    line-height: 1.1;
     color: var(--white);
     margin-top: 4px;
   }
 
   /* ─── Interactive Cards ──────────── */
   .interactive-card {
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                box-shadow 0.4s ease,
-                border-color 0.4s ease;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
   }
 
   .interactive-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: var(--red) !important;
-    box-shadow: 0 0 30px var(--red-glow);
+    transform: translateY(-6px);
+    border-color: rgba(99, 102, 241, 0.4) !important;
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 24px var(--accent-glow);
   }
 
-
-  /* ─── Crosshair BG ───────────────── */
-  .crosshair-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-
-  /* ─── Section label (PRODUCTION etc) */
+  /* ─── Section label ─── */
   .section-label {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--gray);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
   }
 
   .section-label::before {
     content: '';
-    width: 18px;
-    height: 18px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--red);
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
     flex-shrink: 0;
     display: inline-block;
   }
@@ -212,77 +207,80 @@ html {
   /* ─── Section label dark variant */
   .section-label-dark {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--gray-light);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
   }
 
   .section-label-dark::before {
     content: '';
-    width: 16px;
-    height: 16px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--red);
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
     flex-shrink: 0;
     display: inline-block;
   }
 
-  /* ─── CTA Button ─────────────────── */
+  /* ─── CTA Buttons ─────────────────── */
   .btn-cta {
     font-family: var(--font-body);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 14px 28px;
-    border-radius: 999px;
-    border: 2px solid var(--white);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 12px 24px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: var(--white);
-    background: transparent;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-cta:hover {
-    background: var(--white);
-    color: var(--bg-dark);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
     transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
 
   .btn-cta-red {
     font-family: var(--font-body);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 14px 28px;
-    border-radius: 999px;
-    border: 2px solid var(--red);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 12px 26px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: var(--white);
-    background: var(--red);
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-cta-red:hover {
-    background: var(--red-dark);
-    border-color: var(--red-dark);
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    box-shadow: 0 0 28px rgba(99, 102, 241, 0.6);
     transform: translateY(-2px);
   }
 
   /* ─── Star Rating ────────────────── */
   .star {
-    color: var(--red);
+    color: #fbbf24;
     font-size: 1rem;
   }
 
@@ -329,8 +327,8 @@ html {
   }
 
   .icon-btn:hover {
-    border-color: var(--red);
-    background: rgba(227,30,36,0.1);
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, 0.15);
   }
 
   @keyframes fadeIn {
