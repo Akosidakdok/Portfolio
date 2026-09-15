@@ -36,8 +36,8 @@ function JellyfishBackground() {
     if (!ctx) return;
 
     let animationId: number;
-    let jellyfishArr: JellyfishEntity[] = [];
-    let particles: Particle[] = [];
+    const jellyfishArr: JellyfishEntity[] = [];
+    const particles: Particle[] = [];
     const img = new Image();
     let imgLoaded = false;
 

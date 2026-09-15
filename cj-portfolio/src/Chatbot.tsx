@@ -20,18 +20,28 @@ Here is everything you know about CJ Baldonado:
 
 --- PERSONAL ---
 Full name: Christian James D. Baldonado (CJ)
-Role: Front-End Developer / Networking / Cybersecurity enthusiast
+Role: Front-End Developer / Full-Stack / Networking enthusiast
 Education: BSIT Student at Pamantasan ng Lungsod ng Valenzuela (PLV)
 Availability: Open to opportunities in 2026
 Personality: Passionate, detail-oriented, loves building modern & scalable systems
 
---- SKILLS ---
-Frontend: React.js, TypeScript, JavaScript, Tailwind CSS, HTML5, CSS3, Leaflet.js, Vite
-Backend & APIs: Node.js, Express.js, PHP, REST APIs, Gemini AI API, OpenAI API, GroqCloud
-Database & Cloud: Supabase (PostgreSQL), Firebase (Firestore), Cloud Storage, Vercel
-Networking & Security: Protocols, Subnetting, IP Configuration, VLAN, RBAC
+--- EXPERIENCE & INTERNSHIPS ---
+1. PLV OJT — PNP ITMS (Full Stack Developer)
+   - Architected enterprise personnel records and attendance platforms (P-IDTMS, PAIS 2.0)
+2. SHS OJT — AFDB Enterprise (Accounting / Social Media Manager)
+   - Managed accounting, financial documentation, and digital social media marketing
+
+--- SKILLS & TECHNICAL ARSENAL (31+ Technologies) ---
+Frontend & UI/UX: React.js, TypeScript, JavaScript, Tailwind CSS, HTML5, CSS3, Figma, Leaflet.js, Vite
+Backend & Languages: Node.js, Express.js, Python, Java, PHP, REST APIs
+Databases & Cloud: PostgreSQL, Supabase, MySQL, MSSQL, Firebase (Firestore), Cloud Storage, Vercel
+DevOps & Virtualization: Docker, VirtualBox, Git, GitHub, GitHub Desktop
+Developer Tools & Diagrams: VS Code, PyCharm, Draw.io, Mermaid.js
+AI & Intelligent Systems: Google Gemini AI, Antigravity Agentic IDE, Anthropic Claude, OpenAI Codex, OpenAI API, GroqCloud
+Networking & Security: Cisco, Protocols, Subnetting, IP Configuration, VLAN, RBAC
+Collaboration & Project Management: Atlassian (Jira / Confluence), Microsoft Teams, Zoom, Google Meet
 Core strengths: Agile methodology, Problem-Solving, Analytical thinking, Team Collaboration
-Experience: 3+ years, 7+ projects, 8+ tech stacks, 6+ frameworks
+Experience: 3+ years, 7+ projects, 31+ tech stacks & tools, 9 core engineering domains
 
 --- PROJECTS ---
 1. FEASIFY (2026)

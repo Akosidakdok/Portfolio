@@ -13,6 +13,7 @@ import paisImg from './assets/projects/pais.png';
 import fccWebDesignImg from './assets/certifications/fcc-responsive-web-design.png';
 import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
+import TechIcon from './components/TechIcon';
 
 
 
@@ -134,7 +135,10 @@ function SkillGroup({ icon, title, tags, dark = true }: { icon: React.ReactNode;
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
         {tags.map(tag => (
-          <span key={tag} className={dark ? 'skill-tag' : 'skill-tag-light'}>{tag}</span>
+          <span key={tag} className={dark ? 'skill-tag' : 'skill-tag-light'}>
+            <TechIcon name={tag} size={15} />
+            <span>{tag}</span>
+          </span>
         ))}
       </div>
     </div>
@@ -997,6 +1001,49 @@ function CertificationModal({
 }
 
 /* ══════════════════════════════════════════════════════════ */
+/*  FULL TECH STACK LIST (PLAIN)                               */
+/* ══════════════════════════════════════════════════════════ */
+interface PlainTechItem {
+  name: string;
+  category: string;
+  highlight?: string;
+}
+
+const FULL_LIST_PLAIN: PlainTechItem[] = [
+  { name: 'HTML', category: 'Frontend', highlight: 'Markup' },
+  { name: 'CSS', category: 'Frontend', highlight: 'Styling' },
+  { name: 'JavaScript', category: 'Frontend / Scripting', highlight: 'Language' },
+  { name: 'React', category: 'Frontend', highlight: 'Framework' },
+  { name: 'Figma', category: 'Design & UI/UX', highlight: 'Prototyping' },
+  { name: 'Python', category: 'Backend & Data', highlight: 'Language' },
+  { name: 'Java', category: 'Backend & OOP', highlight: 'Language' },
+  { name: 'Node.js', category: 'Backend & Runtime', highlight: 'Engine' },
+  { name: 'PostgreSQL', category: 'Database', highlight: 'Relational' },
+  { name: 'Supabase', category: 'Database & Cloud BaaS', highlight: 'BaaS' },
+  { name: 'MySQL', category: 'Database', highlight: 'Relational' },
+  { name: 'MSSQL', category: 'Database', highlight: 'Enterprise' },
+  { name: 'Docker', category: 'DevOps & Containers', highlight: 'Virtualization' },
+  { name: 'VirtualBox', category: 'Virtualization', highlight: 'Hypervisor' },
+  { name: 'Draw.io', category: 'Architecture & Diagrams', highlight: 'Design' },
+  { name: 'Mermaid.js', category: 'Architecture & Diagrams', highlight: 'Code-to-UML' },
+  { name: 'Cisco', category: 'Networking & Hardware', highlight: 'Enterprise' },
+  { name: 'VS Code', category: 'Developer Tools', highlight: 'IDE' },
+  { name: 'Git', category: 'Version Control', highlight: 'VCS' },
+  { name: 'GitHub', category: 'Version Control', highlight: 'Cloud VCS' },
+  { name: 'GitHub Desktop', category: 'Developer Tools', highlight: 'GUI' },
+  { name: 'PyCharm', category: 'Developer Tools', highlight: 'IDE' },
+  { name: 'Vercel', category: 'Cloud & Hosting', highlight: 'Deployment' },
+  { name: 'Codex', category: 'AI & Automation', highlight: 'Code Gen' },
+  { name: 'Claude', category: 'AI & LLMs', highlight: 'Anthropic' },
+  { name: 'Gemini', category: 'AI & LLMs', highlight: 'Google' },
+  { name: 'Antigravity', category: 'AI Agentic IDE', highlight: 'Google' },
+  { name: 'Atlassian (Jira / Confluence)', category: 'Productivity & PM', highlight: 'Agile PM' },
+  { name: 'Microsoft Teams', category: 'Collaboration', highlight: 'Communication' },
+  { name: 'Zoom', category: 'Collaboration', highlight: 'Conferencing' },
+  { name: 'Google Meet', category: 'Collaboration', highlight: 'Conferencing' },
+];
+
+/* ══════════════════════════════════════════════════════════ */
 /*  MAIN APP                                                   */
 /* ══════════════════════════════════════════════════════════ */
 function App() {
@@ -1007,6 +1054,9 @@ function App() {
   const [activeSectionTab, setActiveSectionTab] = useState<'projects' | 'certifications'>('projects');
   const [certCategory, setCertCategory] = useState<string>('ALL');
   const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
+  const [skillViewMode, setSkillViewMode] = useState<'categorized' | 'plain'>('categorized');
+  const [plainSearch, setPlainSearch] = useState('');
+
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -1213,8 +1263,8 @@ function App() {
             <div style={{ padding: '12px 20px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               <span className="pill-tag">Front-End</span>
               <span className="pill-tag">React</span>
+              <span className="pill-tag">Full-Stack</span>
               <span className="pill-tag">Networking</span>
-              <span className="pill-tag">Cybersecurity</span>
             </div>
 
             {/* Giant title */}
@@ -1270,7 +1320,7 @@ function App() {
                 zIndex: 15,
               }}
             >
-              <span className="section-label-dark" style={{ fontSize: '0.55rem' }}>FRONT END DEVELOPER/ NETWORKING / CYBER SECURITY</span>
+              <span className="section-label-dark" style={{ fontSize: '0.55rem' }}>FRONT END DEVELOPER / NETWORKING</span>
               <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--gray)', lineHeight: 1.7, margin: '10px 0 20px' }}>
                 BSIT Student at PLV. Building modern web apps &amp; data-driven systems.
               </p>
@@ -1307,8 +1357,8 @@ function App() {
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <span className="pill-tag">Front-End</span>
                 <span className="pill-tag">React</span>
+                <span className="pill-tag">Full-Stack</span>
                 <span className="pill-tag">Networking</span>
-                <span className="pill-tag">Cybersecurity</span>
               </div>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)' }}>
                 AVAILABLE [2026]
@@ -1452,7 +1502,7 @@ function App() {
               }}
             >
               <div className="reveal" style={{ maxWidth: '320px' }}>
-                <span className="section-label-dark" style={{ marginBottom: '8px' }}>FRONT END DEVELOPER / NETWORKING / CYBER SECURITY</span>
+                <span className="section-label-dark" style={{ marginBottom: '8px' }}>FRONT END DEVELOPER / NETWORKING</span>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray)', lineHeight: 1.7, marginTop: '10px' }}>
                   BSIT Student at PLV. Building modern web apps &amp; data-driven systems. Specializing in React frontends with AI integrations.
                 </p>
@@ -1524,21 +1574,52 @@ function App() {
           >
             <StatBadge label="YEARS EXP" value="3+" />
             <StatBadge label="PROJECTS" value="7+" active />
-            <StatBadge label="TECH STACK" value="6+" />
-            <StatBadge label="FRAMEWORKS" value="5+" />
+            <StatBadge label="TECH STACK" value="31+" />
+            <StatBadge label="DOMAINS" value="9" />
           </div>
 
           {/* Quote */}
-          <div className="reveal delay-200" style={{ textAlign: 'center', maxWidth: '560px', margin: '0 auto 64px' }}>
+          <div className="reveal delay-200" style={{ textAlign: 'center', maxWidth: '560px', margin: '0 auto 40px' }}>
             <div className="quote-mark">"</div>
             <p style={{ fontFamily: 'var(--font-condensed)', fontWeight: 600, fontSize: '1.15rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, textTransform: 'uppercase' }}>
               Passionate about building modern, scalable systems — where clean code meets exceptional user experience.
             </p>
           </div>
 
-          {/* Skill groups grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-            <div className="reveal delay-100">
+          {/* View Mode Switcher: Categorized vs Full List (Plain) */}
+          <div className="reveal delay-200" style={{ display: 'flex', justifyContent: 'center', marginBottom: '44px' }}>
+            <div className="stack-view-switcher">
+              <button
+                type="button"
+                onClick={() => setSkillViewMode('categorized')}
+                className={`stack-toggle-btn ${skillViewMode === 'categorized' ? 'active' : ''}`}
+                title="View grouped by engineering domain"
+              >
+                <span style={{ fontSize: '0.85rem' }}>⊞</span> Categorized Stack
+              </button>
+              <button
+                type="button"
+                onClick={() => setSkillViewMode('plain')}
+                className={`stack-toggle-btn ${skillViewMode === 'plain' ? 'active' : ''}`}
+                title="View plain list of all 31 technologies with icons"
+              >
+                <span style={{ fontSize: '0.85rem' }}>☰</span> Full List (Plain) <span style={{ opacity: 0.85, fontSize: '0.62rem', padding: '2px 7px', borderRadius: '4px', background: 'rgba(255,255,255,0.18)' }}>{FULL_LIST_PLAIN.length}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* VIEW 1: CATEGORIZED STACK */}
+          {skillViewMode === 'categorized' ? (
+            <div
+              key="categorized"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '20px',
+                animation: 'fadeIn 0.3s ease forwards',
+              }}
+            >
+              {/* 1. Frontend & UI/UX */}
               <SkillGroup
                 icon={
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1546,11 +1627,11 @@ function App() {
                     <polyline points="8 6 2 12 8 18" />
                   </svg>
                 }
-                title="Frontend"
-                tags={['React.js', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'HTML5', 'CSS3', 'Leaflet.js', 'Vite']}
+                title="Frontend & UI/UX"
+                tags={['React', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'HTML', 'CSS', 'Figma', 'Leaflet.js', 'Vite']}
               />
-            </div>
-            <div className="reveal delay-200">
+
+              {/* 2. Backend & Languages */}
               <SkillGroup
                 icon={
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1560,11 +1641,11 @@ function App() {
                     <line x1="6" y1="18" x2="6.01" y2="18" />
                   </svg>
                 }
-                title="Backend & APIs"
-                tags={['Node.js', 'Express.js', 'PHP', 'REST APIs', 'Gemini AI', 'OpenAI API', 'GroqCloud']}
+                title="Backend & Languages"
+                tags={['Node.js', 'Express.js', 'Python', 'Java', 'PHP', 'REST APIs']}
               />
-            </div>
-            <div className="reveal delay-300">
+
+              {/* 3. Database & Cloud */}
               <SkillGroup
                 icon={
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1574,10 +1655,45 @@ function App() {
                   </svg>
                 }
                 title="Database & Cloud"
-                tags={['Supabase', 'Firebase', 'PostgreSQL', 'Firestore', 'Vercel']}
+                tags={['PostgreSQL', 'Supabase', 'MySQL', 'MSSQL', 'Firebase', 'Firestore', 'Vercel']}
               />
-            </div>
-            <div className="reveal delay-400">
+
+              {/* 4. DevOps & Virtualization */}
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                  </svg>
+                }
+                title="DevOps & Virtualization"
+                tags={['Docker', 'VirtualBox', 'Git', 'GitHub', 'GitHub Desktop']}
+              />
+
+              {/* 5. Developer Tools & Diagrams */}
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                  </svg>
+                }
+                title="Developer Tools & Diagrams"
+                tags={['VS Code', 'PyCharm', 'Draw.io', 'Mermaid.js']}
+              />
+
+              {/* 6. AI & Intelligent Systems */}
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                  </svg>
+                }
+                title="AI & Intelligent Systems"
+                tags={['Gemini', 'Antigravity', 'Claude', 'Codex', 'OpenAI API', 'GroqCloud']}
+              />
+
+              {/* 7. Networking & Security */}
               <SkillGroup
                 icon={
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1586,10 +1702,24 @@ function App() {
                   </svg>
                 }
                 title="Networking & Security"
-                tags={['Protocols', 'Subnetting', 'IP Config', 'VLAN', 'RBAC']}
+                tags={['Cisco', 'Protocols', 'Subnetting', 'IP Config', 'VLAN', 'RBAC']}
               />
-            </div>
-            <div className="reveal delay-500">
+
+              {/* 8. Collaboration & Productivity */}
+              <SkillGroup
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                }
+                title="Collaboration & Productivity"
+                tags={['Atlassian (Jira / Confluence)', 'Microsoft Teams', 'Zoom', 'Google Meet']}
+              />
+
+              {/* 9. Core Strengths */}
               <SkillGroup
                 icon={
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1600,7 +1730,206 @@ function App() {
                 tags={['Agile', 'Problem-Solving', 'Analytical', 'Team Collab']}
               />
             </div>
-          </div>
+          ) : (
+            /* VIEW 2: FULL LIST (PLAIN) */
+            <div key="plain" className="plain-list-container" style={{ animation: 'fadeIn 0.3s ease forwards' }}>
+              {/* Header & Search Filter */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '28px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '20px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--red)', background: 'rgba(227,30,36,0.12)', padding: '3px 10px', borderRadius: '4px', border: '1px solid rgba(227,30,36,0.25)' }}>
+                      OFFICIAL CATALOG
+                    </span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray-light)', letterSpacing: '0.08em' }}>
+                      {FULL_LIST_PLAIN.length} TOTAL TECHNOLOGIES
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', letterSpacing: '0.04em', color: 'var(--white)', marginTop: '8px' }}>
+                    FULL LIST (PLAIN)
+                  </h3>
+                </div>
+
+                {/* Instant Search Bar */}
+                <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
+                  <input
+                    type="text"
+                    value={plainSearch}
+                    onChange={e => setPlainSearch(e.target.value)}
+                    placeholder="Search tech stack..."
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px 10px 36px',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.14)',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.75rem',
+                      letterSpacing: '0.05em',
+                      outline: 'none',
+                      transition: 'border-color 0.2s',
+                    }}
+                    onFocus={e => (e.target.style.borderColor = 'var(--red)')}
+                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.14)')}
+                  />
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--gray)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  {plainSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setPlainSearch('')}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--gray)',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Grid of All Technologies with individual brand images/icons */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                {FULL_LIST_PLAIN
+                  .filter(item =>
+                    item.name.toLowerCase().includes(plainSearch.toLowerCase()) ||
+                    item.category.toLowerCase().includes(plainSearch.toLowerCase()) ||
+                    (item.highlight && item.highlight.toLowerCase().includes(plainSearch.toLowerCase()))
+                  )
+                  .map((item, idx) => (
+                    <div
+                      key={item.name}
+                      className="plain-list-item"
+                      title={`${item.name} · ${item.category}`}
+                    >
+                      <div
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          background: 'rgba(255,255,255,0.06)',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                        }}
+                      >
+                        <TechIcon name={item.name} size={18} />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              color: 'var(--white)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {item.name}
+                          </span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)' }}>
+                            #{String(idx + 1).padStart(2, '0')}
+                          </span>
+                        </div>
+                        <span
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.58rem',
+                            color: 'var(--gray-light)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.08em',
+                            marginTop: '2px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {item.category}
+                        </span>
+                      </div>
+                      {item.highlight && (
+                        <span
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.52rem',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            background: 'rgba(227,30,36,0.12)',
+                            border: '1px solid rgba(227,30,36,0.25)',
+                            color: '#ff8a8a',
+                            letterSpacing: '0.06em',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {item.highlight}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+              </div>
+
+              {/* Empty state if search has no results */}
+              {FULL_LIST_PLAIN.filter(item =>
+                item.name.toLowerCase().includes(plainSearch.toLowerCase()) ||
+                item.category.toLowerCase().includes(plainSearch.toLowerCase())
+              ).length === 0 && (
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray)' }}>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.08em' }}>
+                    No technology found matching "{plainSearch}".
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setPlainSearch('')}
+                    style={{
+                      marginTop: '12px',
+                      background: 'transparent',
+                      border: '1px solid var(--red)',
+                      color: 'var(--red)',
+                      padding: '6px 14px',
+                      borderRadius: '6px',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.7rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Clear Filter
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </section>
@@ -1631,7 +1960,7 @@ function App() {
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', letterSpacing: '0.1em', color: 'var(--white)', marginBottom: '4px' }}>
                   PAMANTASAN
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', letterSpacing: '0.08em', color: 'var(--gray-light)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', letterSpacing: '0.1em', color: 'var(--white)', marginBottom: '4px' }}>
                   NG LUNGSOD NG VALENZUELA
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)', marginTop: '8px', letterSpacing: '0.1em' }}>
@@ -1640,75 +1969,76 @@ function App() {
               </div>
             </div>
 
-            {/* Center: numbered section nav links */}
-            <div className="reveal delay-200" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-              {[
-                { n: '01', label: 'ABOUT',    href: '#about'    },
-                { n: '02', label: 'SKILLS',   href: '#skills'   },
-                { n: '03', label: 'PROJECTS', href: '#projects' },
-                { n: '04', label: 'CONTACT',  href: '#contact'  },
-              ].map(({ n, label, href }) => (
-                <a
-                  key={n}
-                  href={href}
+            {/* Center: Experience */}
+            <div className="reveal delay-200" style={{ maxWidth: '440px', flex: '1 1 320px' }}>
+              <span className="section-label-dark" style={{ marginBottom: '16px' }}>EXPERIENCE</span>
+              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* 1. PLV OJT - PNP ITMS */}
+                <div
                   style={{
-                    textDecoration: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: 'pointer',
+                    padding: '16px 20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'rgba(255,255,255,0.02)',
+                    transition: 'border-color 0.25s, background 0.25s, transform 0.25s',
                   }}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget;
-                    (el.querySelector('.num-txt') as HTMLElement).style.color = 'var(--red)';
-                    (el.querySelector('.num-bar') as HTMLElement).style.background = 'var(--red)';
-                    (el.querySelector('.num-lbl') as HTMLElement).style.color = 'var(--red)';
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget;
-                    (el.querySelector('.num-txt') as HTMLElement).style.color = 'rgba(255,255,255,0.3)';
-                    (el.querySelector('.num-bar') as HTMLElement).style.background = 'rgba(255,255,255,0.15)';
-                    (el.querySelector('.num-lbl') as HTMLElement).style.color = 'rgba(255,255,255,0.35)';
-                  }}
+                  className="interactive-card"
                 >
-                  <span
-                    className="num-txt"
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.5rem',
-                      color: 'rgba(255,255,255,0.3)',
-                      letterSpacing: '0.05em',
-                      transition: 'color 0.2s',
-                    }}
-                  >
-                    {n}
-                  </span>
-                  <div
-                    className="num-bar"
-                    style={{
-                      width: '24px',
-                      height: '2px',
-                      background: 'rgba(255,255,255,0.15)',
-                      borderRadius: '2px',
-                      transition: 'background 0.2s',
-                    }}
-                  />
-                  <span
-                    className="num-lbl"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.5rem',
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,0.35)',
-                      transition: 'color 0.2s',
-                    }}
-                  >
-                    {label}
-                  </span>
-                </a>
-              ))}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--red)', display: 'inline-block', boxShadow: '0 0 8px var(--red)' }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: 'var(--red)', textTransform: 'uppercase', fontWeight: 700 }}>
+                        PLV OJT
+                      </span>
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      COLLEGE INTERNSHIP
+                    </span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', letterSpacing: '0.05em', color: 'var(--white)', lineHeight: 1.15 }}>
+                    PNP ITMS
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--gray-light)', marginTop: '4px', letterSpacing: '0.04em' }}>
+                    Full Stack Developer
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', lineHeight: 1.5, marginTop: '8px', marginBottom: 0 }}>
+                    Architected enterprise attendance &amp; personnel records systems (P-IDTMS, PAIS 2.0).
+                  </p>
+                </div>
+
+                {/* 2. SHS OJT - AFDB Enterprise */}
+                <div
+                  style={{
+                    padding: '16px 20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'rgba(255,255,255,0.02)',
+                    transition: 'border-color 0.25s, background 0.25s, transform 0.25s',
+                  }}
+                  className="interactive-card"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'rgba(255,255,255,0.5)', display: 'inline-block' }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: 'var(--gray-light)', textTransform: 'uppercase', fontWeight: 700 }}>
+                        SHS OJT
+                      </span>
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      SENIOR HIGH INTERNSHIP
+                    </span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', letterSpacing: '0.05em', color: 'var(--white)', lineHeight: 1.15 }}>
+                    AFDB ENTERPRISE
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--gray-light)', marginTop: '4px', letterSpacing: '0.04em' }}>
+                    Accounting / Social Media Manager
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', lineHeight: 1.5, marginTop: '8px', marginBottom: 0 }}>
+                    Managed financial records, bookkeeping documentation, and digital marketing channels.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Right: quick facts */}
@@ -1750,7 +2080,7 @@ function App() {
                         <line x1="1" y1="14" x2="4" y2="14" />
                       </svg>
                     ),
-                    text: 'Front-End+ AI / NETWORKING / CYBER SECURITY',
+                    text: 'Front-End + AI / Networking',
                   },
                   {
                     icon: (
@@ -2434,7 +2764,7 @@ function App() {
           </h2>
 
           <p className="reveal delay-200" style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--gray)', maxWidth: '480px', lineHeight: 1.8, marginBottom: '40px' }}>
-            I'm currently looking for a Freelance position as a Front End Developer/Full-Stack Developer. Let's discuss how my Front-End/Full-Stack development skills,  AI experience, Networking, and Cybersecurity can contribute to your team.
+            I'm currently looking for a Freelance position as a Front End Developer/Full-Stack Developer. Let's discuss how my Front-End/Full-Stack development skills, AI experience, and Networking can contribute to your team.
           </p>
 
           {/* CTAs */}
