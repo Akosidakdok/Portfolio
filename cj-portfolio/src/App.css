@@ -1,10 +1,5 @@
 /* App.css — Cinematic Portfolio */
 
-/* Film strip hover accent */
-.film-frame-hover:hover {
-  background: rgba(227, 30, 36, 0.15);
-}
-
 /* Vertical rotated text */
 .rotate-vert-cw {
   writing-mode: vertical-rl;
@@ -20,30 +15,6 @@
   letter-spacing: -0.01em;
 }
 
-/* Image break-out effect */
-.profile-breakout {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Project card image frame */
-.proj-img-frame {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.12);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.proj-img-frame:hover {
-  transform: scale(1.04) rotate(-1deg);
-}
-
 /* Radar circle animation */
 @keyframes radarPing {
   0%   { transform: translate(-50%,-50%) scale(0.8); opacity: 0.3; }
@@ -55,22 +26,7 @@
   animation: radarPing 4s ease-out infinite;
 }
 
-/* Scroll arrow bounce */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(6px); }
-}
-
-.bounce-arrow {
-  animation: bounce 2s ease-in-out infinite;
-}
-
-/* Film strip & Tech Ticker scroll */
-@keyframes filmScroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
+/* Tech Ticker scroll */
 @keyframes tickerScrollLeft {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -79,12 +35,6 @@
 @keyframes tickerScrollRight {
   0%   { transform: translateX(-50%); }
   100% { transform: translateX(0); }
-}
-
-.film-strip-inner {
-  animation: filmScroll 28s linear infinite;
-  display: flex;
-  width: max-content;
 }
 
 .ticker-track-left {
@@ -106,12 +56,6 @@
 .ticker-container:hover .ticker-track-left,
 .ticker-container:hover .ticker-track-right {
   animation-play-state: paused;
-}
-
-/* Section number fade in */
-@keyframes fadeNum {
-  from { opacity: 0; transform: scale(0.7); }
-  to   { opacity: 1; transform: scale(1); }
 }
 
 /* Quote mark style */
@@ -244,21 +188,3 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 12px rgba(227, 30, 36, 0.2);
 }
 
-
-/* Number counter overlay */
-.section-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 7rem;
-  position: absolute;
-  opacity: 0.04;
-  pointer-events: none;
-  user-select: none;
-  top: -20px;
-  left: -10px;
-  line-height: 1;
-  color: var(--white);
-}
-
-.section-num-dark {
-  color: #000;
-}

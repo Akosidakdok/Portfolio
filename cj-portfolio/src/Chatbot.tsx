@@ -135,35 +135,41 @@ async function askGemini(history: Message[], newUserText: string): Promise<strin
     { role: 'user', content: newUserText },
   ];
 
-  try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
-        messages,
-        temperature: 0.75,
-        max_tokens: 512,
-      }),
-    });
+  // Active production models on Groq with automatic fallback
+  const models = ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'groq/compound-mini', 'qwen/qwen3.8-27b'];
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error(`Groq API error (${res.status}):`, errText);
-      if (res.status === 401) return '⚠️ Invalid API key. Please check your Groq API key.';
-      if (res.status === 429) return '⚠️ Too many requests — please wait a moment and try again.';
-      return `⚠️ Error ${res.status}: Could not reach the AI. Please try again.`;
+  for (const model of models) {
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.7,
+          max_tokens: 512,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const content = data?.choices?.[0]?.message?.content;
+        if (content) return content;
+      } else if (res.status === 401) {
+        return '⚠️ Invalid API key. Please check your Groq API key.';
+      } else if (res.status === 429) {
+        return '⚠️ Too many requests — please wait a moment and try again.';
+      }
+      console.warn(`Groq model ${model} returned ${res.status}, trying fallback...`);
+    } catch (err) {
+      console.warn(`Groq fetch failed for ${model}:`, err);
     }
-
-    const data = await res.json();
-    return data?.choices?.[0]?.message?.content ?? "I'm not sure how to answer that. Try asking something else about CJ!";
-  } catch (err) {
-    console.error('Groq fetch error:', err);
-    return '⚠️ Network error — please check your internet connection.';
   }
+
+  return '⚠️ Error: Could not reach the AI service right now. Please try again in a moment.';
 }
 
 /* ─── Main Chatbot Component ─── */

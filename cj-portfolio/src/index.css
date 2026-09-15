@@ -177,14 +177,6 @@ html {
     box-shadow: 0 0 30px var(--red-glow);
   }
 
-  /* ─── Red Dot Separator ─────────── */
-  .nav-dot::before {
-    content: '•';
-    color: var(--red);
-    margin: 0 0.5rem;
-    font-size: 0.5rem;
-    vertical-align: middle;
-  }
 
   /* ─── Crosshair BG ───────────────── */
   .crosshair-bg {
@@ -299,22 +291,6 @@ html {
     font-size: 1rem;
   }
 
-  /* ─── Numbered Section Marker ────── */
-  .num-marker {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 2px solid rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-condensed);
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: #333;
-    background: transparent;
-  }
-
   /* ─── Project Card (dark booking style) */
   .project-card-dark {
     background: var(--bg-dark);
@@ -334,31 +310,6 @@ html {
   .project-thumb-container:hover .project-thumb-img {
     transform: scale(1.06);
     filter: brightness(1.05);
-  }
-
-
-  /* ─── Play Button ─────────────────── */
-  .play-btn {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255,255,255,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.25s;
-  }
-
-  .play-btn:hover {
-    background: var(--white);
-    transform: scale(1.1);
-  }
-
-  .play-btn:hover svg {
-    fill: var(--bg-dark);
   }
 
   /* ─── Icon button (nav) ────────────── */

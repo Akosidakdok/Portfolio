@@ -5,10 +5,5 @@
     "build": "cd cj-portfolio && npm run build",
     "preview": "cd cj-portfolio && npm run preview",
     "lint": "cd cj-portfolio && npm run lint"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.5.0",
-    "postcss": "^8.5.15",
-    "tailwindcss": "^4.3.0"
   }
 }
