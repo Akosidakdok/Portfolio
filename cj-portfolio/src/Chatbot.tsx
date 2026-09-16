@@ -28,7 +28,9 @@ Personality: Passionate, detail-oriented, loves building modern & scalable syste
 --- EXPERIENCE & INTERNSHIPS ---
 1. PLV OJT — PNP ITMS (Full Stack Developer)
    - Architected enterprise personnel records and attendance platforms (P-IDTMS, PAIS 2.0)
-2. SHS OJT — AFDB Enterprise (Accounting / Social Media Manager)
+2. Freelance (Full Stack Developer)
+   - Architected and developed custom full-stack web applications, client solutions, and modern digital platforms
+3. SHS OJT — AFDB Enterprise (Accounting / Social Media Manager)
    - Managed accounting, financial documentation, and digital social media marketing
 
 --- SKILLS & TECHNICAL ARSENAL (31+ Technologies) ---

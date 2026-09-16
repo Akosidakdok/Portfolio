@@ -14,6 +14,7 @@ import fccWebDesignImg from './assets/certifications/fcc-responsive-web-design.p
 import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
 import TechIcon from './components/TechIcon';
+import TelemetryConsole from './components/TelemetryConsole';
 
 
 
@@ -110,7 +111,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
   return (
     <div className="project-card-dark interactive-card" style={{ maxWidth: '340px', width: '100%' }}>
       {/* Card Header */}
-      <div style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', padding: '7px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'var(--accent)', padding: '7px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--white)', textTransform: 'uppercase' }}>Project</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.92)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
           <svg width="8" height="8" viewBox="0 0 76 65" fill="#fff">
@@ -1257,13 +1258,7 @@ function App() {
               }}
             >
               Building scalable web systems &amp;{' '}
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #38bdf8 50%, #a855f7 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
+              <span style={{ color: 'var(--accent)' }}>
                 intelligent interfaces.
               </span>
             </h1>
@@ -1957,7 +1952,40 @@ function App() {
                   </p>
                 </div>
 
-                {/* 2. SHS OJT - AFDB Enterprise */}
+                {/* 2. Freelance - Full Stack Developer */}
+                <div
+                  style={{
+                    padding: '16px 20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'rgba(255,255,255,0.02)',
+                    transition: 'border-color 0.25s, background 0.25s, transform 0.25s',
+                  }}
+                  className="interactive-card"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: '#34d399', textTransform: 'uppercase', fontWeight: 700 }}>
+                        FREELANCE
+                      </span>
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      SELF-EMPLOYED
+                    </span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', letterSpacing: '0.05em', color: 'var(--white)', lineHeight: 1.15 }}>
+                    FREELANCE
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--gray-light)', marginTop: '4px', letterSpacing: '0.04em' }}>
+                    Full Stack Developer
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', lineHeight: 1.5, marginTop: '8px', marginBottom: 0 }}>
+                    Architecting and engineering tailored web applications, client solutions, and modern digital platforms.
+                  </p>
+                </div>
+
+                {/* 3. SHS OJT - AFDB Enterprise */}
                 <div
                   style={{
                     padding: '16px 20px',
@@ -2014,7 +2042,7 @@ function App() {
                         <polyline points="8 6 2 12 8 18" />
                       </svg>
                     ),
-                    text: 'Freelance Web Developer',
+                    text: 'Freelance Full-Stack Developer',
                   },
                   {
                     icon: (
@@ -2156,7 +2184,7 @@ function App() {
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                   transition: 'all 0.25s ease',
-                  background: activeSectionTab === 'projects' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'transparent',
+                  background: activeSectionTab === 'projects' ? 'var(--accent)' : 'transparent',
                   color: activeSectionTab === 'projects' ? 'white' : '#666',
                   boxShadow: activeSectionTab === 'projects' ? '0 4px 16px rgba(99, 102, 241, 0.4)' : 'none',
                 }}
@@ -2192,7 +2220,7 @@ function App() {
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                   transition: 'all 0.25s ease',
-                  background: activeSectionTab === 'certifications' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'transparent',
+                  background: activeSectionTab === 'certifications' ? 'var(--accent)' : 'transparent',
                   color: activeSectionTab === 'certifications' ? 'white' : '#666',
                   boxShadow: activeSectionTab === 'certifications' ? '0 4px 16px rgba(99, 102, 241, 0.4)' : 'none',
                 }}
@@ -2485,7 +2513,7 @@ function App() {
                     transition: 'background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s',
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+                    (e.currentTarget as HTMLButtonElement).style.background = 'var(--accent)';
                     (e.currentTarget as HTMLButtonElement).style.borderColor = '#6366f1';
                     (e.currentTarget as HTMLButtonElement).style.color = 'white';
                     (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.35)';
@@ -2526,7 +2554,7 @@ function App() {
                   aria-label="Next project"
                   style={{
                     width: '52px', height: '52px', borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    background: 'var(--accent)',
                     border: 'none',
                     boxShadow: '0 4px 16px rgba(99, 102, 241, 0.35)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -2651,7 +2679,7 @@ function App() {
           overflow: 'hidden',
         }}
       >
-        {/* Large text */}
+        {/* Contact Content Container */}
         <div
           style={{
             padding: '80px 32px 0',
@@ -2659,39 +2687,57 @@ function App() {
             margin: '0 auto',
           }}
         >
-          <div className="reveal" style={{ marginBottom: '8px' }}>
-            <span className="section-label-dark">INITIALIZE CONNECTION</span>
-          </div>
-          <h2
-            className="reveal delay-100"
+          <div
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(3rem, 9vw, 8rem)',
-              lineHeight: 0.92,
-              letterSpacing: '-0.01em',
-              color: 'var(--white)',
-              textTransform: 'uppercase',
-              marginTop: '16px',
-              marginBottom: '40px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+              gap: '56px',
+              alignItems: 'center',
+              marginBottom: '64px',
             }}
           >
-            LET'S BUILD<br />
-            <span style={{ background: 'linear-gradient(135deg, #6366f1 0%, #38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SOMETHING</span><br />
-            GREAT.
-          </h2>
+            {/* Left Column: Heading, description, and CTAs */}
+            <div>
+              <div className="reveal" style={{ marginBottom: '8px' }}>
+                <span className="section-label-dark">INITIALIZE CONNECTION</span>
+              </div>
+              <h2
+                className="reveal delay-100"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(2.8rem, 5.5vw, 5.8rem)',
+                  lineHeight: 0.92,
+                  letterSpacing: '-0.01em',
+                  color: 'var(--white)',
+                  textTransform: 'uppercase',
+                  marginTop: '16px',
+                  marginBottom: '28px',
+                }}
+              >
+                LET'S BUILD<br />
+                <span style={{ color: 'var(--accent)' }}>SOMETHING</span><br />
+                GREAT.
+              </h2>
 
-          <p className="reveal delay-200" style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--gray)', maxWidth: '480px', lineHeight: 1.8, marginBottom: '40px' }}>
-            I'm currently looking for a Freelance position as a Front End Developer/Full-Stack Developer. Let's discuss how my Front-End/Full-Stack development skills, AI experience, and Networking can contribute to your team.
-          </p>
+              <p className="reveal delay-200" style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--gray)', maxWidth: '480px', lineHeight: 1.8, marginBottom: '36px' }}>
+                I'm currently looking for a Freelance position as a Front End Developer/Full-Stack Developer. Let's discuss how my Front-End/Full-Stack development skills, AI experience, and Networking can contribute to your team.
+              </p>
 
-          {/* CTAs */}
-          <div className="reveal delay-300" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '60px' }}>
-            <a href="mailto:cjbaldonado11@gmail.com" className="btn-cta-red">
-              Send Email ↗
-            </a>
-            <a href="https://www.linkedin.com/in/christian-james-baldonado-7b7721410/" target="_blank" rel="noopener noreferrer" className="btn-cta">
-              LinkedIn ↗
-            </a>
+              {/* CTAs */}
+              <div className="reveal delay-300" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <a href="mailto:cjbaldonado11@gmail.com" className="btn-cta-red">
+                  Send Email ↗
+                </a>
+                <a href="https://www.linkedin.com/in/christian-james-baldonado-7b7721410/" target="_blank" rel="noopener noreferrer" className="btn-cta">
+                  LinkedIn ↗
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Interactive Dev Console & Telemetry Hub */}
+            <div className="reveal delay-200" style={{ width: '100%', maxWidth: '580px', justifySelf: 'center' }}>
+              <TelemetryConsole />
+            </div>
           </div>
 
           {/* Social links row */}
