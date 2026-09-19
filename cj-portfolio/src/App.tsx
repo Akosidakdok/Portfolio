@@ -15,6 +15,7 @@ import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
 import TechIcon from './components/TechIcon';
 import TelemetryConsole from './components/TelemetryConsole';
+import GitHubContributions from './components/GitHubContributions';
 
 
 
@@ -2738,6 +2739,11 @@ function App() {
             <div className="reveal delay-200" style={{ width: '100%', maxWidth: '580px', justifySelf: 'center' }}>
               <TelemetryConsole />
             </div>
+          </div>
+
+          {/* GitHub Activity & Contribution Telemetry Hub */}
+          <div className="reveal delay-300" style={{ width: '100%', marginBottom: '56px' }}>
+            <GitHubContributions />
           </div>
 
           {/* Social links row */}
