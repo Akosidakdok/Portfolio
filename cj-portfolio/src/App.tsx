@@ -1005,18 +1005,79 @@ function App() {
   const [activeProject, setActiveProject] = useState(0);
   const [cardVisible, setCardVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [activeNavSection, setActiveNavSection] = useState<'about' | 'skills' | 'projects' | 'contact'>('about');
   const [activeSectionTab, setActiveSectionTab] = useState<'projects' | 'certifications'>('projects');
   const [certCategory, setCertCategory] = useState<string>('ALL');
   const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
   const [skillViewMode, setSkillViewMode] = useState<'categorized' | 'plain'>('categorized');
   const [plainSearch, setPlainSearch] = useState('');
 
-
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  /* Active section scroll spy */
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      // Bottom of page detection for Contact
+      if (windowHeight + scrollY >= docHeight - 80) {
+        setActiveNavSection('contact');
+        return;
+      }
+
+      const sectionIds: Array<'about' | 'skills' | 'projects' | 'contact'> = ['about', 'skills', 'projects', 'contact'];
+      const scrollThreshold = 180;
+      let current: 'about' | 'skills' | 'projects' | 'contact' = 'about';
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= scrollThreshold) {
+            current = id;
+          }
+        }
+      }
+
+      setActiveNavSection(current);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isItemActive = (item: string) => {
+    const lower = item.toLowerCase();
+    if (activeNavSection === 'projects') {
+      return lower === activeSectionTab;
+    }
+    return lower === activeNavSection;
+  };
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: string, isMobileMenu = false) => {
+    if (isMobileMenu) setMenuOpen(false);
+    const lower = item.toLowerCase();
+    if (lower === 'certifications') {
+      e.preventDefault();
+      setActiveSectionTab('certifications');
+      setActiveNavSection('projects');
+      document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (lower === 'projects') {
+      e.preventDefault();
+      setActiveSectionTab('projects');
+      setActiveNavSection('projects');
+      document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      setActiveNavSection(lower as 'about' | 'skills' | 'contact');
+    }
+  };
 
   const switchProject = useCallback((nextIndex: number) => {
     setCardVisible(false);
@@ -1073,7 +1134,11 @@ function App() {
       >
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
-          <a href="#about" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}>
+          <a
+            href="#about"
+            onClick={() => setActiveNavSection('about')}
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}
+          >
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--white)' }}>CJ</span>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--accent)', lineHeight: 1 }}>+</span>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--white)' }}>DEV</span>
@@ -1088,29 +1153,8 @@ function App() {
                 )}
                 <a
                   href={`#${item.toLowerCase()}`}
-                  onClick={(e) => {
-                    if (item.toLowerCase() === 'certifications') {
-                      e.preventDefault();
-                      setActiveSectionTab('certifications');
-                      document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-                    } else if (item.toLowerCase() === 'projects') {
-                      setActiveSectionTab('projects');
-                    }
-                  }}
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: (item.toLowerCase() === 'projects' && activeSectionTab === 'projects') || (item.toLowerCase() === 'certifications' && activeSectionTab === 'certifications') ? 'var(--white)' : 'var(--gray-light)',
-                    textDecoration: 'none',
-                    transition: 'color 0.2s',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
-                  onMouseLeave={e => {
-                    const isTabActive = (item.toLowerCase() === 'projects' && activeSectionTab === 'projects') || (item.toLowerCase() === 'certifications' && activeSectionTab === 'certifications');
-                    e.currentTarget.style.color = isTabActive ? 'var(--white)' : 'var(--gray-light)';
-                  }}
+                  onClick={(e) => handleNavClick(e, item)}
+                  className={`desktop-nav-link ${isItemActive(item) ? 'active' : ''}`}
                 >
                   {item}
                 </a>
@@ -1144,22 +1188,13 @@ function App() {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                onClick={(e) => {
-                  setMenuOpen(false);
-                  if (item.toLowerCase() === 'certifications') {
-                    e.preventDefault();
-                    setActiveSectionTab('certifications');
-                    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-                  } else if (item.toLowerCase() === 'projects') {
-                    setActiveSectionTab('projects');
-                  }
-                }}
+                onClick={(e) => handleNavClick(e, item, true)}
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.85rem',
                   letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: (item.toLowerCase() === 'projects' && activeSectionTab === 'projects') || (item.toLowerCase() === 'certifications' && activeSectionTab === 'certifications') ? 'var(--accent)' : 'var(--white)',
+                  color: isItemActive(item) ? 'var(--accent)' : 'var(--white)',
                   textDecoration: 'none',
                   borderBottom: '1px solid rgba(255,255,255,0.06)',
                   paddingBottom: '16px',
@@ -1291,7 +1326,14 @@ function App() {
                 marginBottom: '40px',
               }}
             >
-              <a href="#projects" className="btn-cta-red">
+              <a
+                href="#projects"
+                onClick={() => {
+                  setActiveSectionTab('projects');
+                  setActiveNavSection('projects');
+                }}
+                className="btn-cta-red"
+              >
                 Explore Projects ↓
               </a>
               <a
@@ -1329,7 +1371,7 @@ function App() {
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Years Building</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: '#6366f1' }}>7+</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: '#6366f1' }}>10+</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Featured Projects</div>
               </div>
               <div>
@@ -1521,7 +1563,7 @@ function App() {
             }}
           >
             <StatBadge label="YEARS EXP" value="5+" />
-            <StatBadge label="PROJECTS" value="7+" active />
+            <StatBadge label="PROJECTS" value="10+" active />
             <StatBadge label="TECH STACK" value="31+" />
             <StatBadge label="DOMAINS" value="9" />
           </div>

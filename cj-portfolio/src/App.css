@@ -1,5 +1,30 @@
 /* App.css — Sleek Modern Tech Portfolio (Linear / Vercel Aesthetic) */
 
+/* Desktop nav link */
+.desktop-nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.desktop-nav-link:hover {
+  color: var(--white);
+}
+
+.desktop-nav-link.active {
+  color: var(--white);
+}
+
+/* Ensure sections scroll nicely with the fixed navbar */
+section[id], footer[id] {
+  scroll-margin-top: 70px;
+}
+
+
 /* Tech Ribbon & Ticker */
 @keyframes tickerScrollLeft {
   0%   { transform: translateX(0); }
