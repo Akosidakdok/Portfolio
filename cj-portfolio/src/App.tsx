@@ -10,6 +10,8 @@ import mangDelfinsImg from './assets/projects/mang-delfins.png';
 import alertoPhImg from './assets/projects/alerto-ph.png';
 import pIdtmsImg from './assets/projects/p-idtms.png';
 import paisImg from './assets/projects/pais.png';
+import campNaviImg from './assets/projects/camp-navi.png';
+import pnpSurveyImg from './assets/projects/pnp-survey.png';
 import fccWebDesignImg from './assets/certifications/fcc-responsive-web-design.png';
 import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
@@ -109,26 +111,39 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
   date: string;
   image: string;
 }) {
+  const isGithub = link.toLowerCase().includes('github.com');
+
   return (
     <div className="project-card-dark interactive-card" style={{ maxWidth: '340px', width: '100%' }}>
       {/* Card Header */}
       <div style={{ background: 'var(--accent)', padding: '7px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--white)', textTransform: 'uppercase' }}>Project</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.92)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-          <svg width="8" height="8" viewBox="0 0 76 65" fill="#fff">
-            <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
-          </svg>
-          VERCEL DEPLOYED
+          {isGithub ? (
+            <>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+              </svg>
+              GITHUB COLLAB
+            </>
+          ) : (
+            <>
+              <svg width="8" height="8" viewBox="0 0 76 65" fill="#fff">
+                <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+              </svg>
+              VERCEL DEPLOYED
+            </>
+          )}
         </span>
       </div>
 
-      {/* Card Thumbnail Preview (Vercel) */}
+      {/* Card Thumbnail Preview */}
       <a
         href={link}
         target="_blank"
         rel="noopener noreferrer"
         className="project-thumb-container"
-        title={`Visit ${title} live on Vercel`}
+        title={`Visit ${title} on ${isGithub ? 'GitHub' : 'Vercel'}`}
         style={{
           display: 'block',
           position: 'relative',
@@ -142,7 +157,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
       >
         <img
           src={image}
-          alt={`${title} Live Vercel Preview`}
+          alt={`${title} Preview`}
           className="project-thumb-img"
           style={{
             width: '100%',
@@ -184,7 +199,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
             }}
           >
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px #22c55e' }} />
-            Live Preview
+            {isGithub ? 'Collaborator Repo' : 'Live Preview'}
           </span>
           <span
             style={{
@@ -201,7 +216,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
               borderRadius: '4px',
             }}
           >
-            Vercel ↗
+            {isGithub ? 'GitHub ↗' : 'Vercel ↗'}
           </span>
         </div>
       </a>
@@ -241,7 +256,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
           className="btn-cta-red"
           style={{ marginTop: '20px', width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}
         >
-          View Live Project <span>↗</span>
+          {isGithub ? 'View GitHub Repository' : 'View Live Project'} <span>↗</span>
         </a>
       </div>
     </div>
@@ -356,6 +371,32 @@ const PROJECTS: Project[] = [
     longDesc: 'Architected an enterprise personnel management information system for PNP-ITMS ARMD, automating rank-aware time-in-grade calculations, promotion tracking, service histories, leave workflows, and PDF report generation.',
     color: '#D97706',
     image: paisImg,
+  },
+  {
+    id: '8',
+    label: 'PROJECT H',
+    title: 'Camp-Navi',
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Leaflet', 'Supabase', 'PostGIS'],
+    link: 'https://github.com/Markssuave/Camp-Navi',
+    description: 'PNP Camp Crame real-time security geofencing, facility navigation, and active personnel tracking router with automated restricted-zone avoidance.',
+    venue: 'GIS / WEB APP',
+    date: '2026',
+    longDesc: 'Architected a real-time security geofencing, facility navigation, and personnel tracking platform for PNP Camp Crame. Utilizes PostGIS/pgRouting algorithms, Leaflet GIS mapping, and Supabase Realtime to calculate Dijkstra safe routes avoiding restricted zones with live civilian and personnel GPS telemetry.',
+    color: '#10B981',
+    image: campNaviImg,
+  },
+  {
+    id: '9',
+    label: 'PROJECT I',
+    title: 'PNP-Assignment-Survey',
+    stack: ['Python', 'Django', 'PostgreSQL', 'Docker', 'Railway'],
+    link: 'https://github.com/Markssuave/PNP-Assignment-Survey',
+    description: 'PNP Preferred Assignment Location Survey & Admin Dashboard. Handles badge-verified personnel surveys, deployment capacity matrices, and officer transfer decisions.',
+    venue: 'ENTERPRISE / GOV',
+    date: '2026',
+    longDesc: 'Collaborative enterprise personnel assignment portal for the Philippine National Police. Integrates rate-limited badge number identity verification, cyclical survey submissions, capacity-aware transfer planning matrices, audit trails, and zero-email password workflows tailored for secure police intranets.',
+    color: '#2563EB',
+    image: pnpSurveyImg,
   },
 ];
 
@@ -1991,7 +2032,7 @@ function App() {
                     Full Stack Developer
                   </div>
                   <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', lineHeight: 1.5, marginTop: '8px', marginBottom: 0 }}>
-                    Architected enterprise attendance &amp; personnel records systems (P-IDTMS, PAIS 2.0).
+                    Architected enterprise attendance, assignment survey, navigation &amp; personnel records systems (P-IDTMS, PAIS 2.0, Camp-Navi, PNP Survey).
                   </p>
                 </div>
 

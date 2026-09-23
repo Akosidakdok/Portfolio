@@ -118,6 +118,16 @@ export const TechIcon: React.FC<TechIconProps> = ({
     );
   }
 
+  // Django
+  if (norm === 'django') {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <rect width="24" height="24" rx="4" fill="#0C4B33" />
+        <path d="M14.5 5.5H17.5V15.5C17.5 17.5 16.5 18.5 14.5 18.5C13.5 18.5 12.8 18.2 12.5 18L13 16C13.3 16.2 13.7 16.3 14.2 16.3C15 16.3 15.3 15.8 15.3 14.8V5.5H14.5ZM10.5 8.5V11C9.8 10.3 8.9 10 7.8 10C5.5 10 4 11.8 4 14.2C4 16.7 5.5 18.5 7.8 18.5C8.9 18.5 9.8 18.1 10.5 17.5V18.5H12.5V8.5H10.5ZM8.2 16.5C6.8 16.5 6 15.5 6 14.2C6 13 6.8 12 8.2 12C9.5 12 10.5 13 10.5 14.2C10.5 15.5 9.5 16.5 8.2 16.5Z" fill="#44B78B" />
+      </svg>
+    );
+  }
+
   // PostgreSQL
   if (norm === 'postgresql' || norm === 'postgres') {
     return (

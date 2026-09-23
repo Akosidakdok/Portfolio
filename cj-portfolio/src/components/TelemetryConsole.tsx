@@ -22,6 +22,8 @@ const DEVELOPER_JSON_LINES = [
   '  ],',
   '  "featuredBuilds": [',
   '    "FEASIFY (AI Feasibility System)",',
+  '    "Camp-Navi (PNP Camp Crame GIS Navigation)",',
+  '    "PNP-Assignment-Survey (HR Portal & Matrix)",',
   '    "P-IDTMS (PNP-ITMS Attendance & DTR)",',
   '    "PAIS 2.0 (Enterprise Personnel System)",',
   '    "Mang Delfin\'s Web Platform"',

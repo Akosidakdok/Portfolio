@@ -27,15 +27,15 @@ Personality: Passionate, detail-oriented, loves building modern & scalable syste
 
 --- EXPERIENCE & INTERNSHIPS ---
 1. PLV OJT — PNP ITMS (Full Stack Developer)
-   - Architected enterprise personnel records and attendance platforms (P-IDTMS, PAIS 2.0)
+   - Architected enterprise personnel records, attendance, assignment survey, and GIS navigation platforms (P-IDTMS, PAIS 2.0, Camp-Navi, PNP Assignment Survey)
 2. Freelance (Full Stack Developer)
    - Architected and developed custom full-stack web applications, client solutions, and modern digital platforms
 3. SHS OJT — AFDB Enterprise (Accounting / Social Media Manager)
    - Managed accounting, financial documentation, and digital social media marketing
 
---- SKILLS & TECHNICAL ARSENAL (31+ Technologies) ---
+--- SKILLS & TECHNICAL ARSENAL (32+ Technologies) ---
 Frontend & UI/UX: React.js, TypeScript, JavaScript, Tailwind CSS, HTML5, CSS3, Figma, Leaflet.js, Vite
-Backend & Languages: Node.js, Express.js, Python, Java, PHP, REST APIs
+Backend & Languages: Node.js, Express.js, Python, Django, Java, PHP, REST APIs
 Databases & Cloud: PostgreSQL, Supabase, MySQL, MSSQL, Firebase (Firestore), Cloud Storage, Vercel
 DevOps & Virtualization: Docker, VirtualBox, Git, GitHub, GitHub Desktop
 Developer Tools & Diagrams: VS Code, PyCharm, Draw.io, Mermaid.js
@@ -43,7 +43,7 @@ AI & Intelligent Systems: Google Gemini AI, Antigravity Agentic IDE, Anthropic C
 Networking & Security: Cisco, Protocols, Subnetting, IP Configuration, VLAN, RBAC
 Collaboration & Project Management: Atlassian (Jira / Confluence), Microsoft Teams, Zoom, Google Meet
 Core strengths: Agile methodology, Problem-Solving, Analytical thinking, Team Collaboration
-Experience: 3+ years, 7+ projects, 31+ tech stacks & tools, 9 core engineering domains
+Experience: 3+ years, 9+ projects, 32+ tech stacks & tools, 9 core engineering domains
 
 --- PROJECTS ---
 1. FEASIFY (2026)
@@ -91,6 +91,20 @@ Experience: 3+ years, 7+ projects, 31+ tech stacks & tools, 9 core engineering d
    - Tech: React, TypeScript, Tailwind CSS, Express, Supabase
    - Live at: https://itms-armd-directory-two.vercel.app/
    - Repository: https://github.com/Akosidakdok/ITMS-ARMD-Directory
+
+8. Camp-Navi (2026)
+   - PNP Camp Crame real-time security geofencing, facility navigation, and active personnel tracking router
+   - Calculates Dijkstra safe routes avoiding restricted zones with live civilian and personnel GPS telemetry
+   - Role: Collaborator
+   - Tech: React, TypeScript, Tailwind CSS, Leaflet, Supabase, PostGIS
+   - Repository: https://github.com/Markssuave/Camp-Navi
+
+9. PNP-Assignment-Survey (2026)
+   - PNP Preferred Assignment Location Survey & Admin Dashboard
+   - Comprehensive enterprise personnel assignment portal integrating badge-verified surveys, deployment staffing matrices, and officer transfer decisions
+   - Role: Collaborator
+   - Tech: Python, Django, PostgreSQL, Docker, Railway
+   - Repository: https://github.com/Markssuave/PNP-Assignment-Survey
 
 --- CERTIFICATIONS & CREDENTIALS ---
 1. freeCodeCamp: Front-End Development Libraries V8 (July 22, 2026, ~300 hours) - Verified: https://freecodecamp.org/certification/jay-baldonado/front-end-development-libraries

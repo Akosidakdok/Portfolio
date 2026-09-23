@@ -188,10 +188,26 @@ const PHILOSOPHY_ITEMS: TickerItem[] = [
   {
     id: 'phil-pais',
     type: 'highlight',
-    label: 'AUTOMATED AGRICULTURAL AI',
+    label: 'PERSONNEL INFORMATION SYSTEM',
     badge: 'PAIS 2.0',
     icon: <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />,
     accentColor: '#10B981',
+  },
+  {
+    id: 'phil-camp-navi',
+    type: 'highlight',
+    label: 'CAMP CRAME GIS SAFE ROUTING',
+    badge: 'CAMP-NAVI',
+    icon: <MapPin className="w-3.5 h-3.5 text-[#10B981]" />,
+    accentColor: '#10B981',
+  },
+  {
+    id: 'phil-pnp-survey',
+    type: 'highlight',
+    label: 'GOV ROSTER & DEPLOYMENT MATRIX',
+    badge: 'PNP-SURVEY',
+    icon: <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB]" />,
+    accentColor: '#2563EB',
   },
   {
     id: 'phil-fcc',
