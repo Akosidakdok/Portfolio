@@ -1522,7 +1522,17 @@ function App() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', marginBottom: '60px' }}>
             <div className="reveal">
               <span className="section-label-dark">TECHNICAL ARSENAL</span>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '0.02em', color: 'var(--white)', marginTop: '8px', lineHeight: 1 }}>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                  fontWeight: 800,
+                  letterSpacing: '-0.03em',
+                  color: 'var(--white)',
+                  marginTop: '8px',
+                  lineHeight: 1.05,
+                }}
+              >
                 SKILLS &amp; STACK
               </h2>
             </div>
@@ -1604,7 +1614,9 @@ function App() {
                   style={{
                     fontFamily: 'var(--font-display)',
                     fontSize: '1.75rem',
-                    letterSpacing: '0.04em',
+                    fontWeight: 800,
+                    letterSpacing: '-0.03em',
+                    lineHeight: 1.15,
                     color: 'var(--white)',
                     marginTop: '8px',
                   }}
@@ -1882,28 +1894,151 @@ function App() {
       >
         {/* Top dark half */}
         <div style={{ padding: '80px 32px 60px', maxWidth: '1280px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '32px' }}>
+          {/* Section Heading */}
+          <div className="reveal" style={{ marginBottom: '40px' }}>
+            <span className="section-label-dark">BACKGROUND &amp; TIMELINE</span>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(2rem, 4vw, 2.8rem)',
+                fontWeight: 800,
+                letterSpacing: '-0.03em',
+                color: 'var(--white)',
+                marginTop: '8px',
+                lineHeight: 1.08,
+              }}
+            >
+              EXPERIENCE &amp; EDUCATION
+            </h2>
+          </div>
 
-            {/* Left: PLV badge */}
-            <div className="reveal" style={{ maxWidth: '300px' }}>
-              <span className="section-label-dark" style={{ marginBottom: '16px' }}>EDUCATION</span>
-              <div style={{ marginTop: '16px', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)' }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', letterSpacing: '0.1em', color: 'var(--white)', marginBottom: '4px' }}>
-                  PAMANTASAN
+          {/* Balanced 2-Column Responsive Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+              gap: '32px',
+              alignItems: 'start',
+            }}
+          >
+
+            {/* Left: Education & Academic Foundation */}
+            <div className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <span className="section-label-dark">EDUCATION</span>
+
+              {/* PLV Degree Card */}
+              <div
+                style={{
+                  padding: '22px 24px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.02)',
+                  transition: 'border-color 0.25s, background 0.25s, transform 0.25s',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+                className="interactive-card"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: '#34d399', textTransform: 'uppercase', fontWeight: 700 }}>
+                      COLLEGE DEGREE
+                    </span>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    EXPECTED 2027
+                  </span>
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', letterSpacing: '0.1em', color: 'var(--white)', marginBottom: '4px' }}>
-                  NG LUNGSOD NG VALENZUELA
+
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', letterSpacing: '0.05em', color: 'var(--white)', lineHeight: 1.2 }}>
+                    PAMANTASAN NG LUNGSOD NG VALENZUELA
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent)', marginTop: '4px', letterSpacing: '0.04em', fontWeight: 600 }}>
+                    Bachelor of Science in Information Technology (BSIT)
+                  </div>
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)', marginTop: '8px', letterSpacing: '0.1em' }}>
-                  BSIT — GRADUATING 2027
+
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', lineHeight: 1.55, margin: 0 }}>
+                  Undergraduate program specializing in enterprise software architecture, full-stack application development, database management systems, and modern digital infrastructure.
+                </p>
+
+                <div style={{ paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray-light)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                    Core Competencies &amp; Coursework
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {['Software Engineering', 'Web Development', 'Database Admin', 'Network Systems', 'Data Structures'].map(tag => (
+                      <span
+                        key={tag}
+                        style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.6rem',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          background: 'rgba(99,102,241,0.08)',
+                          border: '1px solid rgba(99,102,241,0.2)',
+                          color: '#a5b4fc',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--gray)' }}>
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--gray-light)', letterSpacing: '0.04em' }}>
+                    Valenzuela City, Philippines
+                  </span>
+                </div>
+              </div>
+
+              {/* Academic Highlights & Specialization Card */}
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.02)',
+                  transition: 'border-color 0.25s, background 0.25s, transform 0.25s',
+                }}
+                className="interactive-card"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6366f1', display: 'inline-block', boxShadow: '0 0 8px #6366f1' }} />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 700 }}>
+                      TECHNICAL TRACK
+                    </span>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    SPECIALIZATION
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', letterSpacing: '0.05em', color: 'var(--white)', lineHeight: 1.15 }}>
+                  FULL-STACK &amp; AI INTEGRATION
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--gray-light)', marginTop: '4px', letterSpacing: '0.04em' }}>
+                  Applied Systems Engineering
+                </div>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', lineHeight: 1.5, marginTop: '8px', marginBottom: 0 }}>
+                  Bridging computer science fundamentals with enterprise project delivery — engineering mission-critical applications from PNP ITMS systems to client solutions.
+                </p>
               </div>
             </div>
 
-            {/* Center: Experience */}
-            <div className="reveal delay-200" style={{ maxWidth: '440px', flex: '1 1 320px' }}>
-              <span className="section-label-dark" style={{ marginBottom: '16px' }}>EXPERIENCE</span>
-              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* Right: Experience */}
+            <div className="reveal delay-100" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <span className="section-label-dark">EXPERIENCE</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {/* 1. PLV OJT - PNP ITMS */}
                 <div
                   style={{
@@ -1950,8 +2085,8 @@ function App() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: '#34d399', textTransform: 'uppercase', fontWeight: 700 }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6366f1', display: 'inline-block', boxShadow: '0 0 8px #6366f1' }} />
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 700 }}>
                         FREELANCE
                       </span>
                     </div>
@@ -2005,100 +2140,6 @@ function App() {
               </div>
             </div>
 
-            {/* Right: quick facts */}
-            <div className="reveal delay-300" style={{ maxWidth: '280px' }}>
-              <span className="section-label-dark" style={{ marginBottom: '12px' }}>QUICK FACTS</span>
-              <ul style={{ listStyle: 'none', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[
-                  {
-                    icon: (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                        <circle cx="12" cy="10" r="3" />
-                      </svg>
-                    ),
-                    text: 'Valenzuela City, PH',
-                  },
-                  
-                  {
-                    icon: (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="16 18 22 12 16 6" />
-                        <polyline points="8 6 2 12 8 18" />
-                      </svg>
-                    ),
-                    text: 'Freelance Full-Stack Developer',
-                  },
-                  {
-                    icon: (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="4" y="4" width="16" height="16" rx="2" />
-                        <rect x="9" y="9" width="6" height="6" />
-                        <line x1="9" y1="1" x2="9" y2="4" />
-                        <line x1="15" y1="1" x2="15" y2="4" />
-                        <line x1="9" y1="20" x2="9" y2="23" />
-                        <line x1="15" y1="20" x2="15" y2="23" />
-                        <line x1="20" y1="9" x2="23" y2="9" />
-                        <line x1="20" y1="14" x2="23" y2="14" />
-                        <line x1="1" y1="9" x2="4" y2="9" />
-                        <line x1="1" y1="14" x2="4" y2="14" />
-                      </svg>
-                    ),
-                    text: 'Front-End + AI / Networking',
-                  },
-                  {
-                    icon: (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                        <polyline points="22,6 12,13 2,6" />
-                      </svg>
-                    ),
-                    text: 'cjbaldonado11@gmail.com',
-                    href: 'mailto:cjbaldonado11@gmail.com',
-                  },
-                ].map((item, idx) => (
-                  <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <div
-                      style={{
-                        width: '26px',
-                        height: '26px',
-                        borderRadius: '6px',
-                        background: 'rgba(99,102,241,0.1)',
-                        border: '1px solid rgba(99,102,241,0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'var(--accent)',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {item.icon}
-                    </div>
-                    {item.href ? (
-                      <a
-                        href={item.href}
-                        style={{
-                          fontFamily: 'var(--font-body)',
-                          fontSize: '0.78rem',
-                          color: 'var(--gray-light)',
-                          textDecoration: 'none',
-                          transition: 'color 0.2s',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
-                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
-                      >
-                        {item.text}
-                      </a>
-                    ) : (
-                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--gray-light)' }}>
-                        {item.text}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
           </div>
         </div>
 
@@ -2116,7 +2157,17 @@ function App() {
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#64748b' }}>
                 SHOWCASE // ARCHIVE
               </span>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', marginTop: '4px' }}>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(2rem, 4vw, 3rem)',
+                  fontWeight: 800,
+                  lineHeight: 1.08,
+                  letterSpacing: '-0.03em',
+                  color: '#0f172a',
+                  marginTop: '4px',
+                }}
+              >
                 Featured Engineering &amp; Work
               </h3>
             </div>
@@ -2691,8 +2742,9 @@ function App() {
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: 'clamp(2.8rem, 5.5vw, 5.8rem)',
-                  lineHeight: 0.92,
-                  letterSpacing: '-0.01em',
+                  fontWeight: 800,
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.03em',
                   color: 'var(--white)',
                   textTransform: 'uppercase',
                   marginTop: '16px',
