@@ -44,63 +44,6 @@ function Stars({ filled = 4, total = 5 }: { filled?: number; total?: number }) {
   );
 }
 
-/* ─── Skill Group ─── */
-function SkillGroup({ icon, title, tags, dark = true }: { icon: React.ReactNode; title: string; tags: string[]; dark?: boolean }) {
-  return (
-    <div
-      style={{
-        padding: '28px',
-        borderRadius: '16px',
-        border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
-        background: dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-        position: 'relative',
-        overflow: 'hidden',
-        transition: 'border-color 0.3s, box-shadow 0.3s',
-      }}
-      className="interactive-card"
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-        <div
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            background: 'rgba(227,30,36,0.12)',
-            border: '1px solid rgba(227,30,36,0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#ff6b6b',
-            flexShrink: 0,
-          }}
-        >
-          {icon}
-        </div>
-        <span
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 600,
-            fontSize: '0.95rem',
-            letterSpacing: '0.03em',
-            textTransform: 'uppercase',
-            color: dark ? 'var(--white)' : '#111',
-          }}
-        >
-          {title}
-        </span>
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-        {tags.map(tag => (
-          <span key={tag} className={dark ? 'skill-tag' : 'skill-tag-light'}>
-            <TechIcon name={tag} size={15} />
-            <span>{tag}</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ─── Project Card (dark booking-style) ─── */
 function ProjectCard({ title, stack, link, description, venue, date, image }: {
   title: string;
@@ -1050,7 +993,7 @@ function App() {
   const [activeSectionTab, setActiveSectionTab] = useState<'projects' | 'certifications'>('projects');
   const [certCategory, setCertCategory] = useState<string>('ALL');
   const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
-  const [skillViewMode, setSkillViewMode] = useState<'categorized' | 'plain'>('categorized');
+  const [isMobileTechExpanded, setIsMobileTechExpanded] = useState(false);
   const [plainSearch, setPlainSearch] = useState('');
 
   useEffect(() => {
@@ -1616,350 +1559,308 @@ function App() {
             </p>
           </div>
 
-          {/* View Mode Switcher: Categorized vs Full List (Plain) */}
-          <div className="reveal delay-200" style={{ display: 'flex', justifyContent: 'center', marginBottom: '44px' }}>
-            <div className="stack-view-switcher">
-              <button
-                type="button"
-                onClick={() => setSkillViewMode('categorized')}
-                className={`stack-toggle-btn ${skillViewMode === 'categorized' ? 'active' : ''}`}
-                title="View grouped by engineering domain"
-              >
-                <span style={{ fontSize: '0.85rem' }}>⊞</span> Categorized Stack
-              </button>
-              <button
-                type="button"
-                onClick={() => setSkillViewMode('plain')}
-                className={`stack-toggle-btn ${skillViewMode === 'plain' ? 'active' : ''}`}
-                title="View plain list of all 31 technologies with icons"
-              >
-                <span style={{ fontSize: '0.85rem' }}>☰</span> Full List (Plain) <span style={{ opacity: 0.85, fontSize: '0.62rem', padding: '2px 7px', borderRadius: '4px', background: 'rgba(255,255,255,0.18)' }}>{FULL_LIST_PLAIN.length}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* VIEW 1: CATEGORIZED STACK */}
-          {skillViewMode === 'categorized' ? (
+          {/* Full Tech Stack Catalog (Always Visible, Collapsible on Mobile) */}
+          <div
+            id="tech-catalog-container"
+            className="plain-list-container reveal delay-200"
+            style={{ animation: 'fadeIn 0.3s ease forwards' }}
+          >
+            {/* Header & Search Filter */}
             <div
-              key="categorized"
+              id="tech-catalog-header"
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '20px',
-                animation: 'fadeIn 0.3s ease forwards',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '16px',
+                marginBottom: '28px',
+                borderBottom: '1px solid rgba(255,255,255,0.08)',
+                paddingBottom: '20px',
               }}
             >
-              {/* 1. Frontend & UI/UX */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 18 22 12 16 6" />
-                    <polyline points="8 6 2 12 8 18" />
-                  </svg>
-                }
-                title="Frontend & UI/UX"
-                tags={['React', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'HTML', 'CSS', 'Figma', 'Leaflet.js', 'Vite']}
-              />
-
-              {/* 2. Backend & Languages */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
-                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
-                    <line x1="6" y1="6" x2="6.01" y2="6" />
-                    <line x1="6" y1="18" x2="6.01" y2="18" />
-                  </svg>
-                }
-                title="Backend & Languages"
-                tags={['Node.js', 'Express.js', 'Python', 'Java', 'PHP', 'REST APIs']}
-              />
-
-              {/* 3. Database & Cloud */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <ellipse cx="12" cy="5" rx="9" ry="3" />
-                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-                  </svg>
-                }
-                title="Database & Cloud"
-                tags={['PostgreSQL', 'Supabase', 'MySQL', 'MSSQL', 'Firebase', 'Firestore', 'Vercel']}
-              />
-
-              {/* 4. DevOps & Virtualization */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                    <line x1="12" y1="22.08" x2="12" y2="12" />
-                  </svg>
-                }
-                title="DevOps & Virtualization"
-                tags={['Docker', 'VirtualBox', 'Git', 'GitHub', 'GitHub Desktop']}
-              />
-
-              {/* 5. Developer Tools & Diagrams */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                  </svg>
-                }
-                title="Developer Tools & Diagrams"
-                tags={['VS Code', 'PyCharm', 'Draw.io', 'Mermaid.js']}
-              />
-
-              {/* 6. AI & Intelligent Systems */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                  </svg>
-                }
-                title="AI & Intelligent Systems"
-                tags={['Gemini', 'Antigravity', 'Claude', 'Codex', 'OpenAI API', 'GroqCloud']}
-              />
-
-              {/* 7. Networking & Security */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </svg>
-                }
-                title="Networking & Security"
-                tags={['Cisco', 'Protocols', 'Subnetting', 'IP Config', 'VLAN', 'RBAC']}
-              />
-
-              {/* 8. Collaboration & Productivity */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                }
-                title="Collaboration & Productivity"
-                tags={['Atlassian (Jira / Confluence)', 'Microsoft Teams', 'Zoom', 'Google Meet']}
-              />
-
-              {/* 9. Core Strengths */}
-              <SkillGroup
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                }
-                title="Core Strengths"
-                tags={['Agile', 'Problem-Solving', 'Analytical', 'Team Collab']}
-              />
-            </div>
-          ) : (
-            /* VIEW 2: FULL LIST (PLAIN) */
-            <div key="plain" className="plain-list-container" style={{ animation: 'fadeIn 0.3s ease forwards' }}>
-              {/* Header & Search Filter */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '28px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '20px' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.1)', padding: '3px 10px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
-                      OFFICIAL CATALOG
-                    </span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray-light)', letterSpacing: '0.08em' }}>
-                      {FULL_LIST_PLAIN.length} TOTAL TECHNOLOGIES
-                    </span>
-                  </div>
-                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', letterSpacing: '0.04em', color: 'var(--white)', marginTop: '8px' }}>
-                    FULL LIST (PLAIN)
-                  </h3>
-                </div>
-
-                {/* Instant Search Bar */}
-                <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
-                  <input
-                    type="text"
-                    value={plainSearch}
-                    onChange={e => setPlainSearch(e.target.value)}
-                    placeholder="Search tech stack..."
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span
                     style={{
-                      width: '100%',
-                      padding: '10px 14px 10px 36px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.14)',
-                      borderRadius: '8px',
-                      color: '#fff',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.75rem',
-                      letterSpacing: '0.05em',
-                      outline: 'none',
-                      transition: 'border-color 0.2s',
+                      fontSize: '0.62rem',
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      color: '#38bdf8',
+                      background: 'rgba(56, 189, 248, 0.1)',
+                      padding: '3px 10px',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(56, 189, 248, 0.25)',
                     }}
-                    onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
-                    onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.14)')}
-                  />
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="var(--gray)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
                   >
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                  {plainSearch && (
-                    <button
-                      type="button"
-                      onClick={() => setPlainSearch('')}
-                      style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--gray)',
-                        cursor: 'pointer',
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      ✕
-                    </button>
-                  )}
+                    OFFICIAL CATALOG
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray-light)', letterSpacing: '0.08em' }}>
+                    {FULL_LIST_PLAIN.length} TOTAL TECHNOLOGIES
+                  </span>
                 </div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.75rem',
+                    letterSpacing: '0.04em',
+                    color: 'var(--white)',
+                    marginTop: '8px',
+                  }}
+                >
+                  FULL TECH STACK
+                </h3>
               </div>
 
-              {/* Grid of All Technologies with individual brand images/icons */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
-                  gap: '12px',
-                }}
-              >
-                {FULL_LIST_PLAIN
-                  .filter(item =>
-                    item.name.toLowerCase().includes(plainSearch.toLowerCase()) ||
-                    item.category.toLowerCase().includes(plainSearch.toLowerCase()) ||
-                    (item.highlight && item.highlight.toLowerCase().includes(plainSearch.toLowerCase()))
-                  )
-                  .map((item, idx) => (
-                    <div
-                      key={item.name}
-                      className="plain-list-item"
-                      title={`${item.name} · ${item.category}`}
-                    >
+              {/* Instant Search Bar */}
+              <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
+                <input
+                  type="text"
+                  value={plainSearch}
+                  onChange={e => setPlainSearch(e.target.value)}
+                  placeholder="Search tech stack..."
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px 10px 36px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.05em',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
+                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.14)')}
+                />
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--gray)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                {plainSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setPlainSearch('')}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--gray)',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                    }}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Grid of All Technologies with individual brand images/icons */}
+            {(() => {
+              const filteredList = FULL_LIST_PLAIN.filter(
+                item =>
+                  item.name.toLowerCase().includes(plainSearch.toLowerCase()) ||
+                  item.category.toLowerCase().includes(plainSearch.toLowerCase()) ||
+                  (item.highlight && item.highlight.toLowerCase().includes(plainSearch.toLowerCase()))
+              );
+              const displayedList =
+                isMobile && !isMobileTechExpanded && !plainSearch
+                  ? filteredList.slice(0, 8)
+                  : filteredList;
+
+              return (
+                <>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+                      gap: '12px',
+                    }}
+                  >
+                    {displayedList.map((item, idx) => (
                       <div
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '8px',
-                          background: 'rgba(255,255,255,0.06)',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-                        }}
+                        key={item.name}
+                        className="plain-list-item"
+                        title={`${item.name} · ${item.category}`}
                       >
-                        <TechIcon name={item.name} size={18} />
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                        <div
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '8px',
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                          }}
+                        >
+                          <TechIcon name={item.name} size={18} />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                            <span
+                              style={{
+                                fontFamily: 'var(--font-mono)',
+                                fontWeight: 700,
+                                fontSize: '0.78rem',
+                                color: 'var(--white)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {item.name}
+                            </span>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)' }}>
+                              #{String(idx + 1).padStart(2, '0')}
+                            </span>
+                          </div>
                           <span
                             style={{
                               fontFamily: 'var(--font-mono)',
-                              fontWeight: 700,
-                              fontSize: '0.78rem',
-                              color: 'var(--white)',
+                              fontSize: '0.58rem',
+                              color: 'var(--gray-light)',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.08em',
+                              marginTop: '2px',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                             }}
                           >
-                            {item.name}
-                          </span>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)' }}>
-                            #{String(idx + 1).padStart(2, '0')}
+                            {item.category}
                           </span>
                         </div>
-                        <span
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '0.58rem',
-                            color: 'var(--gray-light)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.08em',
-                            marginTop: '2px',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          {item.category}
-                        </span>
+                        {item.highlight && (
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: '0.52rem',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              background: 'rgba(99,102,241,0.12)',
+                              border: '1px solid rgba(99,102,241,0.25)',
+                              color: '#a5b4fc',
+                              letterSpacing: '0.06em',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {item.highlight}
+                          </span>
+                        )}
                       </div>
-                      {item.highlight && (
-                        <span
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '0.52rem',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            background: 'rgba(99,102,241,0.12)',
-                            border: '1px solid rgba(99,102,241,0.25)',
-                            color: '#a5b4fc',
-                            letterSpacing: '0.06em',
-                            flexShrink: 0,
-                          }}
-                        >
-                          {item.highlight}
+                    ))}
+                  </div>
+
+                  {/* Empty state if search has no results */}
+                  {filteredList.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray)' }}>
+                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.08em' }}>
+                        No technology found matching "{plainSearch}".
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setPlainSearch('')}
+                        style={{
+                          marginTop: '12px',
+                          background: 'transparent',
+                          border: '1px solid var(--accent)',
+                          color: 'var(--accent)',
+                          padding: '6px 14px',
+                          borderRadius: '6px',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.7rem',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Clear Filter
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Mobile Collapsible Toggle Button */}
+                  {isMobile && !plainSearch && filteredList.length > 8 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: '24px',
+                        gap: '8px',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isMobileTechExpanded) {
+                            setIsMobileTechExpanded(false);
+                            const el = document.getElementById('tech-catalog-header');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          } else {
+                            setIsMobileTechExpanded(true);
+                          }
+                        }}
+                        style={{
+                          background: isMobileTechExpanded ? 'rgba(255, 255, 255, 0.05)' : 'rgba(99, 102, 241, 0.15)',
+                          border: isMobileTechExpanded ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(99, 102, 241, 0.4)',
+                          color: isMobileTechExpanded ? 'var(--white)' : '#a5b4fc',
+                          padding: '11px 26px',
+                          borderRadius: '9999px',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.75rem',
+                          letterSpacing: '0.06em',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.25s ease',
+                          boxShadow: isMobileTechExpanded ? 'none' : '0 0 20px rgba(99, 102, 241, 0.25)',
+                        }}
+                      >
+                        {isMobileTechExpanded ? (
+                          <>
+                            <span>Collapse Tech List</span>
+                            <span>▲</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Show All ({filteredList.length}) Technologies</span>
+                            <span>▼</span>
+                          </>
+                        )}
+                      </button>
+                      {!isMobileTechExpanded && (
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--gray-light)', letterSpacing: '0.04em' }}>
+                          Showing 8 of {filteredList.length} technologies
                         </span>
                       )}
                     </div>
-                  ))}
-              </div>
-
-              {/* Empty state if search has no results */}
-              {FULL_LIST_PLAIN.filter(item =>
-                item.name.toLowerCase().includes(plainSearch.toLowerCase()) ||
-                item.category.toLowerCase().includes(plainSearch.toLowerCase())
-              ).length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray)' }}>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.08em' }}>
-                    No technology found matching "{plainSearch}".
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setPlainSearch('')}
-                    style={{
-                      marginTop: '12px',
-                      background: 'transparent',
-                      border: '1px solid var(--accent)',
-                      color: 'var(--accent)',
-                      padding: '6px 14px',
-                      borderRadius: '6px',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.7rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Clear Filter
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                  )}
+                </>
+              );
+            })()}
+          </div>
 
         </div>
       </section>
