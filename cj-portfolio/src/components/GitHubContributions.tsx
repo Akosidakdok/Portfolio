@@ -63,7 +63,7 @@ export default function GitHubContributions() {
   const [isLive, setIsLive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Background live sync
+  // Background live sync (merges with verified profile base to preserve private contributions)
   useEffect(() => {
     let isMounted = true;
     async function syncContributions() {
@@ -78,10 +78,58 @@ export default function GitHubContributions() {
           const allD = await allRes.json();
           const lastD = await lastRes.json();
           if (isMounted) {
+            const apiLastMap = new Map<string, ContributionDay>();
+            (lastD.contributions || []).forEach((d: ContributionDay) => apiLastMap.set(d.date, d));
+
+            const apiAllMap = new Map<string, ContributionDay>();
+            (allD.contributions || []).forEach((d: ContributionDay) => apiAllMap.set(d.date, d));
+
+            const fallbackTyped = fallbackData as unknown as ContributionData;
+            const mergedLastYear = (fallbackTyped.lastYearContributions || []).map((baseDay) => {
+              const apiDay = apiLastMap.get(baseDay.date);
+              if (!apiDay) return baseDay;
+              const count = Math.max(baseDay.count, apiDay.count);
+              const level = Math.max(baseDay.level, apiDay.level);
+              return { date: baseDay.date, count, level };
+            });
+
+            const baseLastDates = new Set(mergedLastYear.map((d) => d.date));
+            (lastD.contributions || []).forEach((apiDay: ContributionDay) => {
+              if (!baseLastDates.has(apiDay.date)) {
+                mergedLastYear.push(apiDay);
+              }
+            });
+
+            const mergedAll = (fallbackTyped.allContributions || []).map((baseDay) => {
+              const apiDay = apiAllMap.get(baseDay.date);
+              if (!apiDay) return baseDay;
+              const count = Math.max(baseDay.count, apiDay.count);
+              const level = Math.max(baseDay.level, apiDay.level);
+              return { date: baseDay.date, count, level };
+            });
+
+            const baseAllDates = new Set(mergedAll.map((d) => d.date));
+            (allD.contributions || []).forEach((apiDay: ContributionDay) => {
+              if (!baseAllDates.has(apiDay.date)) {
+                mergedAll.push(apiDay);
+              }
+            });
+
+            const baseTotals = fallbackTyped.total || {};
+            const lastYearSum = mergedLastYear.reduce((acc, d) => acc + d.count, 0);
+            const sum2026 = mergedAll.filter((d) => d.date.startsWith('2026')).reduce((acc, d) => acc + d.count, 0);
+            const sum2025 = mergedAll.filter((d) => d.date.startsWith('2025')).reduce((acc, d) => acc + d.count, 0);
+
             setData({
-              total: { ...allD.total, ...lastD.total },
-              lastYearContributions: lastD.contributions,
-              allContributions: allD.contributions,
+              total: {
+                ...allD.total,
+                ...lastD.total,
+                '2025': Math.max(baseTotals['2025'] || 30, sum2025),
+                '2026': Math.max(baseTotals['2026'] || 220, sum2026),
+                lastYear: Math.max(baseTotals['lastYear'] || 248, lastYearSum),
+              },
+              lastYearContributions: mergedLastYear,
+              allContributions: mergedAll,
             });
             setIsLive(true);
           }
