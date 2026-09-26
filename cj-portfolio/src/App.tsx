@@ -1436,21 +1436,7 @@ function App() {
                   <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
                     Christian James Baldonado
                   </div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.62rem',
-                      fontWeight: 600,
-                      color: '#34d399',
-                      padding: '3px 8px',
-                      borderRadius: '6px',
-                      background: 'rgba(16, 185, 129, 0.12)',
-                      border: '1px solid rgba(16, 185, 129, 0.25)',
-                      letterSpacing: '0.04em',
-                    }}
-                  >
-                    PLV BSIT
-                  </div>
+                  
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#94a3b8', letterSpacing: '0.02em', marginBottom: '14px' }}>
                   Full-Stack &amp; Front-End Developer
