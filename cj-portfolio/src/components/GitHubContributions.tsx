@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { RefreshCw, ArrowUpRight } from 'lucide-react';
 import fallbackData from '../data/githubContributions.json';
 
 interface ContributionDay {
@@ -13,138 +14,216 @@ interface ContributionData {
   allContributions: ContributionDay[];
 }
 
-type Palette = 'emerald' | 'indigo' | 'crimson';
-type YearOption = 'lastYear' | '2026' | '2025';
+const STORAGE_KEY = 'cj_github_contributions_cache_v5';
 
-const PALETTES: Record<Palette, { label: string; name: string; colors: [string, string, string, string, string]; glow: string }> = {
-  emerald: {
-    label: 'Emerald',
-    name: 'GitHub Native',
-    colors: [
-      'rgba(255, 255, 255, 0.04)',
-      '#0e4429',
-      '#006d32',
-      '#26a641',
-      '#39d353',
-    ],
-    glow: 'rgba(57, 211, 83, 0.45)',
-  },
-  indigo: {
-    label: 'Indigo',
-    name: 'Cyber Telemetry',
-    colors: [
-      'rgba(255, 255, 255, 0.04)',
-      'rgba(99, 102, 241, 0.3)',
-      'rgba(99, 102, 241, 0.65)',
-      '#6366f1',
-      '#38bdf8',
-    ],
-    glow: 'rgba(56, 189, 248, 0.45)',
-  },
-  crimson: {
-    label: 'Crimson',
-    name: 'Solar Red',
-    colors: [
-      'rgba(255, 255, 255, 0.04)',
-      'rgba(227, 30, 36, 0.28)',
-      'rgba(227, 30, 36, 0.65)',
-      '#dc2626',
-      '#f87171',
-    ],
-    glow: 'rgba(239, 68, 68, 0.45)',
-  },
-};
+// Canonical GitHub green scale
+const GITHUB_COLORS: [string, string, string, string, string] = [
+  'rgba(255, 255, 255, 0.035)',
+  '#0e4429',
+  '#006d32',
+  '#26a641',
+  '#39d353',
+];
 
 export default function GitHubContributions() {
-  const [data, setData] = useState<ContributionData>(fallbackData as unknown as ContributionData);
-  const [selectedYear, setSelectedYear] = useState<YearOption>('lastYear');
-  const [palette, setPalette] = useState<Palette>('emerald');
+  // Initialize from cache or fallback data
+  const [data, setData] = useState<ContributionData>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.data) {
+          return parsed.data;
+        }
+      }
+    } catch (err) {
+      console.debug('Error reading cache:', err);
+    }
+    return fallbackData as unknown as ContributionData;
+  });
+
+  const [selectedYear, setSelectedYear] = useState<string>('lastYear');
   const [hoveredCell, setHoveredCell] = useState<{ day: ContributionDay; x: number; y: number } | null>(null);
   const [isLive, setIsLive] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const lastSyncTimeRef = useRef<number>(0);
 
-  // Background live sync (merges with verified profile base to preserve private contributions)
-  useEffect(() => {
-    let isMounted = true;
-    async function syncContributions() {
+  // Dynamic available years from dataset
+  const availableYears = useMemo(() => {
+    const years = Object.keys(data.total || {})
+      .filter((k) => k !== 'lastYear' && /^\d{4}$/.test(k))
+      .sort((a, b) => b.localeCompare(a));
+    return ['lastYear', ...years];
+  }, [data.total]);
+
+  // Live Sync: merges live GitHub feed on top of verified baseline
+  const syncContributions = useCallback(async (isManual = false) => {
+    try {
+      setIsSyncing(true);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      let liveDays: ContributionDay[] = [];
+      let liveTotals: Record<string, number> = {};
+
       try {
-        setIsLoading(true);
+        // Primary: jogruber API
         const [allRes, lastRes] = await Promise.all([
-          fetch('https://github-contributions-api.jogruber.de/v4/Akosidakdok'),
-          fetch('https://github-contributions-api.jogruber.de/v4/Akosidakdok?y=last'),
+          fetch('https://github-contributions-api.jogruber.de/v4/Akosidakdok', {
+            cache: 'no-cache',
+            signal: controller.signal,
+          }),
+          fetch('https://github-contributions-api.jogruber.de/v4/Akosidakdok?y=last', {
+            cache: 'no-cache',
+            signal: controller.signal,
+          }),
         ]);
 
         if (allRes.ok && lastRes.ok) {
           const allD = await allRes.json();
           const lastD = await lastRes.json();
-          if (isMounted) {
-            const apiLastMap = new Map<string, ContributionDay>();
-            (lastD.contributions || []).forEach((d: ContributionDay) => apiLastMap.set(d.date, d));
-
-            const apiAllMap = new Map<string, ContributionDay>();
-            (allD.contributions || []).forEach((d: ContributionDay) => apiAllMap.set(d.date, d));
-
-            const fallbackTyped = fallbackData as unknown as ContributionData;
-            const mergedLastYear = (fallbackTyped.lastYearContributions || []).map((baseDay) => {
-              const apiDay = apiLastMap.get(baseDay.date);
-              if (!apiDay) return baseDay;
-              const count = Math.max(baseDay.count, apiDay.count);
-              const level = Math.max(baseDay.level, apiDay.level);
-              return { date: baseDay.date, count, level };
-            });
-
-            const baseLastDates = new Set(mergedLastYear.map((d) => d.date));
-            (lastD.contributions || []).forEach((apiDay: ContributionDay) => {
-              if (!baseLastDates.has(apiDay.date)) {
-                mergedLastYear.push(apiDay);
-              }
-            });
-
-            const mergedAll = (fallbackTyped.allContributions || []).map((baseDay) => {
-              const apiDay = apiAllMap.get(baseDay.date);
-              if (!apiDay) return baseDay;
-              const count = Math.max(baseDay.count, apiDay.count);
-              const level = Math.max(baseDay.level, apiDay.level);
-              return { date: baseDay.date, count, level };
-            });
-
-            const baseAllDates = new Set(mergedAll.map((d) => d.date));
-            (allD.contributions || []).forEach((apiDay: ContributionDay) => {
-              if (!baseAllDates.has(apiDay.date)) {
-                mergedAll.push(apiDay);
-              }
-            });
-
-            const baseTotals = fallbackTyped.total || {};
-            const lastYearSum = mergedLastYear.reduce((acc, d) => acc + d.count, 0);
-            const sum2026 = mergedAll.filter((d) => d.date.startsWith('2026')).reduce((acc, d) => acc + d.count, 0);
-            const sum2025 = mergedAll.filter((d) => d.date.startsWith('2025')).reduce((acc, d) => acc + d.count, 0);
-
-            setData({
-              total: {
-                ...allD.total,
-                ...lastD.total,
-                '2025': Math.max(baseTotals['2025'] || 30, sum2025),
-                '2026': Math.max(baseTotals['2026'] || 220, sum2026),
-                lastYear: Math.max(baseTotals['lastYear'] || 248, lastYearSum),
-              },
-              lastYearContributions: mergedLastYear,
-              allContributions: mergedAll,
-            });
-            setIsLive(true);
-          }
+          liveDays = lastD.contributions || [];
+          liveTotals = { ...allD.total, ...lastD.total };
         }
       } catch {
-        // Fallback remains active seamlessly
+        // Fallback: vercel API
+        try {
+          const backupRes = await fetch('https://github-contributions.vercel.app/api/v1/Akosidakdok', {
+            cache: 'no-cache',
+            signal: controller.signal,
+          });
+          if (backupRes.ok) {
+            const backupD = await backupRes.json();
+            const rawList: { date: string; count: number }[] = backupD.contributions || [];
+            liveDays = rawList.map((d) => ({
+              date: d.date,
+              count: d.count,
+              level: d.count === 0 ? 0 : d.count <= 3 ? 1 : d.count <= 6 ? 2 : d.count <= 12 ? 3 : 4,
+            }));
+            if (Array.isArray(backupD.years)) {
+              backupD.years.forEach((y: { year: string; total: number }) => {
+                liveTotals[y.year] = y.total;
+              });
+            }
+          }
+        } catch (backupErr) {
+          console.debug('Secondary contributions API error:', backupErr);
+        }
       } finally {
-        if (isMounted) setIsLoading(false);
+        clearTimeout(timeoutId);
       }
+
+      if (liveDays.length > 0) {
+        const liveMap = new Map<string, ContributionDay>();
+        liveDays.forEach((d) => liveMap.set(d.date, d));
+
+        const baseTyped = fallbackData as unknown as ContributionData;
+
+        // 1. Merge rolling last-year contributions
+        const mergedLastYear: ContributionDay[] = (baseTyped.lastYearContributions || []).map((baseDay) => {
+          const liveDay = liveMap.get(baseDay.date);
+          if (!liveDay) return baseDay;
+          const count = Math.max(baseDay.count, liveDay.count);
+          const level = Math.max(baseDay.level, liveDay.level);
+          return { date: baseDay.date, count, level };
+        });
+
+        // Append any new days from live API beyond baseline
+        const existingLastDates = new Set(mergedLastYear.map((d) => d.date));
+        liveDays.forEach((liveDay) => {
+          if (!existingLastDates.has(liveDay.date)) {
+            mergedLastYear.push(liveDay);
+          }
+        });
+
+        // 2. Merge all contributions
+        const mergedAll: ContributionDay[] = (baseTyped.allContributions || []).map((baseDay) => {
+          const liveDay = liveMap.get(baseDay.date);
+          if (!liveDay) return baseDay;
+          const count = Math.max(baseDay.count, liveDay.count);
+          const level = Math.max(baseDay.level, liveDay.level);
+          return { date: baseDay.date, count, level };
+        });
+
+        const existingAllDates = new Set(mergedAll.map((d) => d.date));
+        liveDays.forEach((liveDay) => {
+          if (!existingAllDates.has(liveDay.date)) {
+            mergedAll.push(liveDay);
+          }
+        });
+
+        // 3. Compute dynamic totals
+        const sumLastYear = mergedLastYear.reduce((acc, d) => acc + d.count, 0);
+        const sum2026 = mergedAll.filter((d) => d.date.startsWith('2026')).reduce((acc, d) => acc + d.count, 0);
+        const sum2025 = mergedAll.filter((d) => d.date.startsWith('2025')).reduce((acc, d) => acc + d.count, 0);
+
+        const freshData: ContributionData = {
+          total: {
+            ...liveTotals,
+            ...baseTyped.total,
+            '2025': Math.max(baseTyped.total?.['2025'] || 30, sum2025),
+            '2026': Math.max(baseTyped.total?.['2026'] || 228, sum2026),
+            lastYear: Math.max(baseTyped.total?.lastYear || 256, sumLastYear),
+          },
+          lastYearContributions: mergedLastYear,
+          allContributions: mergedAll,
+        };
+
+        setData(freshData);
+        setIsLive(true);
+        lastSyncTimeRef.current = Date.now();
+
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({ data: freshData, timestamp: Date.now() })
+          );
+        } catch (storageErr) {
+          console.debug('Storage error:', storageErr);
+        }
+      }
+    } catch (err) {
+      if (isManual) {
+        console.error('Failed to sync contributions:', err);
+      }
+    } finally {
+      setIsSyncing(false);
     }
-    syncContributions();
+  }, []);
+
+  // Auto-sync: on mount (deferred for React 19 purity)
+  useEffect(() => {
+    let isMounted = true;
+    const timer = setTimeout(() => {
+      if (isMounted) {
+        syncContributions();
+      }
+    }, 0);
     return () => {
       isMounted = false;
+      clearTimeout(timer);
     };
-  }, []);
+  }, [syncContributions]);
+
+  // Auto-sync: on window focus (e.g. user pushes commits in terminal or other tab)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (Date.now() - lastSyncTimeRef.current > 2 * 60 * 1000) {
+        syncContributions();
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [syncContributions]);
+
+  // Auto-sync: periodic poll every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      syncContributions();
+    }, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [syncContributions]);
 
   // Filter contributions by selected view
   const activeDaysList = useMemo(() => {
@@ -154,12 +233,11 @@ export default function GitHubContributions() {
     return (data.allContributions || []).filter((d) => d.date.startsWith(selectedYear));
   }, [data, selectedYear]);
 
-  // Compute telemetry metrics
+  // Compute live metrics
   const stats = useMemo(() => {
     let total = 0;
     let activeDays = 0;
     let longestStreak = 0;
-    let curStreak = 0;
     let tempStreak = 0;
     let maxDay: { date: string; count: number } = { date: '', count: 0 };
 
@@ -179,28 +257,12 @@ export default function GitHubContributions() {
       }
     }
 
-    // Compute current streak checking days up to today
-    const todayStr = new Date().toISOString().split('T')[0];
-    const pastDays = sorted.filter((d) => d.date <= todayStr);
-    let startIdx = pastDays.length - 1;
-    if (startIdx >= 0 && pastDays[startIdx].count === 0) {
-      startIdx--;
-    }
-    for (let i = startIdx; i >= 0; i--) {
-      if (pastDays[i].count > 0) {
-        curStreak++;
-      } else {
-        break;
-      }
-    }
-
     const yearTotal = data.total?.[selectedYear] ?? total;
 
     return {
       total: yearTotal || total,
       activeDays,
       longestStreak,
-      curStreak,
       maxDay,
     };
   }, [activeDaysList, data.total, selectedYear]);
@@ -234,7 +296,7 @@ export default function GitHubContributions() {
       wList.push(currentWeek);
     }
 
-    // Determine month labels positioned at week column indices (avoiding collisions)
+    // Determine month labels positioned at week column indices
     const mLabels: { weekIndex: number; label: string }[] = [];
     let lastMonth = -1;
 
@@ -259,8 +321,6 @@ export default function GitHubContributions() {
     return { weeks: wList, monthLabels: mLabels };
   }, [activeDaysList]);
 
-  const activeColors = PALETTES[palette].colors;
-
   const formatDateLabel = (dateStr: string) => {
     try {
       const d = new Date(dateStr + 'T00:00:00');
@@ -278,207 +338,231 @@ export default function GitHubContributions() {
   return (
     <div
       style={{
-        borderRadius: '16px',
-        background: 'rgba(18, 18, 24, 0.98)',
+        borderRadius: '20px',
+        background: 'linear-gradient(180deg, rgba(20, 20, 26, 0.85) 0%, rgba(12, 12, 16, 0.95) 100%)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow: '0 24px 60px -12px rgba(0, 0, 0, 0.6), 0 0 35px rgba(99, 102, 241, 0.06)',
+        boxShadow: '0 24px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
+        backdropFilter: 'blur(20px)',
         overflow: 'hidden',
         position: 'relative',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
-      className="interactive-card"
     >
-      {/* Top Window Header Bar */}
+      {/* Refined Header */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '12px 20px',
+          padding: '16px 22px',
           background: 'rgba(255, 255, 255, 0.02)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
           flexWrap: 'wrap',
-          gap: '10px',
+          gap: '12px',
         }}
       >
-        {/* Left: Window Dots & Console Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }} />
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.68rem',
-              color: 'var(--gray-light)',
-              letterSpacing: '0.06em',
-              marginLeft: '8px',
-            }}
-          >
-            sys-github@baldonado:~/contributions
-          </span>
+        {/* Left: GitHub Identity */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--white)' }}>
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.92rem', fontWeight: 700, color: 'var(--white)' }}>
+              GitHub Activity
+            </span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+            <a
+              href="https://github.com/Akosidakdok"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.7rem',
+                color: 'var(--gray-light)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gray-light)')}
+            >
+              @Akosidakdok <ArrowUpRight size={11} />
+            </a>
+          </div>
         </div>
 
-        {/* Right: Live Sync Badge */}
+        {/* Right: Auto-sync Status & Manual Refresh */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: isLive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(99, 102, 241, 0.1)',
-              border: `1px solid ${isLive ? 'rgba(16, 185, 129, 0.25)' : 'rgba(99, 102, 241, 0.25)'}`,
-              padding: '4px 10px',
-              borderRadius: '999px',
-            }}
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: isLive ? '#10b981' : '#818cf8',
-                boxShadow: isLive ? '0 0 8px #10b981' : '0 0 8px #818cf8',
-                display: 'inline-block',
-                animation: isLoading ? 'pulse 1.5s infinite' : 'none',
-              }}
-            />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ position: 'relative', display: 'flex', height: '7px', width: '7px' }}>
+              <span
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  backgroundColor: isLive ? '#22c55e' : '#6366f1',
+                  opacity: 0.6,
+                  animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+                }}
+              />
+              <span
+                style={{
+                  position: 'relative',
+                  display: 'inline-flex',
+                  borderRadius: '50%',
+                  height: '7px',
+                  width: '7px',
+                  backgroundColor: isLive ? '#22c55e' : '#6366f1',
+                }}
+              />
+            </span>
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.62rem',
-                color: isLive ? '#34d399' : '#a5b4fc',
-                letterSpacing: '0.08em',
-                fontWeight: 700,
-                textTransform: 'uppercase',
+                fontSize: '0.68rem',
+                color: isLive ? '#86efac' : '#a5b4fc',
+                letterSpacing: '0.04em',
+                fontWeight: 500,
               }}
             >
-              {isLoading ? 'SYNCING GITHUB...' : isLive ? 'GITHUB TELEMETRY LIVE' : 'CACHED SYNC ONLINE'}
+              {isSyncing ? 'Syncing...' : isLive ? 'Live Sync' : 'Synced'}
             </span>
           </div>
 
-          <a
-            href="https://github.com/Akosidakdok"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => syncContributions(true)}
+            disabled={isSyncing}
+            title="Sync latest GitHub commits now"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: 'var(--white)',
-              textDecoration: 'none',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.62rem',
-              letterSpacing: '0.05em',
-              transition: 'background 0.2s, border-color 0.2s',
+              gap: '6px',
+              padding: '5px 11px',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              color: 'var(--gray-light)',
+              cursor: isSyncing ? 'not-allowed' : 'pointer',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.72rem',
+              fontWeight: 500,
+              transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+              if (!isSyncing) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.color = '#fff';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.16)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+              if (!isSyncing) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.color = 'var(--gray-light)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+              }
             }}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-            </svg>
-            @Akosidakdok ↗
-          </a>
+            <RefreshCw
+              size={12}
+              style={{
+                animation: isSyncing ? 'spin 0.8s linear infinite' : 'none',
+              }}
+            />
+            <span>Refresh</span>
+          </button>
         </div>
       </div>
 
-      {/* Main Container */}
+      {/* Main Content */}
       <div style={{ padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {/* 4 Telemetry Metrics Grid (Matches TelemetryConsole aesthetic) */}
+        {/* 4 Clean Metric Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
           {/* Total Contributions */}
           <div
             style={{
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.02)',
+              padding: '14px 16px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.025)',
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
-              TOTAL COMMITS / PRS
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', fontWeight: 500, marginBottom: '4px' }}>
+              Total Contributions
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: 'var(--white)', letterSpacing: '0.02em', fontWeight: 700 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--white)', fontWeight: 700, lineHeight: 1.2 }}>
               {stats.total.toLocaleString()}
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#10b981', marginTop: '2px' }}>
-              ⚡ {selectedYear === 'lastYear' ? 'Last 365 Days' : `Year ${selectedYear}`}
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#86efac', marginTop: '4px' }}>
+              {selectedYear === 'lastYear' ? 'Last 365 days' : `Year ${selectedYear}`}
             </div>
           </div>
 
           {/* Active Days */}
           <div
             style={{
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.02)',
+              padding: '14px 16px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.025)',
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
-              ACTIVE DEV DAYS
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', fontWeight: 500, marginBottom: '4px' }}>
+              Active Dev Days
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: 'var(--white)', letterSpacing: '0.02em', fontWeight: 700 }}>
-              {stats.activeDays} <span style={{ fontSize: '0.75rem', color: 'var(--gray)' }}>Days</span>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--white)', fontWeight: 700, lineHeight: 1.2 }}>
+              {stats.activeDays} <span style={{ fontSize: '0.75rem', color: 'var(--gray)', fontWeight: 400 }}>days</span>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#38bdf8', marginTop: '2px' }}>
-              🎯 Verified commits
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#38bdf8', marginTop: '4px' }}>
+              {stats.activeDays} active days
             </div>
           </div>
 
           {/* Longest Streak */}
           <div
             style={{
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.02)',
+              padding: '14px 16px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.025)',
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
-              LONGEST STREAK
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', fontWeight: 500, marginBottom: '4px' }}>
+              Longest Streak
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: 'var(--white)', letterSpacing: '0.02em', fontWeight: 700 }}>
-              {stats.longestStreak} <span style={{ fontSize: '0.75rem', color: 'var(--gray)' }}>Days</span>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--white)', fontWeight: 700, lineHeight: 1.2 }}>
+              {stats.longestStreak} <span style={{ fontSize: '0.75rem', color: 'var(--gray)', fontWeight: 400 }}>days</span>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#f59e0b', marginTop: '2px' }}>
-              🔥 Peak momentum
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#f59e0b', marginTop: '4px' }}>
+              Peak momentum
             </div>
           </div>
 
-          {/* Peak Day */}
+          {/* Peak Day Activity */}
           <div
             style={{
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.02)',
+              padding: '14px 16px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.025)',
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
-              PEAK DAY ACTIVITY
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--gray)', fontWeight: 500, marginBottom: '4px' }}>
+              Most Productive Day
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: 'var(--white)', letterSpacing: '0.02em', fontWeight: 700 }}>
-              {stats.maxDay.count} <span style={{ fontSize: '0.75rem', color: 'var(--gray)' }}>Contributions</span>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--white)', fontWeight: 700, lineHeight: 1.2 }}>
+              {stats.maxDay.count} <span style={{ fontSize: '0.75rem', color: 'var(--gray)', fontWeight: 400 }}>commits</span>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#818cf8', marginTop: '2px' }}>
-              📅 {stats.maxDay.date ? formatDateLabel(stats.maxDay.date).split(',')[0] : 'Recorded'}
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#a5b4fc', marginTop: '4px' }}>
+              {stats.maxDay.date ? formatDateLabel(stats.maxDay.date).split(',').slice(0, 2).join(',') : 'Recorded'}
             </div>
           </div>
         </div>
 
-        {/* Toolbar: Timeline Range & Palette Switcher */}
+        {/* Toolbar: Dynamic Year Tabs */}
         <div
           style={{
             display: 'flex',
@@ -487,98 +571,54 @@ export default function GitHubContributions() {
             flexWrap: 'wrap',
             gap: '12px',
             borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-            paddingBottom: '12px',
+            paddingBottom: '14px',
           }}
         >
           {/* Year Range Tabs */}
           <div style={{ display: 'inline-flex', gap: '6px', background: 'rgba(0, 0, 0, 0.3)', padding: '3px', borderRadius: '8px' }}>
-            {(
-              [
-                { id: 'lastYear', label: 'Last 12 Months' },
-                { id: '2026', label: '2026' },
-                { id: '2025', label: '2025' },
-              ] as const
-            ).map((tab) => {
-              const active = selectedYear === tab.id;
+            {availableYears.map((yearKey) => {
+              const active = selectedYear === yearKey;
+              const label = yearKey === 'lastYear' ? 'Last 12 Months' : yearKey;
               return (
                 <button
-                  key={tab.id}
-                  onClick={() => setSelectedYear(tab.id)}
+                  key={yearKey}
+                  type="button"
+                  onClick={() => setSelectedYear(yearKey)}
                   style={{
-                    background: active ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                    background: active ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
                     border: 'none',
                     borderRadius: '6px',
                     color: active ? 'var(--white)' : 'var(--gray)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
-                    letterSpacing: '0.06em',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.72rem',
                     padding: '5px 12px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.15s ease',
                     fontWeight: active ? 600 : 400,
                   }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--gray-light)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--gray)';
+                  }}
                 >
-                  {tab.label}
+                  {label}
                 </button>
               );
             })}
           </div>
 
-          {/* Palette Selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              THEME:
-            </span>
-            <div style={{ display: 'inline-flex', gap: '4px', background: 'rgba(0, 0, 0, 0.3)', padding: '3px', borderRadius: '8px' }}>
-              {(Object.keys(PALETTES) as Palette[]).map((p) => {
-                const active = palette === p;
-                const pColor = PALETTES[p].colors[3];
-                return (
-                  <button
-                    key={p}
-                    onClick={() => setPalette(p)}
-                    title={PALETTES[p].name}
-                    style={{
-                      background: active ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
-                      border: active ? `1px solid ${pColor}` : '1px solid transparent',
-                      borderRadius: '6px',
-                      padding: '4px 8px',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6rem',
-                      color: active ? '#fff' : 'var(--gray)',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '2px',
-                        background: pColor,
-                        display: 'inline-block',
-                      }}
-                    />
-                    {PALETTES[p].label}
-                  </button>
-                );
-              })}
-            </div>
+          {/* Activity Tag */}
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--gray-light)' }}>
+            <span style={{ color: '#86efac', fontWeight: 600 }}>{stats.total}</span> contributions in{' '}
+            {selectedYear === 'lastYear' ? 'the last year' : selectedYear}
           </div>
         </div>
 
-        {/* Calendar Heatmap Container with custom horizontal scrolling */}
+        {/* Heatmap Grid with sleek custom scrollbar */}
         <div style={{ position: 'relative' }}>
-          <div
-            style={{
-              overflowX: 'auto',
-              paddingBottom: '10px',
-              WebkitOverflowScrolling: 'touch',
-            }}
-          >
+          <div className="heatmap-scroll-container" style={{ paddingBottom: '8px' }}>
             <div style={{ minWidth: '780px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {/* Month Headers */}
               <div style={{ display: 'flex', position: 'relative', height: '18px', marginLeft: '32px' }}>
@@ -600,7 +640,7 @@ export default function GitHubContributions() {
                 ))}
               </div>
 
-              {/* Heatmap Grid (7 Rows, 53 Columns) */}
+              {/* Heatmap 7 rows */}
               <div style={{ display: 'flex', gap: '6px' }}>
                 {/* Day of week labels */}
                 <div
@@ -654,8 +694,7 @@ export default function GitHubContributions() {
                           );
                         }
 
-                        const cellColor = activeColors[cell.level] || activeColors[0];
-                        const isHighLevel = cell.level >= 3;
+                        const cellColor = GITHUB_COLORS[cell.level] || GITHUB_COLORS[0];
 
                         return (
                           <div
@@ -675,7 +714,6 @@ export default function GitHubContributions() {
                               borderRadius: '2.5px',
                               background: cellColor,
                               border: cell.level === 0 ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid transparent',
-                              boxShadow: isHighLevel ? `0 0 6px ${PALETTES[palette].glow}` : 'none',
                               cursor: 'pointer',
                               transition: 'transform 0.12s ease, filter 0.12s ease',
                             }}
@@ -690,42 +728,50 @@ export default function GitHubContributions() {
             </div>
           </div>
 
-          {/* Floating Tooltip */}
+          {/* Floating Hover Tooltip */}
           {hoveredCell && (
             <div
               style={{
                 position: 'fixed',
                 left: `${hoveredCell.x}px`,
-                top: `${hoveredCell.y - 44}px`,
+                top: `${hoveredCell.y - 42}px`,
                 transform: 'translateX(-50%)',
-                background: 'rgba(10, 10, 15, 0.95)',
-                border: '1px solid rgba(255, 255, 255, 0.18)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
-                padding: '6px 12px',
-                borderRadius: '8px',
+                background: 'rgba(15, 15, 20, 0.95)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+                padding: '5px 11px',
+                borderRadius: '7px',
                 pointerEvents: 'none',
                 zIndex: 9999,
                 whiteSpace: 'nowrap',
                 backdropFilter: 'blur(8px)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', fontWeight: 600 }}>
+              <span
+                style={{
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '2px',
+                  background: GITHUB_COLORS[hoveredCell.day.level] || GITHUB_COLORS[0],
+                }}
+              />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.74rem', color: '#fff', fontWeight: 500 }}>
                 {hoveredCell.day.count > 0 ? (
                   <>
-                    <span style={{ color: activeColors[hoveredCell.day.level] || '#fff' }}>
-                      {hoveredCell.day.count} {hoveredCell.day.count === 1 ? 'contribution' : 'contributions'}
-                    </span>{' '}
-                    on {formatDateLabel(hoveredCell.day.date)}
+                    <strong>{hoveredCell.day.count} {hoveredCell.day.count === 1 ? 'contribution' : 'contributions'}</strong> on {formatDateLabel(hoveredCell.day.date)}
                   </>
                 ) : (
                   <>No contributions on {formatDateLabel(hoveredCell.day.date)}</>
                 )}
-              </div>
+              </span>
             </div>
           )}
         </div>
 
-        {/* Live Hover Info Bar & Legend */}
+        {/* Live Hover Info Bar & Legend (Restored as requested) */}
         <div
           style={{
             display: 'flex',
@@ -733,31 +779,45 @@ export default function GitHubContributions() {
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '12px',
-            padding: '10px 14px',
-            borderRadius: '10px',
-            background: 'rgba(0, 0, 0, 0.25)',
-            border: '1px dashed rgba(255, 255, 255, 0.1)',
+            padding: '12px 18px',
+            borderRadius: '12px',
+            background: 'rgba(255, 255, 255, 0.025)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
           }}
         >
           {/* Active Hover Inspection */}
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--gray-light)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--gray-light)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             {hoveredCell ? (
-              <span>
-                <span style={{ color: activeColors[hoveredCell.day.level] || '#fff', fontWeight: 600 }}>
-                  {hoveredCell.day.count} contribution{hoveredCell.day.count === 1 ? '' : 's'}
-                </span>{' '}
-                recorded on {formatDateLabel(hoveredCell.day.date)}
-              </span>
+              <>
+                <span
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '2px',
+                    background: GITHUB_COLORS[hoveredCell.day.level] || GITHUB_COLORS[0],
+                    display: 'inline-block',
+                  }}
+                />
+                <span>
+                  <strong style={{ color: '#fff' }}>
+                    {hoveredCell.day.count} {hoveredCell.day.count === 1 ? 'contribution' : 'contributions'}
+                  </strong>{' '}
+                  recorded on {formatDateLabel(hoveredCell.day.date)}
+                </span>
+              </>
             ) : (
-              <span>Hover over any calendar cell to inspect commit timeline</span>
+              <>
+                <span style={{ color: 'var(--gray)' }}>✦</span>
+                <span>Hover over any calendar cell to inspect commit timeline</span>
+              </>
             )}
           </div>
 
           {/* Color Scale Legend */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)' }}>Less</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--gray)' }}>Less</span>
             <div style={{ display: 'flex', gap: '3px' }}>
-              {activeColors.map((col, idx) => (
+              {GITHUB_COLORS.map((col, idx) => (
                 <div
                   key={idx}
                   style={{
@@ -770,56 +830,78 @@ export default function GitHubContributions() {
                 />
               ))}
             </div>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--gray)' }}>More</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--gray)' }}>More</span>
           </div>
         </div>
       </div>
 
-      {/* Terminal Footer Status Bar (Matches TelemetryConsole footer) */}
+      {/* Clean Footer */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '10px 20px',
-          background: 'rgba(0, 0, 0, 0.4)',
+          padding: '12px 22px',
+          background: 'rgba(0, 0, 0, 0.35)',
           borderTop: '1px solid rgba(255, 255, 255, 0.06)',
           fontFamily: 'var(--font-mono)',
-          fontSize: '0.62rem',
+          fontSize: '0.68rem',
           color: 'var(--gray)',
-          letterSpacing: '0.06em',
           flexWrap: 'wrap',
           gap: '8px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span>SOURCE: api.github.com</span>
-          <span>●</span>
-          <span>USER: Akosidakdok</span>
-          <span>●</span>
-          <span style={{ color: '#10b981' }}>STATUS: 200 OK</span>
-        </div>
-
-        <div style={{ display: 'flex', gap: '14px' }}>
-          <a
-            href="https://github.com/Akosidakdok?tab=repositories"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'var(--gray-light)', textDecoration: 'none', transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--white)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gray-light)')}
-          >
-            Repositories ↗
-          </a>
+        <div>
+          <span>Live GitHub activity for </span>
           <a
             href="https://github.com/Akosidakdok"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--gray-light)', textDecoration: 'none', transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--white)')}
+            style={{ color: 'var(--gray-light)', textDecoration: 'none' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gray-light)')}
           >
-            Profile ↗
+            @Akosidakdok
+          </a>
+        </div>
+
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          <a
+            href="https://github.com/Akosidakdok?tab=repositories"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'var(--gray-light)',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gray-light)')}
+          >
+            <span>Repositories</span>
+            <ArrowUpRight size={12} />
+          </a>
+          <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>•</span>
+          <a
+            href="https://github.com/Akosidakdok"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'var(--gray-light)',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gray-light)')}
+          >
+            <span>Profile</span>
+            <ArrowUpRight size={12} />
           </a>
         </div>
       </div>

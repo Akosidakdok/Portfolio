@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import sussyWaveWebp from '../assets/sussy_wave.webp';
+import {
+  Send,
+  Copy,
+  Check,
+  Clock,
+  ArrowUpRight,
+  AlertCircle,
+  RotateCcw,
+  CheckCircle2,
+  Mail,
+} from 'lucide-react';
 
 interface FormData {
   name: string;
@@ -9,10 +19,10 @@ interface FormData {
 }
 
 const TOPICS = [
-  { id: 'freelance', label: '🚀 Freelance Project' },
-  { id: 'fulltime', label: '💼 Full-Time Role' },
-  { id: 'ai_web', label: '🤖 AI & Full-Stack' },
-  { id: 'hello', label: '☕ Say Hello' },
+  { id: 'freelance', label: 'Freelance Project' },
+  { id: 'fulltime', label: 'Full-Time Role' },
+  { id: 'ai_web', label: 'AI & Full-Stack' },
+  { id: 'general', label: 'General Inquiry' },
 ];
 
 const RATE_LIMIT_STORAGE_KEY = 'cj_contact_ratelimit_v1';
@@ -77,7 +87,7 @@ export default function ContactForm() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
-    topic: '🚀 Freelance Project',
+    topic: 'Freelance Project',
     message: '',
   });
 
@@ -87,7 +97,7 @@ export default function ContactForm() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedSummary, setCopiedSummary] = useState(false);
 
-  // Rate limiting & anti-spam state (lazy initialization avoids cascading renders)
+  // Rate limiting & anti-spam state
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(() => {
     return getRateLimitStatus().remainingSeconds;
   });
@@ -137,14 +147,14 @@ export default function ContactForm() {
   };
 
   const constructMailtoUrl = () => {
-    const subject = encodeURIComponent(`[Portfolio Transmission] ${formData.topic} from ${formData.name}`);
+    const subject = encodeURIComponent(`[Portfolio Inquiry] ${formData.topic} - ${formData.name}`);
     const body = encodeURIComponent(
-      `Name / Sender: ${formData.name}\n` +
-      `Email Address: ${formData.email}\n` +
-      `Inquiry Topic: ${formData.topic}\n\n` +
+      `Name: ${formData.name}\n` +
+      `Email: ${formData.email}\n` +
+      `Topic: ${formData.topic}\n\n` +
       `Message:\n${formData.message}\n\n` +
       `---\n` +
-      `Dispatched via CJ Baldonado Portfolio Transmission Terminal`
+      `Sent via CJ Baldonado Portfolio Contact Form`
     );
     return `mailto:cjbaldonado11@gmail.com?subject=${subject}&body=${body}`;
   };
@@ -152,7 +162,7 @@ export default function ContactForm() {
   const handleCopySummary = () => {
     const summaryText =
       `To: cjbaldonado11@gmail.com\n` +
-      `Subject: [Portfolio Transmission] ${formData.topic} from ${formData.name}\n\n` +
+      `Subject: [Portfolio Inquiry] ${formData.topic} - ${formData.name}\n\n` +
       `Sender: ${formData.name} (${formData.email})\n` +
       `Topic: ${formData.topic}\n\n` +
       `Message:\n${formData.message}`;
@@ -181,8 +191,8 @@ export default function ContactForm() {
       setRateLimitReason(rateStatus.reason);
       setErrorMessage(
         rateStatus.reason === 'hourly_limit'
-          ? `Transmission limit reached (max ${MAX_PER_HOUR} per hour). Next transmission available in ${formatCooldown(rateStatus.remainingSeconds)}.`
-          : `Anti-spam cooldown active. Next transmission available in ${formatCooldown(rateStatus.remainingSeconds)}.`
+          ? `Submission limit reached (max ${MAX_PER_HOUR} per hour). Available again in ${formatCooldown(rateStatus.remainingSeconds)}.`
+          : `Please wait ${formatCooldown(rateStatus.remainingSeconds)} before sending another message.`
       );
       return;
     }
@@ -200,7 +210,7 @@ export default function ContactForm() {
     }
 
     if (!formData.message.trim()) {
-      setErrorMessage('Please enter your transmission message.');
+      setErrorMessage('Please write a short message before sending.');
       return;
     }
 
@@ -220,7 +230,7 @@ export default function ContactForm() {
             access_key: web3formsKey,
             name: formData.name,
             email: formData.email,
-            subject: `[Portfolio Transmission] ${formData.topic} from ${formData.name}`,
+            subject: `[Portfolio Inquiry] ${formData.topic} - ${formData.name}`,
             message: formData.message,
           }),
         });
@@ -273,7 +283,7 @@ export default function ContactForm() {
           name: formData.name,
           email: formData.email,
           _replyto: formData.email,
-          _subject: `[Portfolio Transmission] ${formData.topic} from ${formData.name}`,
+          _subject: `[Portfolio Inquiry] ${formData.topic} - ${formData.name}`,
           topic: formData.topic,
           message: formData.message,
           _template: 'table',
@@ -297,8 +307,7 @@ export default function ContactForm() {
         setStatus('success');
       }
     } catch (err) {
-      console.error('Transmission failed:', err);
-      // Fallback: Dispatch mailto if network blocked
+      console.error('Submission failed, opening fallback mailto client:', err);
       const mailtoUrl = constructMailtoUrl();
       try {
         window.open(mailtoUrl, '_blank');
@@ -317,7 +326,7 @@ export default function ContactForm() {
     setFormData({
       name: '',
       email: '',
-      topic: '🚀 Freelance Project',
+      topic: 'Freelance Project',
       message: '',
     });
     setStatus('idle');
@@ -327,135 +336,118 @@ export default function ContactForm() {
   return (
     <div
       style={{
-        borderRadius: '16px',
-        background: 'rgba(18, 18, 24, 0.98)',
+        borderRadius: '20px',
+        background: 'linear-gradient(180deg, rgba(20, 20, 26, 0.85) 0%, rgba(12, 12, 16, 0.95) 100%)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow: '0 24px 60px -12px rgba(0, 0, 0, 0.6), 0 0 35px rgba(99, 102, 241, 0.06)',
+        boxShadow: '0 24px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
+        backdropFilter: 'blur(20px)',
         overflow: 'hidden',
         position: 'relative',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
-      className="interactive-card"
     >
-      {/* Top Window Chrome */}
+      {/* Refined Header Bar */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '12px 18px',
+          padding: '16px 22px',
           background: 'rgba(255, 255, 255, 0.02)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
         }}
       >
-        {/* Left: Window Controls */}
+        {/* Availability status badge */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }} />
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+          <span style={{ position: 'relative', display: 'flex', height: '8px', width: '8px' }}>
+            <span
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                backgroundColor: '#22c55e',
+                opacity: 0.6,
+                animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+              }}
+            />
+            <span
+              style={{
+                position: 'relative',
+                display: 'inline-flex',
+                borderRadius: '50%',
+                height: '8px',
+                width: '8px',
+                backgroundColor: '#22c55e',
+              }}
+            />
+          </span>
           <span
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: '0.68rem',
-              color: 'var(--gray-light)',
-              letterSpacing: '0.06em',
-              marginLeft: '8px',
+              color: '#86efac',
+              letterSpacing: '0.04em',
+              fontWeight: 600,
             }}
           >
-            sys-transmission@baldonado:~
+            Available for opportunities
           </span>
         </div>
 
-        {/* Right: Live Status Indicator */}
+        {/* Expected response time indicator */}
         <div
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(16, 185, 129, 0.1)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
-            padding: '4px 10px',
-            borderRadius: '999px',
+            gap: '5px',
+            color: 'var(--gray-light)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.68rem',
           }}
         >
-          <span
-            style={{
-              width: '6px',
-              height: '6px',
-              borderRadius: '50%',
-              background: '#10b981',
-              boxShadow: '0 0 8px #10b981',
-              display: 'inline-block',
-            }}
-          />
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.62rem',
-              color: '#34d399',
-              letterSpacing: '0.08em',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-            }}
-          >
-            AVAILABLE FOR WORK
-          </span>
+          <Clock size={12} style={{ color: 'var(--gray)' }} />
+          <span>Replies in &lt; 24h</span>
         </div>
       </div>
 
       {/* Main Content Area */}
       {status === 'success' ? (
-        /* Success Screen */
-        <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Header confirmation */}
-          <div style={{ textAlign: 'center', padding: '12px 0 6px' }}>
+        /* Polished Success Screen */
+        <div style={{ padding: '36px 24px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
+          <div style={{ textAlign: 'center' }}>
             <div
               style={{
-                width: '54px',
-                height: '54px',
+                width: '52px',
+                height: '52px',
                 borderRadius: '50%',
                 background: isActivationNotice ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)',
-                border: isActivationNotice ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid rgba(16, 185, 129, 0.35)',
+                border: isActivationNotice ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(16, 185, 129, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 16px',
                 color: isActivationNotice ? '#f59e0b' : '#34d399',
-                fontSize: '1.6rem',
-                boxShadow: isActivationNotice
-                  ? '0 0 24px rgba(245, 158, 11, 0.25)'
-                  : '0 0 24px rgba(16, 185, 129, 0.25)',
               }}
             >
-              {isActivationNotice ? '⚡' : '✓'}
+              {isActivationNotice ? <Mail size={22} /> : <CheckCircle2 size={24} />}
             </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.65rem',
-                color: isActivationNotice ? '#f59e0b' : '#34d399',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                marginBottom: '6px',
-              }}
-            >
-              {isActivationNotice ? 'ONE-TIME INBOX ACTIVATION REQUIRED' : 'TRANSMISSION DELIVERED DIRECTLY TO INBOX'}
-            </div>
+
             <h3
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.25rem',
+                fontSize: '1.35rem',
                 fontWeight: 700,
                 color: 'var(--white)',
                 marginBottom: '8px',
               }}
             >
-              {isActivationNotice ? 'Almost Ready!' : `Thank You, ${formData.name}!`}
+              {isActivationNotice ? 'Almost there!' : `Message Received!`}
             </h3>
+
             <p
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: '0.82rem',
+                fontSize: '0.85rem',
                 color: 'var(--gray-light)',
                 maxWidth: '440px',
                 margin: '0 auto',
@@ -464,300 +456,140 @@ export default function ContactForm() {
             >
               {isActivationNotice ? (
                 <>
-                  FormSubmit has sent a one-time verification email to{' '}
+                  FormSubmit sent a one-time verification link to{' '}
                   <strong style={{ color: 'var(--white)' }}>cjbaldonado11@gmail.com</strong>.
-                  Please open your inbox (or Spam folder) and click <strong>"Activate Form"</strong>.
-                  Once activated, all future messages from this form will land straight into your inbox!
+                  Please check your inbox (or Spam folder) and click <strong>"Activate Form"</strong> to finish setting up direct message delivery.
                 </>
               ) : (
                 <>
-                  Your message has been transmitted directly to{' '}
-                  <strong style={{ color: 'var(--white)' }}>cjbaldonado11@gmail.com</strong>.
-                  CJ will review your transmission and reply within 24 hours.
+                  Thank you, <strong style={{ color: 'var(--white)' }}>{formData.name}</strong>. Your message was delivered to{' '}
+                  <strong style={{ color: 'var(--white)' }}>cjbaldonado11@gmail.com</strong>. I will get back to you shortly!
                 </>
               )}
             </p>
           </div>
 
-          {/* Message summary terminal preview */}
+          {/* Clean Message Summary */}
           <div
             style={{
-              padding: '14px 16px',
-              borderRadius: '10px',
-              background: 'rgba(0, 0, 0, 0.35)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.7rem',
+              padding: '16px 18px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              fontSize: '0.78rem',
               lineHeight: 1.6,
             }}
           >
-            <div style={{ color: 'var(--gray)' }}>// TRANSMISSION MANIFEST</div>
-            <div>
-              <span style={{ color: '#38bdf8' }}>FROM:</span>{' '}
-              <span style={{ color: 'var(--white)' }}>{formData.name} &lt;{formData.email}&gt;</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', paddingBottom: '8px' }}>
+              <span style={{ color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem' }}>SUMMARY</span>
+              <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500 }}>{formData.topic}</span>
             </div>
-            <div>
-              <span style={{ color: '#38bdf8' }}>TOPIC:</span>{' '}
-              <span style={{ color: '#818cf8' }}>{formData.topic}</span>
+            <div style={{ color: 'var(--white)', fontWeight: 500 }}>
+              {formData.name} <span style={{ color: 'var(--gray)', fontWeight: 400 }}>&lt;{formData.email}&gt;</span>
             </div>
-            <div style={{ marginTop: '6px', color: '#94a3b8', fontStyle: 'italic' }}>
+            <div style={{ marginTop: '6px', color: 'var(--gray-light)', fontStyle: 'italic' }}>
               "{formData.message.length > 120 ? formData.message.substring(0, 120) + '...' : formData.message}"
             </div>
           </div>
 
-          {/* Quick Action Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {isActivationNotice ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px' }}>
-                {/* Open Gmail to activate */}
-                <a
-                  href="https://mail.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    textDecoration: 'none',
-                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: '#ffffff',
-                    padding: '10px 14px',
-                    borderRadius: '10px',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    boxShadow: '0 0 16px rgba(245, 158, 11, 0.3)',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <span>📬</span> Check Gmail to Activate ↗
-                </a>
-
-                {/* Reset / Send another */}
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: 'var(--white)',
-                    padding: '10px 14px',
-                    borderRadius: '10px',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.72rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <span>↺</span> Send Another Message
-                </button>
-              </div>
+              <a
+                href="https://mail.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  flex: '1 1 180px',
+                  textDecoration: 'none',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  color: '#ffffff',
+                  padding: '11px 16px',
+                  borderRadius: '10px',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(245, 158, 11, 0.25)',
+                }}
+              >
+                <Mail size={15} />
+                <span>Open Gmail to Activate</span>
+                <ArrowUpRight size={14} />
+              </a>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px' }}>
-                {/* Send Another Transmission (Primary) */}
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: '#ffffff',
-                    padding: '10px 14px',
-                    borderRadius: '10px',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    boxShadow: '0 0 16px rgba(99, 102, 241, 0.35)',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <span>↺</span> Send Another Transmission
-                </button>
-
-                {/* Copy summary */}
-                <button
-                  type="button"
-                  onClick={handleCopySummary}
-                  style={{
-                    background: copiedSummary ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                    border: copiedSummary ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.08)',
-                    color: copiedSummary ? '#34d399' : 'var(--gray-light)',
-                    padding: '10px 14px',
-                    borderRadius: '10px',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.72rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {copiedSummary ? '✓ Copied to Clipboard' : '📋 Copy Full Message'}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleReset}
+                style={{
+                  flex: '1 1 180px',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#ffffff',
+                  padding: '11px 16px',
+                  borderRadius: '10px',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(99, 102, 241, 0.3)',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <RotateCcw size={14} />
+                <span>Send Another Message</span>
+              </button>
             )}
+
+            <button
+              type="button"
+              onClick={handleCopySummary}
+              style={{
+                flex: '1 1 160px',
+                background: copiedSummary ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.04)',
+                border: copiedSummary ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.08)',
+                color: copiedSummary ? '#34d399' : 'var(--gray-light)',
+                padding: '11px 16px',
+                borderRadius: '10px',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.82rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {copiedSummary ? <Check size={14} /> : <Copy size={14} />}
+              <span>{copiedSummary ? 'Copied' : 'Copy Message Note'}</span>
+            </button>
           </div>
         </div>
       ) : (
-        /* Contact Form Interactive View */
-        <form onSubmit={handleSubmit} style={{ padding: '22px 20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Header Tagline */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: 'var(--accent)', fontSize: '0.85rem' }}>⚡</span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.68rem',
-                  color: 'var(--white)',
-                  letterSpacing: '0.08em',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                }}
-              >
-                DIRECT CONTACT FORM
-              </span>
-            </div>
-            <span
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.58rem',
-                color: 'var(--gray)',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-              }}
-            >
-              RESPONSE &lt; 24H
-            </span>
-          </div>
-
-          {/* Name & Email Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '12px' }}>
-            {/* Name Input */}
-            <div>
-              <label
-                htmlFor="form-name"
-                style={{
-                  display: 'block',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.58rem',
-                  color: 'var(--gray)',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  marginBottom: '6px',
-                }}
-              >
-                NAME / ORGANIZATION <span style={{ color: '#ef4444' }}>*</span>
-              </label>
-              <input
-                id="form-name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="e.g. Christian Grey"
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: 'var(--white)',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                  transition: 'all 0.2s ease',
-                }}
-                onFocus={e => {
-                  e.target.style.borderColor = 'var(--accent)';
-                  e.target.style.boxShadow = '0 0 16px rgba(99, 102, 241, 0.25)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.05)';
-                }}
-                onBlur={e => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.03)';
-                }}
-              />
-            </div>
-
-            {/* Email Input */}
-            <div>
-              <label
-                htmlFor="form-email"
-                style={{
-                  display: 'block',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.58rem',
-                  color: 'var(--gray)',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  marginBottom: '6px',
-                }}
-              >
-                EMAIL ADDRESS <span style={{ color: '#ef4444' }}>*</span>
-              </label>
-              <input
-                id="form-email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="e.g. name@company.com"
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: 'var(--white)',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                  transition: 'all 0.2s ease',
-                }}
-                onFocus={e => {
-                  e.target.style.borderColor = 'var(--accent)';
-                  e.target.style.boxShadow = '0 0 16px rgba(99, 102, 241, 0.25)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.05)';
-                }}
-                onBlur={e => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.03)';
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Topic / Project Type Pills */}
+        /* Clean Professional Form */
+        <form onSubmit={handleSubmit} style={{ padding: '26px 24px 22px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          {/* Topic / Project Type Selection */}
           <div>
             <label
               style={{
                 display: 'block',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.58rem',
-                color: 'var(--gray)',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                marginBottom: '8px',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
+                fontWeight: 500,
+                color: 'var(--gray-light)',
+                marginBottom: '10px',
               }}
             >
-              INQUIRY TYPE / TOPIC
+              I'm interested in
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {TOPICS.map(topic => {
@@ -768,26 +600,147 @@ export default function ContactForm() {
                     type="button"
                     onClick={() => handleTopicSelect(topic.label)}
                     style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.68rem',
-                      letterSpacing: '0.04em',
-                      padding: '6px 12px',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.78rem',
+                      fontWeight: isSelected ? 600 : 400,
+                      padding: '7px 14px',
                       borderRadius: '8px',
-                      background: isSelected ? 'rgba(99, 102, 241, 0.22)' : 'rgba(255, 255, 255, 0.02)',
-                      border: isSelected ? '1px solid #6366f1' : '1px solid rgba(255, 255, 255, 0.08)',
+                      background: isSelected ? 'rgba(99, 102, 241, 0.14)' : 'rgba(255, 255, 255, 0.025)',
+                      border: isSelected ? '1px solid rgba(99, 102, 241, 0.6)' : '1px solid rgba(255, 255, 255, 0.08)',
                       color: isSelected ? '#ffffff' : 'var(--gray-light)',
-                      boxShadow: isSelected ? '0 0 14px rgba(99, 102, 241, 0.3)' : 'none',
+                      boxShadow: isSelected ? '0 0 14px rgba(99, 102, 241, 0.2)' : 'none',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
+                      transition: 'all 0.15s ease',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '4px',
+                      gap: '6px',
+                    }}
+                    onMouseEnter={e => {
+                      if (!isSelected) {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                        e.currentTarget.style.color = '#ffffff';
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!isSelected) {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                        e.currentTarget.style.color = 'var(--gray-light)';
+                      }
                     }}
                   >
+                    {isSelected && (
+                      <span
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          borderRadius: '50%',
+                          background: 'var(--accent)',
+                          boxShadow: '0 0 6px var(--accent)',
+                          display: 'inline-block',
+                        }}
+                      />
+                    )}
                     {topic.label}
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Name & Email Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
+            {/* Name Input */}
+            <div>
+              <label
+                htmlFor="form-name"
+                style={{
+                  display: 'block',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.78rem',
+                  fontWeight: 500,
+                  color: 'var(--gray-light)',
+                  marginBottom: '6px',
+                }}
+              >
+                Your Name <span style={{ color: 'var(--accent)' }}>*</span>
+              </label>
+              <input
+                id="form-name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Alex Rivera"
+                style={{
+                  width: '100%',
+                  padding: '11px 14px',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.09)',
+                  color: 'var(--white)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.85rem',
+                  outline: 'none',
+                  transition: 'all 0.2s ease',
+                }}
+                onFocus={e => {
+                  e.target.style.borderColor = 'var(--accent)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.16)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+                }}
+                onBlur={e => {
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.09)';
+                  e.target.style.boxShadow = 'none';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.025)';
+                }}
+              />
+            </div>
+
+            {/* Email Input */}
+            <div>
+              <label
+                htmlFor="form-email"
+                style={{
+                  display: 'block',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.78rem',
+                  fontWeight: 500,
+                  color: 'var(--gray-light)',
+                  marginBottom: '6px',
+                }}
+              >
+                Email Address <span style={{ color: 'var(--accent)' }}>*</span>
+              </label>
+              <input
+                id="form-email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="alex@company.com"
+                style={{
+                  width: '100%',
+                  padding: '11px 14px',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.09)',
+                  color: 'var(--white)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.85rem',
+                  outline: 'none',
+                  transition: 'all 0.2s ease',
+                }}
+                onFocus={e => {
+                  e.target.style.borderColor = 'var(--accent)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.16)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+                }}
+                onBlur={e => {
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.09)';
+                  e.target.style.boxShadow = 'none';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.025)';
+                }}
+              />
             </div>
           </div>
 
@@ -797,15 +750,14 @@ export default function ContactForm() {
               htmlFor="form-message"
               style={{
                 display: 'block',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.58rem',
-                color: 'var(--gray)',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
+                fontWeight: 500,
+                color: 'var(--gray-light)',
                 marginBottom: '6px',
               }}
             >
-              TRANSMISSION MESSAGE <span style={{ color: '#ef4444' }}>*</span>
+              Message <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <textarea
               id="form-message"
@@ -813,31 +765,31 @@ export default function ContactForm() {
               rows={4}
               value={formData.message}
               onChange={handleInputChange}
-              placeholder="Tell me about your project scope, timeline, ideas, or questions..."
+              placeholder="Tell me about your project, timeline, or what you'd like to collaborate on..."
               style={{
                 width: '100%',
-                padding: '10px 14px',
+                padding: '12px 14px',
                 borderRadius: '10px',
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'rgba(255, 255, 255, 0.025)',
+                border: '1px solid rgba(255, 255, 255, 0.09)',
                 color: 'var(--white)',
                 fontFamily: 'var(--font-body)',
                 fontSize: '0.85rem',
                 lineHeight: 1.6,
                 outline: 'none',
                 resize: 'vertical',
-                minHeight: '90px',
+                minHeight: '105px',
                 transition: 'all 0.2s ease',
               }}
               onFocus={e => {
                 e.target.style.borderColor = 'var(--accent)';
-                e.target.style.boxShadow = '0 0 16px rgba(99, 102, 241, 0.25)';
-                e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.16)';
+                e.target.style.background = 'rgba(255, 255, 255, 0.04)';
               }}
               onBlur={e => {
-                e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.09)';
                 e.target.style.boxShadow = 'none';
-                e.target.style.background = 'rgba(255, 255, 255, 0.03)';
+                e.target.style.background = 'rgba(255, 255, 255, 0.025)';
               }}
             />
           </div>
@@ -846,19 +798,19 @@ export default function ContactForm() {
           {errorMessage && (
             <div
               style={{
-                padding: '8px 12px',
+                padding: '9px 12px',
                 borderRadius: '8px',
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                color: '#f87171',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.68rem',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                color: '#fca5a5',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
               }}
             >
-              <span>⚠</span>
+              <AlertCircle size={15} style={{ flexShrink: 0, color: '#f87171' }} />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -867,26 +819,26 @@ export default function ContactForm() {
           {cooldownRemaining > 0 && (
             <div
               style={{
-                padding: '10px 14px',
-                borderRadius: '10px',
+                padding: '9px 12px',
+                borderRadius: '8px',
                 background: 'rgba(245, 158, 11, 0.08)',
                 border: '1px solid rgba(245, 158, 11, 0.25)',
-                color: '#fbbf24',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.68rem',
+                color: '#fde68a',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 lineHeight: 1.4,
               }}
             >
-              <span style={{ fontSize: '0.9rem' }}>⏳</span>
+              <Clock size={15} style={{ flexShrink: 0, color: '#fbbf24' }} />
               <div>
-                <span style={{ fontWeight: 600 }}>Rate limit active: </span>
+                <span style={{ fontWeight: 600 }}>Slow down: </span>
                 {rateLimitReason === 'hourly_limit'
-                  ? `Hourly cap reached (${MAX_PER_HOUR}/hr). Next transmission available in `
-                  : `Cooldown active. Next transmission available in `}
-                <strong style={{ color: '#fff', textDecoration: 'underline' }}>{formatCooldown(cooldownRemaining)}</strong>.
+                  ? `Hourly cap reached (${MAX_PER_HOUR}/hr). Next message available in `
+                  : `Please wait `}
+                <strong style={{ color: '#fff' }}>{formatCooldown(cooldownRemaining)}</strong> before submitting again.
               </div>
             </div>
           )}
@@ -903,37 +855,14 @@ export default function ContactForm() {
             aria-hidden="true"
           />
 
-          {/* Mascot Callout */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '10px 14px',
-              borderRadius: '10px',
-              background: 'rgba(0, 0, 0, 0.25)',
-              border: '1px dashed rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <img
-              src={sussyWaveWebp}
-              alt="Sussy Mascot"
-              style={{ width: '34px', height: '34px', objectFit: 'contain', flexShrink: 0 }}
-            />
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--gray-light)', lineHeight: 1.4 }}>
-              <span style={{ color: '#38bdf8', fontWeight: 600 }}>Sussy (System Pilot): </span>
-              "Transmissions forward straight to CJ's inbox. Fast turnaround guaranteed!"
-            </div>
-          </div>
-
-          {/* Submission and Copy Email Actions */}
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Action Row */}
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginTop: '4px' }}>
             <button
               type="submit"
               disabled={status === 'submitting' || cooldownRemaining > 0}
               style={{
                 flex: '1 1 200px',
-                padding: '12px 20px',
+                padding: '12px 22px',
                 borderRadius: '10px',
                 background:
                   cooldownRemaining > 0
@@ -943,28 +872,28 @@ export default function ContactForm() {
                   cooldownRemaining > 0
                     ? '1px solid rgba(255, 255, 255, 0.1)'
                     : '1px solid rgba(255, 255, 255, 0.2)',
-                color: cooldownRemaining > 0 ? 'var(--gray)' : 'var(--white)',
-                fontFamily: 'var(--font-display)',
+                color: cooldownRemaining > 0 ? 'var(--gray)' : '#ffffff',
+                fontFamily: 'var(--font-body)',
                 fontWeight: 600,
-                fontSize: '0.85rem',
-                letterSpacing: '0.04em',
+                fontSize: '0.84rem',
+                letterSpacing: '0.01em',
                 cursor: status === 'submitting' || cooldownRemaining > 0 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                boxShadow: cooldownRemaining > 0 ? 'none' : '0 0 20px rgba(99, 102, 241, 0.4)',
+                boxShadow: cooldownRemaining > 0 ? 'none' : '0 4px 18px rgba(99, 102, 241, 0.35)',
                 transition: 'all 0.2s ease',
               }}
               onMouseEnter={e => {
                 if (status !== 'submitting' && cooldownRemaining === 0) {
-                  e.currentTarget.style.boxShadow = '0 0 28px rgba(99, 102, 241, 0.65)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 24px rgba(99, 102, 241, 0.5)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
                 }
               }}
               onMouseLeave={e => {
                 if (cooldownRemaining === 0) {
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(99, 102, 241, 0.4)';
+                  e.currentTarget.style.boxShadow = '0 4px 18px rgba(99, 102, 241, 0.35)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }
               }}
@@ -973,8 +902,8 @@ export default function ContactForm() {
                 <>
                   <span
                     style={{
-                      width: '12px',
-                      height: '12px',
+                      width: '13px',
+                      height: '13px',
                       borderRadius: '50%',
                       border: '2px solid rgba(255,255,255,0.3)',
                       borderTopColor: '#fff',
@@ -982,114 +911,133 @@ export default function ContactForm() {
                       display: 'inline-block',
                     }}
                   />
-                  <span>Dispatching...</span>
+                  <span>Sending message...</span>
                 </>
               ) : cooldownRemaining > 0 ? (
                 <>
-                  <span>⏳ Cooldown Active ({formatCooldown(cooldownRemaining)})</span>
+                  <Clock size={14} />
+                  <span>Cooldown ({formatCooldown(cooldownRemaining)})</span>
                 </>
               ) : (
                 <>
-                  <span>Transmit Message</span>
-                  <span>↗</span>
+                  <span>Send Message</span>
+                  <Send size={14} />
                 </>
               )}
             </button>
 
-            {/* Quick Copy Email Hub Button */}
+            {/* Quick Copy Email Button */}
             <button
               type="button"
               onClick={handleCopyEmail}
-              title="Copy direct email address"
+              title="Copy email address directly"
               style={{
-                background: copiedEmail ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                border: copiedEmail ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: copiedEmail ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.035)',
+                border: copiedEmail ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
                 color: copiedEmail ? '#34d399' : 'var(--gray-light)',
                 padding: '12px 16px',
                 borderRadius: '10px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.72rem',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.82rem',
+                fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'all 0.2s',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '7px',
                 flexShrink: 0,
               }}
               onMouseEnter={e => {
                 if (!copiedEmail) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                  e.currentTarget.style.color = 'var(--white)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
                 }
               }}
               onMouseLeave={e => {
                 if (!copiedEmail) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.035)';
                   e.currentTarget.style.color = 'var(--gray-light)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
                 }
               }}
             >
-              {copiedEmail ? (
-                <>
-                  <span>✓</span> Copied Email
-                </>
-              ) : (
-                <>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
-                  <span>Copy Email</span>
-                </>
-              )}
+              {copiedEmail ? <Check size={14} /> : <Copy size={14} />}
+              <span>{copiedEmail ? 'Copied' : 'Copy Email'}</span>
             </button>
           </div>
         </form>
       )}
 
-      {/* Terminal Status Bar (Footer) */}
+      {/* Clean Bottom Footer Bar */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '10px 18px',
-          background: 'rgba(0, 0, 0, 0.4)',
+          flexWrap: 'wrap',
+          gap: '10px',
+          padding: '12px 22px',
+          background: 'rgba(0, 0, 0, 0.35)',
           borderTop: '1px solid rgba(255, 255, 255, 0.06)',
           fontFamily: 'var(--font-mono)',
-          fontSize: '0.62rem',
+          fontSize: '0.68rem',
           color: 'var(--gray)',
-          letterSpacing: '0.06em',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span>PORT: 3000</span>
-          <span>●</span>
-          <span>LATENCY: 14ms</span>
-          <span>●</span>
-          <span style={{ color: '#10b981' }}>200 OK</span>
+        <div>
+          <span>Direct: </span>
+          <a
+            href="mailto:cjbaldonado11@gmail.com"
+            style={{
+              color: 'var(--gray-light)',
+              textDecoration: 'none',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
+          >
+            cjbaldonado11@gmail.com
+          </a>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
           <a
             href="https://github.com/Akosidakdok"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--gray-light)', textDecoration: 'none', transition: 'color 0.2s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
+            style={{
+              color: 'var(--gray-light)',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
           >
-            GitHub ↗
+            <span>GitHub</span>
+            <ArrowUpRight size={12} />
           </a>
+          <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>•</span>
           <a
             href="https://www.linkedin.com/in/christian-james-baldonado-7b7721410/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--gray-light)', textDecoration: 'none', transition: 'color 0.2s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
+            style={{
+              color: 'var(--gray-light)',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-light)')}
           >
-            LinkedIn ↗
+            <span>LinkedIn</span>
+            <ArrowUpRight size={12} />
           </a>
         </div>
       </div>

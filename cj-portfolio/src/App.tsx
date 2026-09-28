@@ -2721,7 +2721,7 @@ function App() {
             {/* Left Column: Heading, description, and CTAs */}
             <div>
               <div className="reveal" style={{ marginBottom: '8px' }}>
-                <span className="section-label-dark">INITIALIZE CONNECTION</span>
+                <span className="section-label-dark">GET IN TOUCH</span>
               </div>
               <h2
                 className="reveal delay-100"
