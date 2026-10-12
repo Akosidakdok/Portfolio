@@ -21,6 +21,7 @@ const DEVELOPER_JSON_LINES = [
   '    "Supabase", "Gemini AI", "Tailwind CSS"',
   '  ],',
   '  "featuredBuilds": [',
+  '    "Point Nemo (Local-First AI Study Game)",',
   '    "FEASIFY (AI Feasibility System)",',
   '    "Camp-Navi (PNP Camp Crame GIS Navigation)",',
   '    "PNP-Assignment-Survey (HR Portal & Matrix)",',

@@ -12,9 +12,11 @@ import pIdtmsImg from './assets/projects/p-idtms.png';
 import paisImg from './assets/projects/pais.png';
 import campNaviImg from './assets/projects/camp-navi.png';
 import pnpSurveyImg from './assets/projects/pnp-survey.png';
+import pointNemoImg from './assets/projects/pointnemo.png';
 import fccWebDesignImg from './assets/certifications/fcc-responsive-web-design.png';
 import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
+import appBuildersCertImg from './assets/certifications/appbuilders-hackathon-2026.png';
 import TechIcon from './components/TechIcon';
 import ContactForm from './components/ContactForm';
 import GitHubContributions from './components/GitHubContributions';
@@ -341,6 +343,19 @@ const PROJECTS: Project[] = [
     color: '#2563EB',
     image: pnpSurveyImg,
   },
+  {
+    id: '10',
+    label: 'PROJECT J',
+    title: 'Point Nemo',
+    stack: ['React', 'TypeScript', 'Express', 'SQLite', 'Ollama (Local AI)', 'Tailwind CSS'],
+    link: 'https://github.com/Akosidakdok/PointNemo',
+    description: 'Local-first study expedition game powered by on-device Ollama AI. Converts uploaded study PDFs into 9-question deep-sea creature encounters and turn-based boss battles with zero cloud telemetry.',
+    venue: 'LOCAL-FIRST AI / GAME',
+    date: '2026',
+    longDesc: 'A retro pixel-art submersible study expedition. Intakes course documents locally and leverages on-device Ollama LLM inference (Qwen 2.5) to synthesize 3-topic, 9-question interactive descents. Features transactional SQLite persistence, Canvas 2D animated ocean viewport, and 16-bit creature battle encounters where all user data and AI inference remain strictly offline.',
+    color: '#06B6D4',
+    image: pointNemoImg,
+  },
 ];
 
 /* ══════════════════════════════════════════════════════════ */
@@ -353,7 +368,7 @@ export interface Certification {
   organization: string;
   date: string;
   credentialId: string;
-  category: 'Web Development' | 'AI & Computer Science';
+  category: 'Web Development' | 'AI & Computer Science' | 'Hackathons & Competitions';
   skills: string[];
   description: string;
   color: string;
@@ -364,7 +379,7 @@ export interface Certification {
   signatory?: string;
 }
 
-const CERT_CATEGORIES = ['ALL', 'Web Development', 'AI & Computer Science'] as const;
+const CERT_CATEGORIES = ['ALL', 'Web Development', 'AI & Computer Science', 'Hackathons & Competitions'] as const;
 
 const CERTIFICATIONS: Certification[] = [
   {
@@ -416,6 +431,22 @@ const CERTIFICATIONS: Certification[] = [
     image: codeOrgAiImg,
     verifyUrl: 'https://www.code.org',
     signatory: 'Hadi Partovi, Co-founder and CEO, Code.org',
+  },
+  {
+    id: '4',
+    title: 'AppBuildersPH Hackathon 2026 — Certificate of Participation',
+    issuer: 'AppBuildersPH',
+    organization: 'App Builders PH',
+    date: 'October 9–10, 2026',
+    credentialId: 'APPBUILDERS-HACKATHON-2026-POINTNEMO',
+    category: 'Hackathons & Competitions',
+    skills: ['Hackathon Competition', 'Rapid Prototyping', 'Local AI Systems', 'Full-Stack Engineering', 'Team pointnemo'],
+    description: 'Certificate of Participation awarded to Christian James Baldonado as a member of Team PointNemo in the AppBuildersPH Hackathon 2026 held at Cyberzone, SM Makati.',
+    color: '#15803D',
+    status: 'VERIFIED',
+    image: appBuildersCertImg,
+    verifyUrl: 'https://appbuildersph.com/hackathon',
+    signatory: 'App Builders PH Hackathon Committee',
   },
 ];
 

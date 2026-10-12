@@ -36,14 +36,14 @@ Personality: Passionate, detail-oriented, loves building modern & scalable syste
 --- SKILLS & TECHNICAL ARSENAL (32+ Technologies) ---
 Frontend & UI/UX: React.js, TypeScript, JavaScript, Tailwind CSS, HTML5, CSS3, Figma, Leaflet.js, Vite
 Backend & Languages: Node.js, Express.js, Python, Django, Java, PHP, REST APIs
-Databases & Cloud: PostgreSQL, Supabase, MySQL, MSSQL, Firebase (Firestore), Cloud Storage, Vercel
+Databases & Cloud: PostgreSQL, Supabase, MySQL, MSSQL, SQLite, Firebase (Firestore), Cloud Storage, Vercel
 DevOps & Virtualization: Docker, VirtualBox, Git, GitHub, GitHub Desktop
 Developer Tools & Diagrams: VS Code, PyCharm, Draw.io, Mermaid.js
-AI & Intelligent Systems: Google Gemini AI, Antigravity Agentic IDE, Anthropic Claude, OpenAI Codex, OpenAI API, GroqCloud
+AI & Intelligent Systems: Google Gemini AI, Ollama (Local AI), Antigravity Agentic IDE, Anthropic Claude, OpenAI Codex, OpenAI API, GroqCloud
 Networking & Security: Cisco, Protocols, Subnetting, IP Configuration, VLAN, RBAC
 Collaboration & Project Management: Atlassian (Jira / Confluence), Microsoft Teams, Zoom, Google Meet
 Core strengths: Agile methodology, Problem-Solving, Analytical thinking, Team Collaboration
-Experience: 3+ years, 9+ projects, 32+ tech stacks & tools, 9 core engineering domains
+Experience: 3+ years, 10+ projects, 34+ tech stacks & tools, 9 core engineering domains
 
 --- PROJECTS ---
 1. FEASIFY (2026)
@@ -106,11 +106,18 @@ Experience: 3+ years, 9+ projects, 32+ tech stacks & tools, 9 core engineering d
    - Tech: Python, Django, PostgreSQL, Docker, Railway
    - Repository: https://github.com/Markssuave/PNP-Assignment-Survey
 
+10. Point Nemo (2026)
+   - Local-first study expedition game powered by on-device Ollama AI
+   - Ingests uploaded study PDFs locally and converts them into 9-question deep-sea creature encounters and boss battles with zero cloud telemetry
+   - Features transactional SQLite persistence, Canvas 2D animated ocean viewport, and 16-bit creature battle encounters
+   - Tech: React, TypeScript, Express, SQLite, Ollama (Local AI), Tailwind CSS, Vite
+   - Repository: https://github.com/Akosidakdok/PointNemo
+
 --- CERTIFICATIONS & CREDENTIALS ---
 1. freeCodeCamp: Front-End Development Libraries V8 (July 22, 2026, ~300 hours) - Verified: https://freecodecamp.org/certification/jay-baldonado/front-end-development-libraries
 2. freeCodeCamp: Legacy Responsive Web Design V8 (July 22, 2026, ~300 hours) - Verified: https://freecodecamp.org/certification/jay-baldonado/responsive-web-design
 3. Code.org: AI for Oceans Hour of Code (2026) - Computer Science & AI ML Classification concepts
-
+4. AppBuildersPH: AppBuildersPH Hackathon 2026 — Certificate of Participation (October 9–10, 2026, Cyberzone, SM Makati) - Member of Team PointNemo
 
 --- CONTACT ---
 GitHub: https://github.com/Akosidakdok

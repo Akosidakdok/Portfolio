@@ -210,12 +210,28 @@ const PHILOSOPHY_ITEMS: TickerItem[] = [
     accentColor: '#2563EB',
   },
   {
+    id: 'phil-pointnemo',
+    type: 'highlight',
+    label: 'LOCAL-FIRST AI STUDY EXPEDITION',
+    badge: 'POINT NEMO',
+    icon: <Sparkles className="w-3.5 h-3.5 text-[#06B6D4]" />,
+    accentColor: '#06B6D4',
+  },
+  {
     id: 'phil-fcc',
     type: 'highlight',
     label: '600+ HRS CERTIFIED DEVELOPER',
     badge: 'FREECODECAMP',
     icon: <Award className="w-3.5 h-3.5 text-[#F59E0B]" />,
     accentColor: '#F59E0B',
+  },
+  {
+    id: 'phil-appbuilders',
+    type: 'highlight',
+    label: 'APPBUILDERSPH HACKATHON 2026',
+    badge: 'PARTICIPANT',
+    icon: <Award className="w-3.5 h-3.5 text-[#16A34A]" />,
+    accentColor: '#16A34A',
   },
   {
     id: 'phil-arch',

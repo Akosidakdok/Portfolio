@@ -327,6 +327,30 @@ export const TechIcon: React.FC<TechIconProps> = ({
     );
   }
 
+  // SQLite
+  if (norm === 'sqlite' || norm === 'better-sqlite3' || norm === 'sqlite3') {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <rect width="24" height="24" rx="4" fill="#003B57" />
+        <ellipse cx="12" cy="7" rx="6" ry="2.5" stroke="#00A2D9" strokeWidth="1.5" fill="#0E4A6B" />
+        <path d="M6 7v10c0 1.38 2.69 2.5 6 2.5s6-1.12 6-2.5V7" stroke="#00A2D9" strokeWidth="1.5" />
+        <path d="M6 12c0 1.38 2.69 2.5 6 2.5s6-1.12 6-2.5" stroke="#00A2D9" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Ollama
+  if (norm === 'ollama' || norm === 'ollama (local ai)' || norm === 'ollama ai' || norm === 'ollama (local llm)') {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <rect width="24" height="24" rx="4" fill="#0F172A" />
+        <path d="M12 4.5C9.8 4.5 8 6.3 8 8.5c0 1.5.8 2.8 2 3.5V16c0 1.1.9 2 2 2s2-.9 2-2v-4c1.2-.7 2-2 2-3.5 0-2.2-1.8-4-4-4z" fill="#38BDF8" />
+        <circle cx="10.5" cy="8" r="1.1" fill="#0F172A" />
+        <circle cx="13.5" cy="8" r="1.1" fill="#0F172A" />
+      </svg>
+    );
+  }
+
   // Antigravity
   if (norm === 'antigravity' || norm === 'google antigravity' || norm === 'agy') {
     return (
