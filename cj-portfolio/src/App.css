@@ -224,4 +224,46 @@ section[id], footer[id] {
 .heatmap-scroll-container::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.28);
 }
+/* Project Deep Dive Case Study View */
+@media (max-width: 960px) {
+  .project-deepdive-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
 
+/* Project Deep-Dive Modal Scroll */
+.project-modal-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.project-modal-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.project-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.project-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+@media (max-width: 640px) {
+  .project-modal-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .project-modal-header-actions {
+    justify-content: space-between !important;
+    width: 100%;
+  }
+}

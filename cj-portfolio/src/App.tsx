@@ -13,6 +13,7 @@ import paisImg from './assets/projects/pais.png';
 import campNaviImg from './assets/projects/camp-navi.png';
 import pnpSurveyImg from './assets/projects/pnp-survey.png';
 import pointNemoImg from './assets/projects/pointnemo.png';
+import pointNemoMapImg from './assets/projects/pointnemo-map.png';
 import fccWebDesignImg from './assets/certifications/fcc-responsive-web-design.png';
 import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
@@ -20,6 +21,7 @@ import appBuildersCertImg from './assets/certifications/appbuilders-hackathon-20
 import TechIcon from './components/TechIcon';
 import ContactForm from './components/ContactForm';
 import GitHubContributions from './components/GitHubContributions';
+import ProjectDetailPage, { type Project } from './components/ProjectDetailPage';
 
 
 
@@ -47,7 +49,16 @@ function Stars({ filled = 4, total = 5 }: { filled?: number; total?: number }) {
 }
 
 /* ─── Project Card (dark booking-style) ─── */
-function ProjectCard({ title, stack, link, description, venue, date, image }: {
+function ProjectCard({
+  title,
+  stack,
+  link,
+  description,
+  venue,
+  date,
+  image,
+  onExplore,
+}: {
   title: string;
   stack: string[];
   link: string;
@@ -55,6 +66,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
   venue: string;
   date: string;
   image: string;
+  onExplore?: () => void;
 }) {
   const isGithub = link.toLowerCase().includes('github.com');
 
@@ -83,12 +95,10 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
       </div>
 
       {/* Card Thumbnail Preview */}
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
+      <div
+        onClick={onExplore}
         className="project-thumb-container"
-        title={`Visit ${title} on ${isGithub ? 'GitHub' : 'Vercel'}`}
+        title={`Click to view case study for ${title}`}
         style={{
           display: 'block',
           position: 'relative',
@@ -97,7 +107,7 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
           overflow: 'hidden',
           backgroundColor: '#0a0a0a',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
-          textDecoration: 'none',
+          cursor: onExplore ? 'pointer' : 'default',
         }}
       >
         <img
@@ -156,19 +166,33 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '3px',
-              background: 'rgba(227,30,36,0.9)',
+              background: 'rgba(99, 102, 241, 0.9)',
               padding: '3px 8px',
               borderRadius: '4px',
             }}
           >
-            {isGithub ? 'GitHub ↗' : 'Vercel ↗'}
+            View Details ↗
           </span>
         </div>
-      </a>
+      </div>
 
       {/* Card Body */}
       <div style={{ padding: '20px' }}>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', letterSpacing: '0.04em', color: 'var(--white)', marginBottom: '14px', lineHeight: 1.1 }}>
+        <h3
+          onClick={onExplore}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.75rem',
+            letterSpacing: '0.04em',
+            color: 'var(--white)',
+            marginBottom: '14px',
+            lineHeight: 1.1,
+            cursor: onExplore ? 'pointer' : 'default',
+            transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => onExplore && (e.currentTarget.style.color = 'var(--accent)')}
+          onMouseLeave={e => onExplore && (e.currentTarget.style.color = 'var(--white)')}
+        >
           {title}
         </h3>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--gray-light)', lineHeight: 1.6, marginBottom: '18px', whiteSpace: 'pre-line' }}>
@@ -194,15 +218,46 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
             </div>
           </div>
         </div>
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-cta-red"
-          style={{ marginTop: '20px', width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}
-        >
-          {isGithub ? 'View GitHub Repository' : 'View Live Project'} <span>↗</span>
-        </a>
+
+        {/* Action Buttons: Case Study + Live/Github Link */}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
+          <button
+            onClick={onExplore}
+            className="btn-cta-red"
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+            }}
+          >
+            Case Study <span>→</span>
+          </button>
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={isGithub ? 'View GitHub Repository' : 'View Live Demo'}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 14px',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: 'var(--white)',
+              fontSize: '0.75rem',
+              fontFamily: 'var(--font-mono)',
+              textDecoration: 'none',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)')}
+          >
+            {isGithub ? 'GitHub ↗' : 'Live ↗'}
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -211,59 +266,110 @@ function ProjectCard({ title, stack, link, description, venue, date, image }: {
 /* ══════════════════════════════════════════════════════════ */
 /*  PROJECT DATA                                               */
 /* ══════════════════════════════════════════════════════════ */
-interface Project {
-  id: string;
-  label: string;
-  title: string;
-  stack: string[];
-  link: string;
-  description: string;
-  venue: string;
-  date: string;
-  longDesc: string;
-  color: string;
-  image: string;
-}
-
 const PROJECTS: Project[] = [
   {
     id: '1',
     label: 'PROJECT A',
     title: 'FEASIFY',
-    stack: ['React', 'TypeScript', 'Gemini AI', 'Firebase'],
+    stack: ['React', 'TypeScript', 'Gemini AI', 'Firebase', 'Tailwind CSS'],
     link: 'https://feasify-ten.vercel.app/',
     description: 'AI-powered financial feasibility system. Automates complex model generation for finance students with real-time AI assistance.\n-------------------------------------------------\nTo Login, use this credentials:\nuser:baldonado@gmail.com\npassword: BALDONADO-1111',
-    venue: 'WEB APP',
+    venue: 'WEB APP / FINTECH AI',
     date: '2026',
     longDesc: 'AI-assisted financial feasibility web system built for BSBA FM students. Automates the generation of financial parameters and complex system architecture using Gemini Flash AI.',
     color: '#6366F1',
     image: feasifyImg,
+    role: 'Lead Full Stack & AI Architect',
+    context: 'Fintech Thesis Platform for BSBA FM Students',
+    liveUrl: 'https://feasify-ten.vercel.app/',
+    credentials: { user: 'baldonado@gmail.com', pass: 'BALDONADO-1111' },
+    gallery: [
+      { caption: 'FEASIFY • Financial Feasibility Model Generator & Balance Sheet Assistant', image: feasifyImg },
+    ],
+    overview: [
+      'FEASIFY is an AI-assisted financial feasibility web platform engineered specifically for BSBA Financial Management students.',
+      'It automates the generation of complex financial parameters, NPV/IRR formulas, balance sheets, and market feasibility breakdowns using real-time Google Gemini Flash AI assistance.',
+    ],
+    features: [
+      { title: 'AI Financial Modeling', desc: 'Auto-generates multi-year financial statements, cash flow forecasts, and break-even points via Gemini Flash AI.' },
+      { title: 'Deterministic Calculus', desc: 'Hardened mathematical engines calculate Net Present Value (NPV), Internal Rate of Return (IRR), and Payback Periods.' },
+      { title: 'Academic Defense Reporting', desc: 'Generates formatted feasibility summaries with exportable reporting tables for academic presentations.' },
+      { title: 'Role-Based Authentication', desc: 'Secure student project workspaces with instructor review modules and project versioning.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React 19, TypeScript, Tailwind CSS, Vite' },
+      { component: 'AI Engine', detail: 'Google Gemini 1.5 Flash via REST API' },
+      { component: 'Database & Auth', detail: 'Firebase Authentication & Cloud Firestore' },
+      { component: 'Deployment', detail: 'Vercel Edge Network' },
+    ],
   },
   {
     id: '2',
     label: 'PROJECT B',
     title: 'Barangay-Equipment-Borrowing-and-Tracking-System',
-    stack: ['Software Development', 'HTML/CSS', 'Firebase'],
+    stack: ['HTML/CSS', 'JavaScript', 'Firebase', 'Firestore'],
     link: 'https://barangaymapulanglupa.vercel.app/',
     description: 'Developed a web-based application for tracking and borrowing local barangay equipment, streamlining the inventory management process.',
-    venue: 'WEB APP',
+    venue: 'CIVIC / WEB APP',
     date: '2025',
     longDesc: 'Designed and implemented a responsive interface using HTML5 and CSS3, ensuring seamless navigation for community users and staff.',
     color: '#374151',
     image: barangayImg,
+    role: 'Frontend & Systems Developer',
+    context: 'Barangay Mapulang Lupa Community Asset Portal',
+    liveUrl: 'https://barangaymapulanglupa.vercel.app/',
+    gallery: [
+      { caption: 'Barangay Equipment Tracking & Loan Management System', image: barangayImg },
+    ],
+    overview: [
+      'A web-based civic application engineered for Barangay Mapulang Lupa to modernize municipal equipment loaning and inventory tracking.',
+      'Eliminates manual paper logbooks with an online borrowing catalog, reservation approval workflows, and condition audit logs.',
+    ],
+    features: [
+      { title: 'Public Equipment Catalog', desc: 'Enables residents to browse available barangay equipment (tents, chairs, emergency tools) and submit loan requests.' },
+      { title: 'Real-Time Inventory State', desc: 'Firebase Firestore synchronization tracks equipment availability and maintenance state in real time.' },
+      { title: 'Overdue Tracking & Notices', desc: 'Automated flagging for overdue equipment with borrower contact history.' },
+      { title: 'Staff Admin Console', desc: 'Administrative dashboard for barangay officers to approve, reject, and inspect equipment dispatches.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'Semantic HTML5, CSS3 structural grids, JavaScript' },
+      { component: 'Database & Auth', detail: 'Firebase Authentication & Cloud Firestore' },
+      { component: 'Hosting', detail: 'Vercel' },
+    ],
   },
   {
     id: '3',
     label: 'PROJECT C',
     title: 'PORTFOLIO SITE',
-    stack: ['React', 'TypeScript', 'Tailwind', 'Vite'],
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite', 'GroqCloud'],
     link: 'https://baldonadoportfolio.vercel.app/',
     description: 'This very portfolio. Cinematic editorial design with animated film strips, crosshair motifs, and scroll reveals.',
-    venue: 'WEB APP',
+    venue: 'CREATIVE / WEB APP',
     date: '2026',
     longDesc: 'Personal portfolio built with React and TypeScript. Features a cinematic black/red editorial aesthetic inspired by bold film UI design, with Bebas Neue display typography and animated components.',
     color: '#7C3AED',
     image: portfolioThumbImg,
+    role: 'Creator & Designer',
+    context: 'Personal Developer Brand & Interactive Showcase',
+    liveUrl: 'https://baldonadoportfolio.vercel.app/',
+    gallery: [
+      { caption: 'Cinematic Editorial Developer Portfolio & Interactive HUD', image: portfolioThumbImg },
+    ],
+    overview: [
+      'CJ Baldonado\'s personal developer portfolio, designed with a high-contrast cinematic editorial aesthetic.',
+      'Engineered with Plus Jakarta Sans and DM Mono typography, interactive telemetry console, AI assistant chatbot, and animated filmstrips.',
+    ],
+    features: [
+      { title: 'Cinematic Editorial Design', desc: 'High-contrast typography, interactive crosshairs, and smooth scroll reveals.' },
+      { title: 'AI Assistant (CJ Bot)', desc: 'Knowledgeable personal AI assistant powered by GroqCloud and Google Gemini with deep portfolio awareness.' },
+      { title: 'Live Telemetry HUD', desc: 'Interactive developer console displaying real-time Philippine time (PHT UTC+8), ping, and availability status.' },
+      { title: 'Dual Animated Tickers', desc: 'Continuous marquee tickers showcasing technical competencies, certifications, and engineering philosophies.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React 19, TypeScript, Tailwind CSS, Vite' },
+      { component: 'AI Integration', detail: 'GroqCloud (free-tier ultra-fast Llama) & Google Gemini REST API' },
+      { component: 'Icons & Aesthetics', detail: 'Lucide React, custom SVG icon system' },
+    ],
   },
   {
     id: '4',
@@ -272,11 +378,31 @@ const PROJECTS: Project[] = [
     stack: ['HTML/CSS', 'JavaScript', 'PHP'],
     link: 'https://mang-delfins-putong-pulo.vercel.app/',
     description: 'Engineered a highly responsive, multi-page marketing and storefront platform to showcase local delicacies, significantly enhancing the business digital presence and customer accessibility.',
-    venue: 'WEB APP',
+    venue: 'COMMERCE / STOREFRONT',
     date: '2025',
     longDesc: 'Built interactive product carousels, a custom branch locator, and dynamic product overlay modals utilizing semantic HTML5, CSS3 structural grids, and JavaScript, resulting in a user-friendly experience that boosted online engagement and sales for the local delicacy business.',
     color: '#EC4899',
     image: mangDelfinsImg,
+    role: 'Sole Web Developer & Designer',
+    context: 'Commercial Storefront for Renowned Delicacy Brand',
+    liveUrl: 'https://mang-delfins-putong-pulo.vercel.app/',
+    gallery: [
+      { caption: 'Mang Delfin\'s Putong Pulo Storefront & Branch Locator', image: mangDelfinsImg },
+    ],
+    overview: [
+      'A responsive marketing and storefront platform built to showcase Mang Delfin\'s Putong Pulo, a beloved heritage food enterprise.',
+      'Features interactive product carousels, custom branch locator, and dynamic product modals that boosted customer orders and inquiries.',
+    ],
+    features: [
+      { title: 'Interactive Product Showcase', desc: 'High-performance carousels with flavor breakdowns, nutritional details, and pricing.' },
+      { title: 'Branch Locator', desc: 'Helps customers find nearby kiosks and retail stores with opening hours and Google Maps links.' },
+      { title: 'Direct Order Inquiry', desc: 'Streamlines party tray and bulk order requests directly to sales staff.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'Semantic HTML5, CSS3 grids, Vanilla JavaScript' },
+      { component: 'Backend', detail: 'PHP for contact form submission and automated email alerts' },
+      { component: 'Hosting', detail: 'Vercel' },
+    ],
   },
   {
     id: '5',
@@ -285,11 +411,34 @@ const PROJECTS: Project[] = [
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'Leaflet', 'Node.js'],
     link: 'https://alerto-ph.vercel.app/',
     description: 'Community-powered flood monitoring, early-warning, and disaster resilience platform for Filipinos with real-time hazard reporting and GIS navigation.',
-    venue: 'WEB APP',
+    venue: 'DISASTER RESILIENCE / GIS',
     date: '2026',
     longDesc: 'Combines citizen crowdsourcing, Leaflet.js GIS mapping, and PAGASA meteorological telemetry to deliver street-by-street flood monitoring, drainage hazard tracking, and automated safe bypass routing.',
     color: '#0284C7',
     image: alertoPhImg,
+    role: 'Lead Full Stack & GIS Developer',
+    context: 'Disaster Resilience & Community Early-Warning Platform',
+    liveUrl: 'https://alerto-ph.vercel.app/',
+    githubUrl: 'https://github.com/Akosidakdok/BantayBaha',
+    gallery: [
+      { caption: 'AlertoPH Community Flood Monitoring & Safe Bypass Map', image: alertoPhImg },
+    ],
+    overview: [
+      'AlertoPH is a community-powered flood monitoring, early-warning, and disaster resilience platform built to safeguard Filipino commuters and residents.',
+      'Combines citizen crowdsourcing, Leaflet.js GIS mapping, and PAGASA meteorological telemetry to deliver street-by-street flood monitoring and automated safe bypass routing.',
+    ],
+    features: [
+      { title: 'Crowdsourced Flood Telemetry', desc: 'Allows verified citizens and local DRRMO officers to report water levels and impassable roads with geotagged evidence.' },
+      { title: 'Safe Bypass Navigation', desc: 'Calculates Dijkstra-based evacuation routes that steer drivers and pedestrians clear of flooded choke points.' },
+      { title: 'PAGASA Telemetry Integration', desc: 'Pulls rainfall alerts, typhoon tracks, and weather advisories for localized community risk assessment.' },
+      { title: 'Offline-First Resilience', desc: 'Caches offline critical emergency contacts, evacuation center locations, and flood history.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React, TypeScript, Tailwind CSS, Leaflet GIS' },
+      { component: 'Backend', detail: 'Node.js, Express REST API' },
+      { component: 'Mapping Engine', detail: 'OpenStreetMap tiles & Leaflet GeoJSON layer overlays' },
+      { component: 'Hosting', detail: 'Vercel with edge caching' },
+    ],
   },
   {
     id: '6',
@@ -298,11 +447,34 @@ const PROJECTS: Project[] = [
     stack: ['React', 'TypeScript', 'Node.js', 'Express', 'Supabase'],
     link: 'https://pnp-itms-internship-attendance.vercel.app/',
     description: 'PNP-ITMS Internship Daily Time Record Management System. Comprehensive web application for tracking attendance, managing intern evaluations, and automating DTR workflows.',
-    venue: 'WEB APP',
+    venue: 'ENTERPRISE / POLICE INTRANET',
     date: '2026',
     longDesc: 'A secure enterprise attendance and internship management system for PNP ITMS, featuring QR/identity-assisted attendance verification, automated DTR generation, document workflows, and role-based access control.',
     color: '#059669',
     image: pIdtmsImg,
+    role: 'Enterprise Full Stack Intern (PNP ITMS)',
+    context: 'Philippine National Police — Information Technology Management Service',
+    liveUrl: 'https://pnp-itms-internship-attendance.vercel.app/',
+    githubUrl: 'https://github.com/Akosidakdok/PNP-ITMS-INTERNSHIP-ATTENDANCE',
+    gallery: [
+      { caption: 'P-IDTMS Internship Daily Time Record Management System', image: pIdtmsImg },
+    ],
+    overview: [
+      'PNP-ITMS Internship Daily Time Record Management System (P-IDTMS) is an enterprise web application for tracking intern attendance, managing evaluations, and automating DTR workflows.',
+      'Features QR/identity-assisted attendance verification, automated Civil Service DTR generation, document workflows, and role-based access control.',
+    ],
+    features: [
+      { title: 'QR & Identity Attendance', desc: 'Automated scan-in and photo verification to prevent attendance proxying and streamline daily check-ins.' },
+      { title: 'Automated DTR Timesheets', desc: 'Calculates total hours, overtime, tardiness, and generates official Civil Service-compliant DTR sheets.' },
+      { title: 'Supervisor Evaluation Matrix', desc: 'Enables police mentors to evaluate interns on technical competencies, conduct, and attendance metrics.' },
+      { title: 'Role-Based Security', desc: 'Strict separation between intern, supervisor, and ITMS administrative roles with audit trails.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React, TypeScript, Tailwind CSS' },
+      { component: 'Backend', detail: 'Node.js, Express REST API' },
+      { component: 'Database & Auth', detail: 'Supabase PostgreSQL with Row Level Security (RLS)' },
+      { component: 'Hosting', detail: 'Vercel Enterprise Tier' },
+    ],
   },
   {
     id: '7',
@@ -311,11 +483,34 @@ const PROJECTS: Project[] = [
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'Express', 'Supabase'],
     link: 'https://itms-armd-directory-two.vercel.app/',
     description: 'PNP-ITMS Personnel and Assignment Information System. Full-scale enterprise HR and personnel management platform for uniformed and civilian personnel.',
-    venue: 'ENTERPRISE APP',
+    venue: 'ENTERPRISE HR / POLICE SYSTEM',
     date: '2026',
     longDesc: 'Architected an enterprise personnel management information system for PNP-ITMS ARMD, automating rank-aware time-in-grade calculations, promotion tracking, service histories, leave workflows, and PDF report generation.',
     color: '#D97706',
     image: paisImg,
+    role: 'Enterprise Full Stack Intern (PNP ITMS ARMD)',
+    context: 'PNP ITMS Administrative and Resource Management Division',
+    liveUrl: 'https://itms-armd-directory-two.vercel.app/',
+    githubUrl: 'https://github.com/Akosidakdok/ITMS-ARMD-Directory',
+    gallery: [
+      { caption: 'PAIS 2.0 Personnel & Assignment Information System', image: paisImg },
+    ],
+    overview: [
+      'PAIS 2.0 is a full-scale enterprise HR and personnel management platform engineered for uniformed and civilian personnel of the PNP-ITMS ARMD.',
+      'Automates rank-aware time-in-grade calculations, promotion tracking, service histories, leave workflows, and formatted PDF personnel report generation.',
+    ],
+    features: [
+      { title: 'Rank-Aware Promotion Engine', desc: 'Computes eligibility based on PNP rank hierarchy, time-in-grade mandates, and mandatory schoolings.' },
+      { title: 'Digital Service Jacket', desc: 'Maintains complete service records, awards, disciplinary histories, and unit assignments for police personnel.' },
+      { title: 'Automated Roster & PDF Engine', desc: 'Generates formatted administrative reports, personnel rosters, and service summaries on demand.' },
+      { title: 'Internal Security & RBAC', desc: 'Tailored for sensitive police records with encrypted storage and access auditing.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React, TypeScript, Tailwind CSS' },
+      { component: 'Backend', detail: 'Node.js, Express REST API' },
+      { component: 'Database', detail: 'Supabase PostgreSQL' },
+      { component: 'Reporting', detail: 'Client-side PDF generation & print-ready layout engine' },
+    ],
   },
   {
     id: '8',
@@ -324,11 +519,32 @@ const PROJECTS: Project[] = [
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'Leaflet', 'Supabase', 'PostGIS'],
     link: 'https://github.com/Markssuave/Camp-Navi',
     description: 'PNP Camp Crame real-time security geofencing, facility navigation, and active personnel tracking router with automated restricted-zone avoidance.',
-    venue: 'GIS / WEB APP',
+    venue: 'GIS / POLICE NAVIGATION',
     date: '2026',
     longDesc: 'Architected a real-time security geofencing, facility navigation, and personnel tracking platform for PNP Camp Crame. Utilizes PostGIS/pgRouting algorithms, Leaflet GIS mapping, and Supabase Realtime to calculate Dijkstra safe routes avoiding restricted zones with live civilian and personnel GPS telemetry.',
     color: '#10B981',
     image: campNaviImg,
+    role: 'Full Stack & GIS Collaborator',
+    context: 'PNP Camp General Crame Facility Navigation & Security',
+    githubUrl: 'https://github.com/Markssuave/Camp-Navi',
+    gallery: [
+      { caption: 'Camp-Navi Camp Crame GIS Navigation & Geofencing System', image: campNaviImg },
+    ],
+    overview: [
+      'Camp-Navi is a real-time security geofencing, facility navigation, and active personnel tracking router architected for PNP Camp Crame.',
+      'Utilizes PostGIS/pgRouting algorithms, Leaflet GIS mapping, and Supabase Realtime to calculate Dijkstra safe routes avoiding restricted zones with live civilian and personnel GPS telemetry.',
+    ],
+    features: [
+      { title: 'Restricted Zone Avoidance', desc: 'Calculates intelligent pathfinding around classified police facilities and sensitive operational zones.' },
+      { title: 'PostGIS Spatial Pathfinding', desc: 'Leverages PostGIS and pgRouting algorithms to compute optimal walking and driving routes.' },
+      { title: 'Real-Time Telemetry', desc: 'Integrates Supabase Realtime to broadcast live officer locations and incident markers.' },
+      { title: 'Comprehensive Base Directory', desc: 'Detailed building directory with unit assignments, emergency contact numbers, and checkpoint locations.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React, TypeScript, Tailwind CSS, Leaflet GIS' },
+      { component: 'Spatial Database', detail: 'PostgreSQL with PostGIS extension & pgRouting' },
+      { component: 'Realtime Layer', detail: 'Supabase Realtime WebSockets' },
+    ],
   },
   {
     id: '9',
@@ -337,11 +553,32 @@ const PROJECTS: Project[] = [
     stack: ['Python', 'Django', 'PostgreSQL', 'Docker', 'Railway'],
     link: 'https://github.com/Markssuave/PNP-Assignment-Survey',
     description: 'PNP Preferred Assignment Location Survey & Admin Dashboard. Handles badge-verified personnel surveys, deployment capacity matrices, and officer transfer decisions.',
-    venue: 'ENTERPRISE / GOV',
+    venue: 'ENTERPRISE / GOV PORTAL',
     date: '2026',
     longDesc: 'Collaborative enterprise personnel assignment portal for the Philippine National Police. Integrates rate-limited badge number identity verification, cyclical survey submissions, capacity-aware transfer planning matrices, audit trails, and zero-email password workflows tailored for secure police intranets.',
     color: '#2563EB',
     image: pnpSurveyImg,
+    role: 'Backend & Systems Collaborator',
+    context: 'Philippine National Police Assignment & Survey Portal',
+    githubUrl: 'https://github.com/Markssuave/PNP-Assignment-Survey',
+    gallery: [
+      { caption: 'PNP Preferred Assignment Location Survey & Staffing Matrix', image: pnpSurveyImg },
+    ],
+    overview: [
+      'PNP Preferred Assignment Location Survey & Admin Dashboard is a collaborative enterprise personnel portal for the Philippine National Police.',
+      'Integrates rate-limited badge number identity verification, cyclical survey submissions, capacity-aware transfer planning matrices, audit trails, and zero-email password workflows tailored for secure police intranets.',
+    ],
+    features: [
+      { title: 'Badge Identity Verification', desc: 'Rate-limited badge lookup verifies active police roster status before granting survey access.' },
+      { title: 'Staffing Capacity Matrix', desc: 'Admin dashboard calculates real-time manpower deficits and surplus across police regional offices.' },
+      { title: 'Zero-Email Security Workflow', desc: 'Designed for closed police intranets where external email services are prohibited.' },
+      { title: 'Audit Trail & Integrity', desc: 'Cryptographic survey receipts prevent tampering with officer transfer requests.' },
+    ],
+    architecture: [
+      { component: 'Backend & Admin', detail: 'Python, Django, Django REST Framework' },
+      { component: 'Database', detail: 'PostgreSQL' },
+      { component: 'DevOps & Containerization', detail: 'Docker, Railway deployment pipeline' },
+    ],
   },
   {
     id: '10',
@@ -355,6 +592,29 @@ const PROJECTS: Project[] = [
     longDesc: 'A retro pixel-art submersible study expedition. Intakes course documents locally and leverages on-device Ollama LLM inference (Qwen 2.5) to synthesize 3-topic, 9-question interactive descents. Features transactional SQLite persistence, Canvas 2D animated ocean viewport, and 16-bit creature battle encounters where all user data and AI inference remain strictly offline.',
     color: '#06B6D4',
     image: pointNemoImg,
+    role: 'Full Stack Engineer & AI Systems Architect',
+    context: 'AppBuildersPH Hackathon 2026 Project (SM Makati Cyberzone)',
+    githubUrl: 'https://github.com/Akosidakdok/PointNemo',
+    gallery: [
+      { caption: 'Point Nemo • Submersible Study Library & Sonar HUD', image: pointNemoImg },
+      { caption: 'Descent Sea Selector & Interactive Marine Expedition Map', image: pointNemoMapImg },
+    ],
+    overview: [
+      'Point Nemo is a local-first study expedition game developed for the AppBuildersPH Hackathon 2026 by Team PointNemo.',
+      'It converts uploaded study PDFs into 9-question deep-sea creature encounters and boss battles, running 100% offline with zero cloud telemetry using local Ollama LLMs.',
+    ],
+    features: [
+      { title: '100% Offline AI Generation', desc: 'Leverages local Ollama inference (Qwen 2.5) to parse uploaded PDFs and formulate 3-topic, 9-question multi-stage descent runs.' },
+      { title: 'Retro 16-Bit Combat Viewport', desc: '2D Canvas retro submersible graphics featuring deep-sea creatures (Barreleye, Blobfish, Goblin Shark, Megalodon).' },
+      { title: 'Authoritative Game Engine', desc: 'Strict 18-slot backend state machine validating answers, calculating HP/XP damage, and enforcing descent pass/fail rules.' },
+      { title: 'Zero Cloud Telemetry', desc: 'All user documents, embeddings, and inference remain strictly loopback on-device via SQLite and local LLM.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React, TypeScript, Tailwind CSS, Canvas 2D Viewport, Vite' },
+      { component: 'Local AI Inference', detail: 'Ollama (qwen2.5:3b / 1.5b) over localhost:11434' },
+      { component: 'Backend Engine', detail: 'Node.js Express API with Zod schema contract validation' },
+      { component: 'Database', detail: 'SQLite via better-sqlite3 with transactional migrations' },
+    ],
   },
 ];
 
@@ -1024,8 +1284,33 @@ function App() {
   const [activeSectionTab, setActiveSectionTab] = useState<'projects' | 'certifications'>('projects');
   const [certCategory, setCertCategory] = useState<string>('ALL');
   const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
+  const [selectedProjectDetail, setSelectedProjectDetail] = useState<Project | null>(null);
   const [isMobileTechExpanded, setIsMobileTechExpanded] = useState(false);
   const [plainSearch, setPlainSearch] = useState('');
+
+  const openProjectDetail = (project: Project) => {
+    setSelectedProjectDetail(project);
+    window.history.pushState(null, '', `#project=${project.id}`);
+  };
+
+  /* Hash synchronization for project deep dives */
+  useEffect(() => {
+    const checkHash = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#project=')) {
+        const id = hash.replace('#project=', '').trim();
+        const found = PROJECTS.find(p => p.id === id || p.title.toLowerCase().replace(/\s+/g, '-') === id);
+        if (found) {
+          setSelectedProjectDetail(found);
+        }
+      } else if (hash === '#projects' && selectedProjectDetail) {
+        setSelectedProjectDetail(null);
+      }
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, [selectedProjectDetail]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -2379,6 +2664,7 @@ function App() {
                       venue={PROJECTS[activeProject].venue}
                       date={PROJECTS[activeProject].date}
                       image={PROJECTS[activeProject].image}
+                      onExplore={() => openProjectDetail(PROJECTS[activeProject])}
                     />
                   </div>
                   {/* Active project description below card */}
@@ -2398,6 +2684,13 @@ function App() {
                     <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: '#555', lineHeight: 1.7 }}>
                       {PROJECTS[activeProject].longDesc}
                     </p>
+                    <button
+                      onClick={() => openProjectDetail(PROJECTS[activeProject])}
+                      className="btn-cta-red"
+                      style={{ marginTop: '14px', width: '100%', justifyContent: 'center', fontSize: '0.75rem', cursor: 'pointer' }}
+                    >
+                      Read Full Case Study <span>→</span>
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -2467,7 +2760,10 @@ function App() {
 
                         <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '1.05rem', color: '#111', letterSpacing: '0.02em' }}>{prev.title}</h3>
                         <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#666', lineHeight: 1.7 }}>{prev.longDesc}</p>
-                        <button onClick={goPrev} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>← PREV</button>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <button onClick={goPrev} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '10px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>← PREV</button>
+                          <button onClick={() => openProjectDetail(prev)} style={{ all: 'unset', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--gray)' }}>Case Study ↗</button>
+                        </div>
                       </div>
                     );
                   })()}
@@ -2482,6 +2778,7 @@ function App() {
                       venue={PROJECTS[activeProject].venue}
                       date={PROJECTS[activeProject].date}
                       image={PROJECTS[activeProject].image}
+                      onExplore={() => openProjectDetail(PROJECTS[activeProject])}
                     />
                   </div>
 
@@ -2543,7 +2840,10 @@ function App() {
 
                         <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '1.05rem', color: '#111', letterSpacing: '0.02em' }}>{next.title}</h3>
                         <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#666', lineHeight: 1.7 }}>{next.longDesc}</p>
-                        <button onClick={goNext} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', marginTop: '4px', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '12px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>NEXT →</button>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <button onClick={goNext} style={{ all: 'unset', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', transition: 'gap 0.2s' }} onMouseEnter={e => (e.currentTarget.style.gap = '10px')} onMouseLeave={e => (e.currentTarget.style.gap = '6px')}>NEXT →</button>
+                          <button onClick={() => openProjectDetail(next)} style={{ all: 'unset', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--gray)' }}>Case Study ↗</button>
+                        </div>
                       </div>
                     );
                   })()}
@@ -2853,6 +3153,24 @@ function App() {
         <CertificationModal
           cert={selectedCert}
           onClose={() => setSelectedCert(null)}
+        />
+      )}
+
+      {/* ── PROJECT DETAIL CASE STUDY MODAL ── */}
+      {selectedProjectDetail && (
+        <ProjectDetailPage
+          project={selectedProjectDetail}
+          allProjects={PROJECTS}
+          onBack={() => {
+            setSelectedProjectDetail(null);
+            if (window.location.hash.startsWith('#project')) {
+              window.history.replaceState(null, '', window.location.pathname + '#projects');
+            }
+          }}
+          onSelectProject={(p) => {
+            setSelectedProjectDetail(p);
+            window.history.replaceState(null, '', `#project=${p.id}`);
+          }}
         />
       )}
 
