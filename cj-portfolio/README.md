@@ -1,5 +1,19 @@
 # React + TypeScript + Vite
 
+## GitHub contribution calendar
+
+The calendar uses `/api/github-contributions` when `GITHUB_TOKEN` is configured. GitHub requires a token with the `read:user` scope to include private and internal contribution counts.
+
+For local development, create `cj-portfolio/.env.local` and add:
+
+```text
+GITHUB_TOKEN=your_github_token
+```
+
+Restart `npm run dev` after saving the file. The token is read by the Vite server and is never exposed in frontend code. For deployment, add the same variable in Vercel under **Project → Settings → Environment Variables** for Production and Preview, then redeploy.
+
+Without the token, the calendar falls back to public contribution feeds and may show a lower total than GitHub when private contributions are included.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

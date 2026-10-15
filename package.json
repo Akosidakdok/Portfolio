@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "postinstall": "cd cj-portfolio && npm install",
     "dev": "cd cj-portfolio && npm run dev",

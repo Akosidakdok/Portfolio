@@ -45,6 +45,8 @@ export default function GitHubContributions() {
   const [selectedYear, setSelectedYear] = useState<string>('lastYear');
   const [hoveredCell, setHoveredCell] = useState<{ day: ContributionDay; x: number; y: number } | null>(null);
   const [isLive, setIsLive] = useState(false);
+  const [syncFailed, setSyncFailed] = useState(false);
+  const [hasPrivateContributionData, setHasPrivateContributionData] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const lastSyncTimeRef = useRef<number>(0);
 
@@ -60,111 +62,102 @@ export default function GitHubContributions() {
   const syncContributions = useCallback(async (isManual = false) => {
     try {
       setIsSyncing(true);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
-
       let liveDays: ContributionDay[] = [];
       let liveTotals: Record<string, number> = {};
+      let liveLastYear: ContributionDay[] = [];
+      let includesPrivateContributions = false;
 
-      try {
-        // Primary: jogruber API
-        const [allRes, lastRes] = await Promise.all([
-          fetch('https://github-contributions-api.jogruber.de/v4/Akosidakdok', {
-            cache: 'no-cache',
-            signal: controller.signal,
-          }),
-          fetch('https://github-contributions-api.jogruber.de/v4/Akosidakdok?y=last', {
-            cache: 'no-cache',
-            signal: controller.signal,
-          }),
-        ]);
-
-        if (allRes.ok && lastRes.ok) {
-          const allD = await allRes.json();
-          const lastD = await lastRes.json();
-          liveDays = lastD.contributions || [];
-          liveTotals = { ...allD.total, ...lastD.total };
-        }
-      } catch {
-        // Fallback: vercel API
+      const fetchJson = async (url: string) => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         try {
-          const backupRes = await fetch('https://github-contributions.vercel.app/api/v1/Akosidakdok', {
-            cache: 'no-cache',
+          const response = await fetch(url, {
+            cache: 'no-store',
             signal: controller.signal,
           });
-          if (backupRes.ok) {
-            const backupD = await backupRes.json();
-            const rawList: { date: string; count: number }[] = backupD.contributions || [];
-            liveDays = rawList.map((d) => ({
-              date: d.date,
-              count: d.count,
-              level: d.count === 0 ? 0 : d.count <= 3 ? 1 : d.count <= 6 ? 2 : d.count <= 12 ? 3 : 4,
-            }));
-            if (Array.isArray(backupD.years)) {
-              backupD.years.forEach((y: { year: string; total: number }) => {
-                liveTotals[y.year] = y.total;
-              });
-            }
-          }
-        } catch (backupErr) {
-          console.debug('Secondary contributions API error:', backupErr);
+          if (!response.ok) throw new Error(`GitHub contributions request failed (${response.status})`);
+          return await response.json();
+        } finally {
+          clearTimeout(timeoutId);
         }
-      } finally {
-        clearTimeout(timeoutId);
+      };
+
+      try {
+        // Prefer authenticated GitHub data so shared private contributions are included.
+        const privateD = await fetchJson('/api/github-contributions');
+        if (!Array.isArray(privateD.allContributions) || !Array.isArray(privateD.lastYearContributions)) {
+          throw new Error('Authenticated GitHub contributions response was invalid');
+        }
+        liveDays = privateD.allContributions;
+        liveLastYear = privateD.lastYearContributions;
+        liveTotals = privateD.total || {};
+        includesPrivateContributions = true;
+      } catch {
+        try {
+          // Public profile scraper remains available for local development and token-free deployments.
+          const [allD, lastD] = await Promise.all([
+            fetchJson('https://github-contributions-api.jogruber.de/v4/Akosidakdok'),
+            fetchJson('https://github-contributions-api.jogruber.de/v4/Akosidakdok?y=last'),
+          ]);
+          if (!Array.isArray(allD.contributions) || !Array.isArray(lastD.contributions)) {
+            throw new Error('Public GitHub contributions response was invalid');
+          }
+          liveDays = allD.contributions;
+          liveLastYear = lastD.contributions;
+          liveTotals = { ...allD.total, ...lastD.total };
+        } catch {
+          // Last fallback: Vercel's public profile feed.
+          const backupD = await fetchJson('https://github-contributions.vercel.app/api/v1/Akosidakdok');
+          const rawList: { date: string; count: number }[] = backupD.contributions || [];
+          liveDays = rawList.map((d) => ({
+            date: d.date,
+            count: d.count,
+            level: d.count === 0 ? 0 : d.count <= 3 ? 1 : d.count <= 6 ? 2 : d.count <= 12 ? 3 : 4,
+          }));
+          if (Array.isArray(backupD.years)) {
+            backupD.years.forEach((y: { year: string; total: number }) => {
+              liveTotals[y.year] = y.total;
+            });
+          }
+          const today = new Date();
+          const cutoff = new Date(today);
+          cutoff.setDate(cutoff.getDate() - 364);
+          const todayString = today.toISOString().slice(0, 10);
+          const cutoffString = cutoff.toISOString().slice(0, 10);
+          liveLastYear = liveDays.filter((day) => day.date >= cutoffString && day.date <= todayString);
+          if (liveDays.length === 0) {
+            throw new Error('GitHub contributions response was empty');
+          }
+        }
       }
 
       if (liveDays.length > 0) {
-        const liveMap = new Map<string, ContributionDay>();
-        liveDays.forEach((d) => liveMap.set(d.date, d));
-
         const baseTyped = fallbackData as unknown as ContributionData;
+        const mergeAuthoritativeDays = (
+          baseline: ContributionDay[],
+          current: ContributionDay[],
+        ): ContributionDay[] => {
+          const byDate = new Map(baseline.map((day) => [day.date, day]));
+          current.forEach((day) => byDate.set(day.date, day));
+          return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+        };
 
-        // 1. Merge rolling last-year contributions
-        const mergedLastYear: ContributionDay[] = (baseTyped.lastYearContributions || []).map((baseDay) => {
-          const liveDay = liveMap.get(baseDay.date);
-          if (!liveDay) return baseDay;
-          const count = Math.max(baseDay.count, liveDay.count);
-          const level = Math.max(baseDay.level, liveDay.level);
-          return { date: baseDay.date, count, level };
-        });
-
-        // Append any new days from live API beyond baseline
-        const existingLastDates = new Set(mergedLastYear.map((d) => d.date));
-        liveDays.forEach((liveDay) => {
-          if (!existingLastDates.has(liveDay.date)) {
-            mergedLastYear.push(liveDay);
-          }
-        });
-
-        // 2. Merge all contributions
-        const mergedAll: ContributionDay[] = (baseTyped.allContributions || []).map((baseDay) => {
-          const liveDay = liveMap.get(baseDay.date);
-          if (!liveDay) return baseDay;
-          const count = Math.max(baseDay.count, liveDay.count);
-          const level = Math.max(baseDay.level, liveDay.level);
-          return { date: baseDay.date, count, level };
-        });
-
-        const existingAllDates = new Set(mergedAll.map((d) => d.date));
-        liveDays.forEach((liveDay) => {
-          if (!existingAllDates.has(liveDay.date)) {
-            mergedAll.push(liveDay);
-          }
-        });
-
-        // 3. Compute dynamic totals
-        const sumLastYear = mergedLastYear.reduce((acc, d) => acc + d.count, 0);
-        const sum2026 = mergedAll.filter((d) => d.date.startsWith('2026')).reduce((acc, d) => acc + d.count, 0);
-        const sum2025 = mergedAll.filter((d) => d.date.startsWith('2025')).reduce((acc, d) => acc + d.count, 0);
+        // Live API days replace the snapshot for dates they cover, including zero-count corrections.
+        const mergedLastYear = liveLastYear.length > 0
+          ? liveLastYear
+          : mergeAuthoritativeDays(baseTyped.lastYearContributions || [], liveDays);
+        const mergedAll = mergeAuthoritativeDays(baseTyped.allContributions || [], liveDays);
+        const yearTotals = Object.fromEntries(
+          Object.keys(baseTyped.total || {}).map((year) => [year, baseTyped.total[year]]),
+        );
+        Object.assign(yearTotals, liveTotals);
 
         const freshData: ContributionData = {
           total: {
-            ...liveTotals,
-            ...baseTyped.total,
-            '2025': Math.max(baseTyped.total?.['2025'] || 30, sum2025),
-            '2026': Math.max(baseTyped.total?.['2026'] || 228, sum2026),
-            lastYear: Math.max(baseTyped.total?.lastYear || 256, sumLastYear),
+            ...yearTotals,
+            ...(liveLastYear.length > 0
+              ? { lastYear: liveTotals.lastYear ?? liveLastYear.reduce((sum, day) => sum + day.count, 0) }
+              : {}),
           },
           lastYearContributions: mergedLastYear,
           allContributions: mergedAll,
@@ -172,6 +165,8 @@ export default function GitHubContributions() {
 
         setData(freshData);
         setIsLive(true);
+        setSyncFailed(false);
+        setHasPrivateContributionData(includesPrivateContributions);
         lastSyncTimeRef.current = Date.now();
 
         try {
@@ -182,8 +177,11 @@ export default function GitHubContributions() {
         } catch (storageErr) {
           console.debug('Storage error:', storageErr);
         }
+      } else {
+        throw new Error('No contribution data was returned');
       }
     } catch (err) {
+      setSyncFailed(true);
       if (isManual) {
         console.error('Failed to sync contributions:', err);
       }
@@ -427,7 +425,13 @@ export default function GitHubContributions() {
                 fontWeight: 500,
               }}
             >
-              {isSyncing ? 'Syncing...' : isLive ? 'Live Sync' : 'Synced'}
+              {isSyncing
+                ? 'Syncing...'
+                : syncFailed
+                  ? 'Sync unavailable'
+                  : isLive
+                    ? hasPrivateContributionData ? 'GitHub Sync' : 'Public data'
+                    : 'Cached data'}
             </span>
           </div>
 
