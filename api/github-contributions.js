@@ -90,23 +90,25 @@ export async function getGitHubContributions(token, now = new Date()) {
   };
 }
 
-export default async function handler(request) {
-  if (request.method !== 'GET') {
-    return Response.json({ error: 'Method not allowed' }, { status: 405, headers: { Allow: 'GET' } });
-  }
+export default {
+  async fetch(request) {
+    if (request.method !== 'GET') {
+      return Response.json({ error: 'Method not allowed' }, { status: 405, headers: { Allow: 'GET' } });
+    }
 
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    return Response.json({ error: 'GitHub contribution token is not configured' }, { status: 503 });
-  }
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      return Response.json({ error: 'GitHub contribution token is not configured' }, { status: 503 });
+    }
 
-  try {
-    const data = await getGitHubContributions(token);
-    return Response.json(data, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' },
-    });
-  } catch (error) {
-    console.error('GitHub contribution endpoint failed', error);
-    return Response.json({ error: 'Could not retrieve GitHub contributions' }, { status: 502 });
-  }
-}
+    try {
+      const data = await getGitHubContributions(token);
+      return Response.json(data, {
+        headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=600' },
+      });
+    } catch (error) {
+      console.error('GitHub contribution endpoint failed', error);
+      return Response.json({ error: 'Could not retrieve GitHub contributions' }, { status: 502 });
+    }
+  },
+};
