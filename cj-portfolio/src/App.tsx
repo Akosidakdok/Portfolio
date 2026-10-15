@@ -14,6 +14,7 @@ import campNaviImg from './assets/projects/camp-navi.png';
 import pnpSurveyImg from './assets/projects/pnp-survey.png';
 import pointNemoImg from './assets/projects/pointnemo.png';
 import pointNemoMapImg from './assets/projects/pointnemo-map.png';
+import carbularyoInventoryImg from './assets/projects/carbularyo-inventory-system.png';
 import fccWebDesignImg from './assets/certifications/fcc-responsive-web-design.png';
 import fccFrontendImg from './assets/certifications/fcc-frontend-libraries.png';
 import codeOrgAiImg from './assets/certifications/code-org-ai-for-oceans.png';
@@ -614,6 +615,43 @@ const PROJECTS: Project[] = [
       { component: 'Local AI Inference', detail: 'Ollama (qwen2.5:3b / 1.5b) over localhost:11434' },
       { component: 'Backend Engine', detail: 'Node.js Express API with Zod schema contract validation' },
       { component: 'Database', detail: 'SQLite via better-sqlite3 with transactional migrations' },
+    ],
+  },
+  {
+    id: '11',
+    label: 'PROJECT K',
+    title: 'Carbularyo Inventory System',
+    stack: ['React', 'TypeScript', 'Supabase', 'TanStack Query', 'Tailwind CSS', 'Vite'],
+    link: 'https://carbularyo-inventory-system.vercel.app/',
+    description: 'A mobile-friendly auto parts shop system for managing inventory, stock movements, customer work orders, and administrative reporting.',
+    venue: 'INVENTORY / AUTO SERVICE',
+    date: '2026',
+    longDesc: 'A role-based inventory and work order platform for an automotive parts shop. Staff can look up parts, adjust stock, and manage customer work orders, while administrators oversee accounts, reports, and income audits. Supabase provides data and authentication, with realtime updates and installable PWA support.',
+    color: '#0F766E',
+    image: carbularyoInventoryImg,
+    role: 'Full Stack Developer',
+    context: 'Inventory and Work Order Management for an Automotive Parts Shop',
+    liveUrl: 'https://carbularyo-inventory-system.vercel.app/',
+    githubUrl: 'https://github.com/Akosidakdok/carbularyo-inventory-system',
+    gallery: [
+      { caption: 'Carbularyo Inventory System', image: carbularyoInventoryImg },
+    ],
+    overview: [
+      'Carbularyo Inventory System supports daily operations for an automotive parts shop, from catalog lookup and stock control to customer work orders.',
+      'Separate staff and administrator experiences provide shop workflows, account management, reporting, and income auditing, backed by Supabase and realtime data synchronization.',
+    ],
+    features: [
+      { title: 'Parts Inventory', desc: 'Search and filter the parts catalog, review stock status, and maintain item records and photos.' },
+      { title: 'Stock Tracking', desc: 'Record stock adjustments and inspect movement history for inventory accountability.' },
+      { title: 'Work Orders', desc: 'Create and manage customer work orders, add parts and services, and track completion.' },
+      { title: 'Admin Operations', desc: 'Manage accounts and review operational reports and income audit records.' },
+      { title: 'Realtime and PWA Support', desc: 'Synchronizes data through Supabase Realtime and includes installable progressive web app support.' },
+    ],
+    architecture: [
+      { component: 'Frontend', detail: 'React, TypeScript, Tailwind CSS, Vite' },
+      { component: 'Data & Authentication', detail: 'Supabase PostgreSQL, Auth, and Realtime' },
+      { component: 'Client Data Layer', detail: 'TanStack Query with dedicated service and repository modules' },
+      { component: 'Deployment', detail: 'Vercel configuration with Supabase Edge Functions' },
     ],
   },
 ];
